@@ -26,8 +26,8 @@
             <ul>
                 <li>Bogdan, George Laurentiu</li>
                 <li>Diz Gil, Guillermo</li>
-                <li>PÃ©rez MuÃ±oz, Carmen MarÃ­a</li>
-                <li>RodrÃ­guez PÃ©rez, Francisco</li>
+                <li>Muñoz Pérez, Carmen María</li>
+                <li>Rodríguez Pérez, Francisco</li>
             </ul>
             <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
         </div>
