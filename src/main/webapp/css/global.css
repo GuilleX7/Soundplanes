@@ -1,0 +1,13 @@
+/* Dark background override */
+.bg-dark-sp {
+	background-color: #000000;
+}
+
+/* Image background */
+.background-sp {
+	background: url("/images/nasa-unsplash-large.png") no-repeat 0 0;
+    background-size: 100% 100%;
+    background-position: center center;
+    height: 40%;
+    z-index: -1; /* We don't want it to overlap anything */
+}
