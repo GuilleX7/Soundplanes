@@ -2,20 +2,22 @@ package aiss.controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class IndexServlet
+ * Servlet implementation class RegisterUserController
  */
-public class LandingController extends HttpServlet {
+@WebServlet(urlPatterns = "/registerUser")
+public class RegisterUserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public LandingController() {
+	public RegisterUserController() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -26,8 +28,8 @@ public class LandingController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Show main webpage
-		request.getRequestDispatcher("/WEB-INF/views/landingPage.html").forward(request, response);
+		// TODO Auto-generated method stub
+		request.getRequestDispatcher("WEB-INF/register.html");
 	}
 
 	/**
@@ -36,6 +38,7 @@ public class LandingController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

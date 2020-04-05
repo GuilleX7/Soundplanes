@@ -3,7 +3,6 @@
   <welcome-file-list>
     <welcome-file>landing</welcome-file>
   </welcome-file-list>
-  
   <servlet>
     <display-name>LandingController</display-name>
     <servlet-name>LandingController</servlet-name>
@@ -13,8 +12,6 @@
     <servlet-name>LandingController</servlet-name>
     <url-pattern>/landing</url-pattern>
   </servlet-mapping>
-  
-  <!-- Spotify Auth -->
   <servlet>
     <display-name>SpotifyAuth</display-name>
     <servlet-name>SpotifyAuth</servlet-name>
@@ -28,8 +25,6 @@
     <servlet-name>SpotifyAuth</servlet-name>
     <url-pattern>/auth/spotify</url-pattern>
   </servlet-mapping>
-  
-   <!-- Spotify Auth Callback -->
   <servlet>
     <display-name>SpotifyCallback</display-name>
     <servlet-name>SpotifyCallback</servlet-name>
@@ -46,5 +41,15 @@
   <servlet-mapping>
     <servlet-name>SpotifyCallback</servlet-name>
     <url-pattern>/oauth2callback/Spotify</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>RegisterUserController</display-name>
+    <servlet-name>RegisterUserController</servlet-name>
+    <servlet-class>aiss.controller.RegisterUserController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RegisterUserController</servlet-name>
+    <url-pattern>/RegisterUserController</url-pattern>
   </servlet-mapping>
 </web-app>
