@@ -51,4 +51,14 @@
     <servlet-name>SpotifyCallback</servlet-name>
     <url-pattern>/oauth2callback/Spotify</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>RegisterUserController</display-name>
+    <servlet-name>RegisterUserController</servlet-name>
+    <servlet-class>aiss.controller.RegisterUserController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RegisterUserController</servlet-name>
+    <url-pattern>/RegisterUserController</url-pattern>
+  </servlet-mapping>
 </web-app>
