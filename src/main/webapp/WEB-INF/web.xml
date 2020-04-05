@@ -3,7 +3,6 @@
   <welcome-file-list>
     <welcome-file>landing</welcome-file>
   </welcome-file-list>
-  
   <servlet>
     <display-name>LandingController</display-name>
     <servlet-name>LandingController</servlet-name>
@@ -13,8 +12,15 @@
     <servlet-name>LandingController</servlet-name>
     <url-pattern>/landing</url-pattern>
   </servlet-mapping>
-  
-  <!-- Spotify Auth -->
+  <servlet>
+  	<display-name>LocationController</display-name>
+  	<servlet-name>LocationController</servlet-name>
+  	<servlet-class>aiss.controller.LocationController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>LocationController</servlet-name>
+  	<url-pattern>/chooseLocation</url-pattern>
+  </servlet-mapping>
   <servlet>
     <display-name>SpotifyAuth</display-name>
     <servlet-name>SpotifyAuth</servlet-name>
@@ -28,8 +34,6 @@
     <servlet-name>SpotifyAuth</servlet-name>
     <url-pattern>/auth/spotify</url-pattern>
   </servlet-mapping>
-  
-   <!-- Spotify Auth Callback -->
   <servlet>
     <display-name>SpotifyCallback</display-name>
     <servlet-name>SpotifyCallback</servlet-name>

@@ -1,21 +1,24 @@
 package aiss.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Locale;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class IndexServlet
+ * Servlet implementation class chooseLocationController
  */
-public class LandingController extends HttpServlet {
+public class LocationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public LandingController() {
+	public LocationController() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -26,8 +29,18 @@ public class LandingController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Show main webpage
-		request.getRequestDispatcher("/WEB-INF/views/landingPage.html").forward(request, response);
+		// TODO Auto-generated method stub
+		String nombre = request.getParameter("name");
+		if (nombre == null || nombre.isEmpty()) {
+			request.getRequestDispatcher("/registerUser").forward(request, response);
+		} else {
+			String country = request.getLocale().getDisplayCountry(Locale.US);
+			response.setContentType("text/html");
+			PrintWriter out = response.getWriter();
+			out.println(country);
+			out.close();
+		}
+
 	}
 
 	/**
@@ -36,6 +49,7 @@ public class LandingController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
