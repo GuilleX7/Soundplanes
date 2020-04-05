@@ -15742,9 +15742,9 @@
 											"font": "Arial;13;0",
 											"left": -64,
 											"top": -16,
-											"width": 70.7763671875,
+											"width": 109.79541015625,
 											"height": 13,
-											"text": "(from Class)"
+											"text": "(from Controller)"
 										},
 										{
 											"_type": "LabelView",
@@ -16323,172 +16323,6 @@
 							"templateParameterCompartment": {
 								"$ref": "AAAAAAFw9Rzq43qwM8M="
 							}
-						},
-						{
-							"_type": "UMLClassView",
-							"_id": "AAAAAAFw9R5Mt3r/1b4=",
-							"_parent": {
-								"$ref": "AAAAAAFw9QE5sGUXzj4="
-							},
-							"model": {
-								"$ref": "AAAAAAFw9R5Mt3r9TU4="
-							},
-							"subViews": [
-								{
-									"_type": "UMLNameCompartmentView",
-									"_id": "AAAAAAFw9R5Mt3sAWuM=",
-									"_parent": {
-										"$ref": "AAAAAAFw9R5Mt3r/1b4="
-									},
-									"model": {
-										"$ref": "AAAAAAFw9R5Mt3r9TU4="
-									},
-									"subViews": [
-										{
-											"_type": "LabelView",
-											"_id": "AAAAAAFw9R5Mt3sBvhw=",
-											"_parent": {
-												"$ref": "AAAAAAFw9R5Mt3sAWuM="
-											},
-											"visible": false,
-											"font": "Arial;13;0",
-											"height": 13
-										},
-										{
-											"_type": "LabelView",
-											"_id": "AAAAAAFw9R5Mt3sCQgU=",
-											"_parent": {
-												"$ref": "AAAAAAFw9R5Mt3sAWuM="
-											},
-											"font": "Arial;13;1",
-											"left": 469,
-											"top": 903,
-											"width": 120.62451171875,
-											"height": 13,
-											"text": "GetMusicController"
-										},
-										{
-											"_type": "LabelView",
-											"_id": "AAAAAAFw9R5Mt3sD4UQ=",
-											"_parent": {
-												"$ref": "AAAAAAFw9R5Mt3sAWuM="
-											},
-											"visible": false,
-											"font": "Arial;13;0",
-											"width": 70.7763671875,
-											"height": 13,
-											"text": "(from Class)"
-										},
-										{
-											"_type": "LabelView",
-											"_id": "AAAAAAFw9R5Mt3sE6rA=",
-											"_parent": {
-												"$ref": "AAAAAAFw9R5Mt3sAWuM="
-											},
-											"visible": false,
-											"font": "Arial;13;0",
-											"height": 13,
-											"horizontalAlignment": 1
-										}
-									],
-									"font": "Arial;13;0",
-									"left": 464,
-									"top": 896,
-									"width": 130.62451171875,
-									"height": 25,
-									"stereotypeLabel": {
-										"$ref": "AAAAAAFw9R5Mt3sBvhw="
-									},
-									"nameLabel": {
-										"$ref": "AAAAAAFw9R5Mt3sCQgU="
-									},
-									"namespaceLabel": {
-										"$ref": "AAAAAAFw9R5Mt3sD4UQ="
-									},
-									"propertyLabel": {
-										"$ref": "AAAAAAFw9R5Mt3sE6rA="
-									}
-								},
-								{
-									"_type": "UMLAttributeCompartmentView",
-									"_id": "AAAAAAFw9R5Mt3sFVVg=",
-									"_parent": {
-										"$ref": "AAAAAAFw9R5Mt3r/1b4="
-									},
-									"model": {
-										"$ref": "AAAAAAFw9R5Mt3r9TU4="
-									},
-									"font": "Arial;13;0",
-									"left": 464,
-									"top": 921,
-									"width": 130.62451171875,
-									"height": 10
-								},
-								{
-									"_type": "UMLOperationCompartmentView",
-									"_id": "AAAAAAFw9R5Mt3sG/y8=",
-									"_parent": {
-										"$ref": "AAAAAAFw9R5Mt3r/1b4="
-									},
-									"model": {
-										"$ref": "AAAAAAFw9R5Mt3r9TU4="
-									},
-									"font": "Arial;13;0",
-									"left": 464,
-									"top": 931,
-									"width": 130.62451171875,
-									"height": 10
-								},
-								{
-									"_type": "UMLReceptionCompartmentView",
-									"_id": "AAAAAAFw9R5Mt3sHD1o=",
-									"_parent": {
-										"$ref": "AAAAAAFw9R5Mt3r/1b4="
-									},
-									"model": {
-										"$ref": "AAAAAAFw9R5Mt3r9TU4="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"width": 10,
-									"height": 10
-								},
-								{
-									"_type": "UMLTemplateParameterCompartmentView",
-									"_id": "AAAAAAFw9R5Mt3sI0XI=",
-									"_parent": {
-										"$ref": "AAAAAAFw9R5Mt3r/1b4="
-									},
-									"model": {
-										"$ref": "AAAAAAFw9R5Mt3r9TU4="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"width": 10,
-									"height": 10
-								}
-							],
-							"font": "Arial;13;0",
-							"containerChangeable": true,
-							"left": 464,
-							"top": 896,
-							"width": 130.62451171875,
-							"height": 45,
-							"nameCompartment": {
-								"$ref": "AAAAAAFw9R5Mt3sAWuM="
-							},
-							"attributeCompartment": {
-								"$ref": "AAAAAAFw9R5Mt3sFVVg="
-							},
-							"operationCompartment": {
-								"$ref": "AAAAAAFw9R5Mt3sG/y8="
-							},
-							"receptionCompartment": {
-								"$ref": "AAAAAAFw9R5Mt3sHD1o="
-							},
-							"templateParameterCompartment": {
-								"$ref": "AAAAAAFw9R5Mt3sI0XI="
-							}
 						}
 					]
 				},
@@ -16649,6 +16483,29 @@
 										"$ref": "AAAAAAFw9QX3/Xg++vY="
 									},
 									"name": "MovementController.java"
+								},
+								{
+									"_type": "UMLClass",
+									"_id": "AAAAAAFw9QwJann5Xz0=",
+									"_parent": {
+										"$ref": "AAAAAAFw9QX3/Xg++vY="
+									},
+									"name": "BaseMenuController.java",
+									"ownedElements": [
+										{
+											"_type": "UMLDependency",
+											"_id": "AAAAAAFw9QxM/Xo1/B8=",
+											"_parent": {
+												"$ref": "AAAAAAFw9QwJann5Xz0="
+											},
+											"source": {
+												"$ref": "AAAAAAFw9QwJann5Xz0="
+											},
+											"target": {
+												"$ref": "AAAAAAFw9QqaMHm4PcY="
+											}
+										}
+									]
 								}
 							]
 						},
@@ -16661,37 +16518,6 @@
 							"name": "Model"
 						}
 					]
-				},
-				{
-					"_type": "UMLClass",
-					"_id": "AAAAAAFw9QwJann5Xz0=",
-					"_parent": {
-						"$ref": "AAAAAAFw9O/pp1WCbso="
-					},
-					"name": "BaseMenuController.java",
-					"ownedElements": [
-						{
-							"_type": "UMLDependency",
-							"_id": "AAAAAAFw9QxM/Xo1/B8=",
-							"_parent": {
-								"$ref": "AAAAAAFw9QwJann5Xz0="
-							},
-							"source": {
-								"$ref": "AAAAAAFw9QwJann5Xz0="
-							},
-							"target": {
-								"$ref": "AAAAAAFw9QqaMHm4PcY="
-							}
-						}
-					]
-				},
-				{
-					"_type": "UMLClass",
-					"_id": "AAAAAAFw9R5Mt3r9TU4=",
-					"_parent": {
-						"$ref": "AAAAAAFw9O/pp1WCbso="
-					},
-					"name": "GetMusicController"
 				}
 			]
 		}
