@@ -1,17 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <welcome-file-list>
-    <welcome-file>index</welcome-file>
+    <welcome-file>landing</welcome-file>
   </welcome-file-list>
   
   <servlet>
-    <description></description>
-    <display-name>IndexServlet</display-name>
-    <servlet-name>IndexServlet</servlet-name>
-    <servlet-class>aiss.servlet.IndexServlet</servlet-class>
+    <display-name>LandingController</display-name>
+    <servlet-name>LandingController</servlet-name>
+    <servlet-class>aiss.controller.LandingController</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>IndexServlet</servlet-name>
-    <url-pattern>/index</url-pattern>
+    <servlet-name>LandingController</servlet-name>
+    <url-pattern>/landing</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Spotify Auth -->
+  <servlet>
+    <display-name>SpotifyAuth</display-name>
+    <servlet-name>SpotifyAuth</servlet-name>
+    <servlet-class>aiss.controller.oauth.GenericAuthController</servlet-class>
+    <init-param>
+      <param-name>provider</param-name>
+      <param-value>Spotify</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpotifyAuth</servlet-name>
+    <url-pattern>/auth/spotify</url-pattern>
+  </servlet-mapping>
+  
+   <!-- Spotify Auth Callback -->
+  <servlet>
+    <display-name>SpotifyCallback</display-name>
+    <servlet-name>SpotifyCallback</servlet-name>
+    <servlet-class>aiss.controller.oauth.OAuth2Callback</servlet-class>
+    <init-param>
+      <param-name>provider</param-name>
+      <param-value>Spotify</param-value>
+    </init-param>
+    <init-param>
+      <param-name>onSuccess</param-name>
+      <param-value>redirect:/</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpotifyCallback</servlet-name>
+    <url-pattern>/oauth2callback/Spotify</url-pattern>
   </servlet-mapping>
 </web-app>
