@@ -44,30 +44,35 @@
 				<div class="col">
 					<h1 class="lead">Select the region where you wish to spawn:</h1>
 				</div>
-				<div class="col">
-					<div class="btn-group">
-						<button type="button" class="btn btn-primary dropdown-toggle"
-							data-toggle="dropdown">
-							States..<span class="caret"></span>
-						</button>
-							
-							<ul class="dropdown-menu scrollable-menu" role="menu">
-								<%
-									List<String> states = (List<String>) request.getAttribute("states");
-								%>
-								<c:forEach items="${states}" var="state">
-									<li><a href="#"><c:out value="${state}" /></a></li>
-								</c:forEach>
-							</ul>
-					</div>
+				<form action="/registerUser" method="POST">
+					<div class="col">
 
-				</div>
+						<%
+							List<String> states = (List<String>) request.getAttribute("states");
+						%>
+						<div class="form-group">
+							<label for="selectState">State...</label> <select
+								class="form-control" id="selectState" name="state">
+								<c:forEach items="${states}" var="state">
+									<option><c:out value="${state}" /></option>
+								</c:forEach>
+							</select>
+						</div>
+
+
+					</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<a class="btn btn-secondary btn-lg" href="/registerUser" role="button">Go back</a>
+					<a class="btn btn-secondary btn-lg" href="/registerUser"
+						role="button">Go back</a>
+				</div>
+				<div class="col">
+					<button class="btn btn-success btn-lg" type="submit">Use
+						this location</button>
 				</div>
 			</div>
+			</form>
 		</div>
 	</div>
 
