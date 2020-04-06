@@ -2,6 +2,7 @@ package aiss.controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class IndexServlet
  */
+
 public class LandingController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -17,7 +19,6 @@ public class LandingController extends HttpServlet {
 	 */
 	public LandingController() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -26,7 +27,6 @@ public class LandingController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Show main webpage
 		request.getRequestDispatcher("/WEB-INF/views/landingPage.html").forward(request, response);
 	}
 

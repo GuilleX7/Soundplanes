@@ -2,34 +2,131 @@
 <html>
 
 <head>
-    <title>Soundplanes</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/global.css">
+<title>Soundplanes</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+	crossorigin="anonymous">
+<link rel="stylesheet" href="/css/global.css">
 </head>
 
 <body class="bg-dark-sp">
-    <div class="background-sp fixed-bottom"></div>
+	<div class="background-sp fixed-bottom"></div>
 
-    <div class="navbar">
-        <p class="navbar-brand">
-            <img class="d-inline-flex align-middle" src="/images/nav-white-logo.png" />
-        </p>
-    </div>
-    <div class="container-sm">
-        <div class="jumbotron text-center text-white bg-transparent">
-        	<hr class="my-4">
-            <h1 class="display-4">Hello, World!</h1>
-            <p class="lead">We are excited to see you here! You are lucky to see such an awesome project!</p>
-            <hr class="my-4">
-            <a class="btn btn-primary btn-lg" href="/registerUser" role="button">C'mon barbie let's go party</a>
-        </div>
-    </div>
-    
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<div class="navbar">
+		<p class="navbar-brand">
+			<img class="d-inline-flex align-middle"
+				src="/images/nav-white-logo.png" />
+		</p>
+	</div>
+	<div class="container-sm">
+		<div class="jumbotron text-center text-white bg-transparent">
+			<form method="POST" id="form-user-register">
+				<div clas="form-group">
+					<h3>Your nickname:</h3>
+					<input type="text" class="form-control" name="name" id="input-name"
+						placeholder="Type here your nickname" pattern="\w+" required>
+					<div class="invalid-feedback">You must choose a nickname
+						first!</div>
+				</div>
+				<hr class="my-4">
+				<p class="lead" id="p-lead">In order to offer you a better
+					experience, we may request to use your location.</p>
+				<div class="form-row">
+					<div class="col">
+						<a class="btn btn-primary btn-lg btn-block" href="#" role="button"
+							id="btn-use-location">Use my location</a>
+					</div>
+					<div class="col">
+						<a class="btn btn-secondary btn-lg btn-block" href="#"
+							role="button" id="btn-choose-location">Choose location</a>
+					</div>
+				</div>
+				<input type="hidden" name="location" value="" id="hidden-location">
+			</form>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+		crossorigin="anonymous"></script>
+	<script>
+	function isGeolocated() {
+		return $("#hidden-location").val() != "";
+	}
+	
+	function submitForm(action) {
+		if (!$("#input-name").val()) {
+			$("#input-name").addClass("is-invalid");	
+		} else {
+			$("#form-user-register")
+				.prop("action", action)
+				.submit();
+		}
+	}
+	
+	var isGeolocating = false;
+	
+	$(document).ready(function() {
+		if (navigator.geolocation) {
+			$("#btn-use-location").on("click", function() {
+				if (isGeolocated()) {
+					submitForm("/registerUser");
+				} else {
+					if (isGeolocating) return;
+					isGeolocating = true;
+					$("#btn-use-location").html("Trying to locate...");
+					navigator.geolocation.getCurrentPosition(
+						(position) => {
+							isGeolocating = false;
+							$("#p-lead").html("We got it! yo can go ahead")
+							$("#btn-use-location")
+								.html("Continue using my location")
+								.addClass("btn-success")
+							$("#hidden-location").val(position.coords.latitude + "," + position.coords.longitude);
+						},
+						(error) => {
+							isGeolocating = false;
+							$("#btn-use-location").html("Use my location")
+							switch (error.code) {
+						    case error.PERMISSION_DENIED:
+						    	$("#p-lead").html("We understand it! If you change your mind, you will probably need to ask your browser for allowing us to locate you");
+						      	break;
+						    case error.TIMEOUT:
+						    	$("#p-lead").html("Don't worry! take your time to decide")
+						      	break;
+						    default:
+						    	$("#p-lead").html("Sorry, but we were unable to geolocate you")
+						      	break;
+						  	}
+						}
+					);
+				}
+			});
+		} else {
+			$("#p-lead").html("Oops! it seems your browser doesn't support geolocation. But you are still able to choose a location!");
+			$("#btn-use-location").parent().remove();
+			$("#btn-choose-location")
+				.addClass("btn-primary")
+				.removeClass("btn-secondary");
+		}
+		
+		$("#btn-choose-location").on("click", () => {
+			submitForm("/chooseLocation");
+		});
+	});
+	</script>
 </body>
 
 </html>

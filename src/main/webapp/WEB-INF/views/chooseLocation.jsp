@@ -11,7 +11,6 @@
 	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
 	crossorigin="anonymous">
 <link rel="stylesheet" href="/css/global.css">
-<link rel="stylesheet" href="/css/chooseLocation.css">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 </head>
@@ -27,51 +26,38 @@
 	</div>
 	<div class="container-sm">
 		<div class="jumbotron text-center text-white bg-transparent">
-			<!-- <hr class="my-4">
-            <h1 class="lead">It seem you are visiting us from <%=request.getAttribute("country")%></h1>
-            <p class="lead">We are excited to see you here! You are lucky to see such an awesome project!</p>
-            <hr class="my-4">
-            <a class="btn btn-primary btn-lg" href="/registerUser" role="button">C'mon barbie let's go party</a>
-             -->
-			<div class="row">
-				<div class="col">
-					<h1 class="lead">
-						It seem you are visiting us from
-						<%=request.getAttribute("country")%></h1>
+			<h3>
+				It seems you are visiting us from
+				<%=request.getAttribute("country")%>
+			</h3>
+			<form action="/registerUser" method="POST">
+				<%
+					List<String> states = (List<String>) request.getAttribute("states");
+				%>
+				<h1 class="lead">Select the region where you wish to spawn:</h1>
+				<div class="form-group">
+					<label for="select-state">State...</label>
+					<select
+						class="form-control" id="select-state" name="state">
+						<c:forEach items="${states}" var="state">
+							<option><c:out value="${state}" /></option>
+						</c:forEach>
+					</select>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<h1 class="lead">Select the region where you wish to spawn:</h1>
-				</div>
-				<form action="/registerUser" method="POST">
+				<div class="form-row">
 					<div class="col">
-
-						<%
-							List<String> states = (List<String>) request.getAttribute("states");
-						%>
-						<div class="form-group">
-							<label for="selectState">State...</label> <select
-								class="form-control" id="selectState" name="state">
-								<c:forEach items="${states}" var="state">
-									<option><c:out value="${state}" /></option>
-								</c:forEach>
-							</select>
-						</div>
-
-
+						<a class="btn btn-secondary btn-lg btn-block" href="/registerUser"
+							role="button">Go back</a>
 					</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<a class="btn btn-secondary btn-lg" href="/registerUser"
-						role="button">Go back</a>
+					<div class="col">
+						<button class="btn btn-success btn-lg btn-block" type="submit">Use
+							this location</button>
+					</div>
 				</div>
-				<div class="col">
-					<button class="btn btn-success btn-lg" type="submit">Use
-						this location</button>
-				</div>
-			</div>
+				<input type="hidden" name="name"
+					value="<%=request.getParameter("name")%>">
+				<input type="hidden" name="country"
+					value="<%=request.getAttribute("country")%>">
 			</form>
 		</div>
 	</div>

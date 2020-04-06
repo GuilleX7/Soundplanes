@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class RegisterUserController
  */
+
 public class RegisterUserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -18,7 +19,6 @@ public class RegisterUserController extends HttpServlet {
 	 */
 	public RegisterUserController() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -27,8 +27,7 @@ public class RegisterUserController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		request.getRequestDispatcher("WEB-INF/views/register.html").forward(request, response);;
+		request.getRequestDispatcher("WEB-INF/views/register.html").forward(request, response);
 	}
 
 	/**
@@ -37,7 +36,33 @@ public class RegisterUserController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String name = request.getParameter("name"), location = request.getParameter("location"),
+				country = request.getParameter("country"), state = request.getParameter("state");
+
+		if (name == null || name.isEmpty()) {
+			doGet(request, response);
+			return;
+		}
+
+		if (location != null && !location.isEmpty()) {
+			try {
+				String[] coords = location.split(",");
+				Double latitude = Double.valueOf(coords[0]);
+				Double longitude = Double.valueOf(coords[1]);
+			} catch (Exception e) {
+				doGet(request, response);
+				return;
+			}
+
+			response.getWriter().write("Username: " + name + "\nPosition: " + location);
+			return;
+		}
+
+		if (country != null && !country.isEmpty() && state != null && !state.isEmpty()) {
+			response.getWriter().write("Username: " + name + "\nCountry: " + country + "\nState: " + state);
+			return;
+		}
+		
 		doGet(request, response);
 	}
 

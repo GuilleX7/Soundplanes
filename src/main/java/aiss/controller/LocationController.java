@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import aiss.model.resource.CountryStatesResource;
 /**
  * Servlet implementation class chooseLocationController
  */
+
 public class LocationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Map<String,List<String>> states;
@@ -25,7 +27,6 @@ public class LocationController extends HttpServlet {
 	 */
 	public LocationController() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -34,10 +35,9 @@ public class LocationController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		String nombre = request.getParameter("name");
 		if (nombre == null || nombre.isEmpty()) {
-			request.getRequestDispatcher("/registerUser").forward(request, response);
+			response.sendRedirect("/registerUser");
 		} else {
 			String country = request.getLocale().getDisplayCountry(Locale.US);
 			request.setAttribute("country", country);
@@ -54,7 +54,6 @@ public class LocationController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 	

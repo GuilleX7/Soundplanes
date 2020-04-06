@@ -7,6 +7,7 @@
 	<welcome-file-list>
 		<welcome-file>landing</welcome-file>
 	</welcome-file-list>
+
 	<servlet>
 		<display-name>LandingController</display-name>
 		<servlet-name>LandingController</servlet-name>
@@ -16,6 +17,17 @@
 		<servlet-name>LandingController</servlet-name>
 		<url-pattern>/landing</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<display-name>RegisterUserController</display-name>
+		<servlet-name>RegisterUserController</servlet-name>
+		<servlet-class>aiss.controller.RegisterUserController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RegisterUserController</servlet-name>
+		<url-pattern>/registerUser</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<display-name>LocationController</display-name>
 		<servlet-name>LocationController</servlet-name>
@@ -25,6 +37,7 @@
 		<servlet-name>LocationController</servlet-name>
 		<url-pattern>/chooseLocation</url-pattern>
 	</servlet-mapping>
+
 	<servlet>
 		<display-name>SpotifyAuth</display-name>
 		<servlet-name>SpotifyAuth</servlet-name>
@@ -38,6 +51,7 @@
 		<servlet-name>SpotifyAuth</servlet-name>
 		<url-pattern>/auth/spotify</url-pattern>
 	</servlet-mapping>
+
 	<servlet>
 		<display-name>SpotifyCallback</display-name>
 		<servlet-name>SpotifyCallback</servlet-name>
@@ -54,16 +68,6 @@
 	<servlet-mapping>
 		<servlet-name>SpotifyCallback</servlet-name>
 		<url-pattern>/oauth2callback/Spotify</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<description></description>
-		<display-name>RegisterUserController</display-name>
-		<servlet-name>RegisterUserController</servlet-name>
-		<servlet-class>aiss.controller.RegisterUserController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>RegisterUserController</servlet-name>
-		<url-pattern>/registerUser</url-pattern>
 	</servlet-mapping>
 	<security-constraint>
 		<web-resource-collection>

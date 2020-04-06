@@ -105,6 +105,7 @@ public class OAuthRegistry {
 	/**
 	 * Load the configuration of the different OAuth providers from the Json file.
 	 */
+	@SuppressWarnings("unchecked")
 	private static void loadConfig() {
 		serviceConfigurations = new HashMap<>();
 		ObjectMapper om = new ObjectMapper();

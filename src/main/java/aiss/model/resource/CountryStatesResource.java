@@ -11,19 +11,16 @@ import java.util.logging.Logger;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import aiss.utility.OAuthServiceConfiguration;
-
-
-
 public class CountryStatesResource {
 
 	private static Logger log = Logger.getLogger(CountryStatesResource.class.getName());
-	
+
 	protected static final String STATES_RESOURCE = "WEB-INF/states.json";
-	
-	static Map<String,List<String>> states;
-	
-	private static void LoadResources() {
+
+	static Map<String, List<String>> states;
+
+	@SuppressWarnings("unchecked")
+	private static void loadResources() {
 		states = new HashMap<>();
 		ObjectMapper om = new ObjectMapper();
 		try {
@@ -43,10 +40,10 @@ public class CountryStatesResource {
 			log.log(Level.WARNING, e.getMessage());
 		}
 	}
-	
-	public static Map<String,List<String>> getStates(){
-		if(states == null){
-			LoadResources();
+
+	public static Map<String, List<String>> getStates() {
+		if (states == null) {
+			loadResources();
 		}
 		return states;
 	}
