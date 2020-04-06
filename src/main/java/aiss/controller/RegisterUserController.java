@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class RegisterUserController
  */
-@WebServlet(urlPatterns = "/registerUser")
 public class RegisterUserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -29,7 +28,7 @@ public class RegisterUserController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		request.getRequestDispatcher("WEB-INF/register.html");
+		request.getRequestDispatcher("WEB-INF/views/register.html").forward(request, response);;
 	}
 
 	/**

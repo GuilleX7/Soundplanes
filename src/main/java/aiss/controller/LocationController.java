@@ -2,19 +2,24 @@ package aiss.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import aiss.model.resource.CountryStatesResource;
+
 /**
  * Servlet implementation class chooseLocationController
  */
 public class LocationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	Map<String,List<String>> states;
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -35,10 +40,10 @@ public class LocationController extends HttpServlet {
 			request.getRequestDispatcher("/registerUser").forward(request, response);
 		} else {
 			String country = request.getLocale().getDisplayCountry(Locale.US);
-			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
-			out.println(country);
-			out.close();
+			request.setAttribute("country", country);
+			List<String> states = CountryStatesResource.getStates().get(country);
+			request.setAttribute("states", states);
+			request.getRequestDispatcher("/WEB-INF/views/chooseLocation.jsp").forward(request, response);
 		}
 
 	}
@@ -51,6 +56,11 @@ public class LocationController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+	
+	@Override
+	public void init() throws ServletException {
+		
 	}
 
 }
