@@ -1,14 +1,16 @@
 package aiss.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import aiss.model.resource.GeocodingResource;
 import aiss.model.resource.UserResource;
-import aiss.model.user.Location;
+import aiss.model.geocoding.Location;
 import aiss.model.user.User;
 
 /**
@@ -43,30 +45,37 @@ public class RegisterUserController extends HttpServlet {
 		String name = request.getParameter("name"), location = request.getParameter("location"),
 				country = request.getParameter("country"), state = request.getParameter("state");
 
+		Location geolocation = null;
+		
 		if (name == null || name.isEmpty()) {
 			doGet(request, response);
 			return;
 		}
 		
 		if (country != null && !country.isEmpty() && state != null && !state.isEmpty()) {
-			response.getWriter().write("Username: " + name + "\nCountry: " + country + "\nState: " + state);
-			return;
-		}
-
-		if (location != null && !location.isEmpty()) {
-			Location geolocation = null;
+			List<Location> locations = GeocodingResource.geocodeCountryState(state, country);
+			if (locations.size() < 1) {
+				doGet(request, response);
+				return;
+			}
+			geolocation = locations.get(0);
+		} else if (location != null && !location.isEmpty()) {
 			try {
 				geolocation = Location.fromFormat(location);
 			} catch (Exception e) {
 				doGet(request, response);
 				return;
 			}
-			User user = User.of(name, geolocation);
-			UserResource.getInstance().registerUser(user);
-			request.getSession().setAttribute("UUID", user.getUUID());
-			response.getWriter().write("User registered successfully");
-			return;
 		}
+		
+		User user = User.of(name, geolocation);
+		UserResource.getInstance().registerUser(user);
+		request.getSession().setAttribute("UUID", user.getUUID());
+		response.getWriter().write("User registered successfully");
+		response.getWriter().write("Name: " + user.getName());
+		response.getWriter().write("Latitude: " + user.getGeolocation().getLatitude());
+		response.getWriter().write("Longitude: " + user.getGeolocation().getLongitude());
+		return;
 	}
 
 }

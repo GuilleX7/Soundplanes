@@ -33,27 +33,25 @@ public class GeniusResource {
 		chr.setRawValue(API_KEY);
 		cr.setChallengeResponse(chr);
 		
-		SearchRequest searchRequest = null;
+		SearchRequest request = null;
 		
 		List<Song> songs = new ArrayList<Song>();
 
 		try {
-			searchRequest = cr.get(SearchRequest.class);
+			request = cr.get(SearchRequest.class);
 		} catch (ResourceException re) {
 			log.warning(re.getMessage());
-			log.warning("Error when retrieving Genius search: ");
-			log.warning(searchURL);
 			return songs;
 		}
 
-		Meta meta = searchRequest.getMeta();
+		Meta meta = request.getMeta();
 		if (meta.getStatus() != 200) {
 			log.warning(String.format("Genius API returned error code %d: %s", meta.getStatus(),
 					(meta.getMessage() == null) ? "" : meta.getMessage()));
 			return songs;
 		}
 		
-		List<Hit> hits = searchRequest.getResponse().getHits();
+		List<Hit> hits = request.getResponse().getHits();
 		for (Hit hit : hits) {
 			if (hit.getType().contentEquals("song")) {
 				songs.add(hit.getSong());

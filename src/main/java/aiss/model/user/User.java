@@ -2,6 +2,8 @@ package aiss.model.user;
 
 import java.util.UUID;
 
+import aiss.model.geocoding.Location;
+
 public class User {
 	private UUID uuid;
 	private String name;
@@ -37,5 +39,4 @@ public class User {
 	public void setGeolocation(Location geolocation) {
 		this.geolocation = geolocation;
 	}
-	
 }
