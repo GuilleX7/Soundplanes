@@ -62,58 +62,80 @@
 		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
 		crossorigin="anonymous"></script>
 	<script>
-	function isGeolocated() {
-		return $("#hidden-location").val() != "";
-	}
+	var isGeolocating = false;
 	
 	function submitForm(action) {
 		if (!$("#input-name").val()) {
 			$("#input-name").addClass("is-invalid");	
 		} else {
+			let submit = jQuery.Event("submit");
+			submit._ready = true;
 			$("#form-user-register")
 				.prop("action", action)
-				.submit();
+				.trigger(submit)
 		}
 	}
 	
-	var isGeolocating = false;
+	function isGeolocated() {
+		return $("#hidden-location").val() != "";
+	}
+	
+	function geolocate() {
+		if (isGeolocating || isGeolocated()) return;
+		isGeolocating = true;
+		$("#btn-use-location").html("Trying to locate...");
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				isGeolocating = false;
+				$("#p-lead").html("We got it! yo can go ahead")
+				$("#btn-use-location")
+					.html("Continue using my location")
+					.addClass("btn-success")
+				$("#hidden-location").val(position.coords.latitude + "," + position.coords.longitude);
+			},
+			(error) => {
+				isGeolocating = false;
+				$("#btn-use-location").html("Use my location")
+				switch (error.code) {
+			    case error.PERMISSION_DENIED:
+			    	$("#p-lead").html("We understand it! If you change your mind, you will probably need to ask your browser for allowing us to locate you");
+			      	break;
+			    case error.TIMEOUT:
+			    	$("#p-lead").html("Don't worry! take your time to decide")
+			      	break;
+			    default:
+			    	$("#p-lead").html("Sorry, but we were unable to geolocate you")
+			      	break;
+			  	}
+			}
+		);
+	}
 	
 	$(document).ready(function() {
+		$("#form-user-register").on("submit", function (e) {
+			if (!e._ready) {
+				//Prevents default browser behaviour when
+				//submiting a cached form
+				e.preventDefault();
+			}
+		});
+		
 		if (navigator.geolocation) {
 			$("#btn-use-location").on("click", function() {
 				if (isGeolocated()) {
 					submitForm("/registerUser");
 				} else {
-					if (isGeolocating) return;
-					isGeolocating = true;
-					$("#btn-use-location").html("Trying to locate...");
-					navigator.geolocation.getCurrentPosition(
-						(position) => {
-							isGeolocating = false;
-							$("#p-lead").html("We got it! yo can go ahead")
-							$("#btn-use-location")
-								.html("Continue using my location")
-								.addClass("btn-success")
-							$("#hidden-location").val(position.coords.latitude + "," + position.coords.longitude);
-						},
-						(error) => {
-							isGeolocating = false;
-							$("#btn-use-location").html("Use my location")
-							switch (error.code) {
-						    case error.PERMISSION_DENIED:
-						    	$("#p-lead").html("We understand it! If you change your mind, you will probably need to ask your browser for allowing us to locate you");
-						      	break;
-						    case error.TIMEOUT:
-						    	$("#p-lead").html("Don't worry! take your time to decide")
-						      	break;
-						    default:
-						    	$("#p-lead").html("Sorry, but we were unable to geolocate you")
-						      	break;
-						  	}
-						}
-					);
+					geolocate();
 				}
 			});
+			
+			if (navigator.permissions) {
+				navigator.permissions.query({name: "geolocation"}).then(function (status) {
+					if (status.state == "granted") {
+						geolocate();
+					}
+				});
+			}
 		} else {
 			$("#p-lead").html("Oops! it seems your browser doesn't support geolocation. But you are still able to choose a location!");
 			$("#btn-use-location").parent().remove();
