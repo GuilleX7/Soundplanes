@@ -26,8 +26,9 @@
 	</div>
 	<div class="container-sm">
 		<div class="jumbotron text-center text-white bg-transparent">
+			<h3><%=request.getParameter("name")%>,</h3>
 			<h3>
-				It seems you are visiting us from
+				it seems you are visiting us from
 				<%=request.getAttribute("country")%>
 			</h3>
 			<form action="/registerUser" method="POST">

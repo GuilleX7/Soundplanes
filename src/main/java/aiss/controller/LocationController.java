@@ -21,7 +21,7 @@ import aiss.model.resource.CountryStatesResource;
 
 public class LocationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	Map<String,List<String>> states;
+
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -41,11 +41,10 @@ public class LocationController extends HttpServlet {
 		} else {
 			String country = request.getLocale().getDisplayCountry(Locale.US);
 			request.setAttribute("country", country);
-			List<String> states = CountryStatesResource.getStates().get(country);
+			List<String> states = CountryStatesResource.getStates(country);
 			request.setAttribute("states", states);
 			request.getRequestDispatcher("/WEB-INF/views/chooseLocation.jsp").forward(request, response);
 		}
-
 	}
 
 	/**
@@ -56,10 +55,4 @@ public class LocationController extends HttpServlet {
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
-	
-	@Override
-	public void init() throws ServletException {
-		
-	}
-
 }
