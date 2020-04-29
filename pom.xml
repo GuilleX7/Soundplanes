@@ -73,6 +73,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- JSoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.13.1</version>
+		</dependency>
 
 		<!-- Jackson 2 core -->
 		<dependency>
