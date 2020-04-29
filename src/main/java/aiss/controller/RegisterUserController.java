@@ -1,11 +1,22 @@
 package aiss.controller;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.util.log.Log;
+
+import aiss.model.genius.SearchRequest;
+import aiss.model.genius.Song;
+import aiss.model.resource.GeniusResource;
+import aiss.model.resource.GeocodingResource;
+import aiss.model.resource.UserResource;
+import aiss.model.user.Location;
+import aiss.model.user.User;
 
 /**
  * Servlet implementation class RegisterUserController
@@ -43,27 +54,26 @@ public class RegisterUserController extends HttpServlet {
 			doGet(request, response);
 			return;
 		}
-
-		if (location != null && !location.isEmpty()) {
-			try {
-				String[] coords = location.split(",");
-				Double latitude = Double.valueOf(coords[0]);
-				Double longitude = Double.valueOf(coords[1]);
-			} catch (Exception e) {
-				doGet(request, response);
-				return;
-			}
-
-			response.getWriter().write("Username: " + name + "\nPosition: " + location);
-			return;
-		}
-
+		
 		if (country != null && !country.isEmpty() && state != null && !state.isEmpty()) {
 			response.getWriter().write("Username: " + name + "\nCountry: " + country + "\nState: " + state);
 			return;
 		}
-		
-		doGet(request, response);
+
+		if (location != null && !location.isEmpty()) {
+			Location geolocation = null;
+			try {
+				geolocation = Location.fromFormat(location);
+			} catch (Exception e) {
+				doGet(request, response);
+				return;
+			}
+			User user = User.of(name, geolocation);
+			UserResource.getInstance().registerUser(user);
+			request.getSession().setAttribute("UUID", user.getUUID());
+			response.getWriter().write("User registered successfully");
+			return;
+		}
 	}
 
 }
