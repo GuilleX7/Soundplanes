@@ -1,82 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:web="http://java.sun.com/xml/ns/javaee"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	version="2.5">
-	<welcome-file-list>
-		<welcome-file>landing</welcome-file>
-	</welcome-file-list>
-
-	<servlet>
-		<display-name>LandingController</display-name>
-		<servlet-name>LandingController</servlet-name>
-		<servlet-class>aiss.controller.LandingController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>LandingController</servlet-name>
-		<url-pattern>/landing</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<display-name>RegisterUserController</display-name>
-		<servlet-name>RegisterUserController</servlet-name>
-		<servlet-class>aiss.controller.RegisterUserController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>RegisterUserController</servlet-name>
-		<url-pattern>/registerUser</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<display-name>LocationController</display-name>
-		<servlet-name>LocationController</servlet-name>
-		<servlet-class>aiss.controller.LocationController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>LocationController</servlet-name>
-		<url-pattern>/chooseLocation</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<display-name>SpotifyAuth</display-name>
-		<servlet-name>SpotifyAuth</servlet-name>
-		<servlet-class>aiss.controller.oauth.GenericAuthController</servlet-class>
-		<init-param>
-			<param-name>provider</param-name>
-			<param-value>Spotify</param-value>
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>SpotifyAuth</servlet-name>
-		<url-pattern>/auth/spotify</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<display-name>SpotifyCallback</display-name>
-		<servlet-name>SpotifyCallback</servlet-name>
-		<servlet-class>aiss.controller.oauth.OAuth2Callback</servlet-class>
-		<init-param>
-			<param-name>provider</param-name>
-			<param-value>Spotify</param-value>
-		</init-param>
-		<init-param>
-			<param-name>onSuccess</param-name>
-			<param-value>redirect:/</param-value>
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>SpotifyCallback</servlet-name>
-		<url-pattern>/oauth2callback/Spotify</url-pattern>
-	</servlet-mapping>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Force HTTPS</web-resource-name>
-			<url-pattern>/*</url-pattern>
-		</web-resource-collection>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <welcome-file-list>
+    <welcome-file>landing</welcome-file>
+  </welcome-file-list>
+  
+  <!-- Regular controllers -->
+  <servlet>
+    <display-name>LandingController</display-name>
+    <servlet-name>LandingController</servlet-name>
+    <servlet-class>aiss.controller.LandingController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LandingController</servlet-name>
+    <url-pattern>/landing</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <display-name>RegisterUserController</display-name>
+    <servlet-name>RegisterUserController</servlet-name>
+    <servlet-class>aiss.controller.RegisterUserController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RegisterUserController</servlet-name>
+    <url-pattern>/registerUser</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <display-name>LocationController</display-name>
+    <servlet-name>LocationController</servlet-name>
+    <servlet-class>aiss.controller.LocationController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LocationController</servlet-name>
+    <url-pattern>/chooseLocation</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MapController</display-name>
+    <servlet-name>MapController</servlet-name>
+    <servlet-class>aiss.controller.MapController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MapController</servlet-name>
+    <url-pattern>/map</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Spotify OAuth controllers -->
+  <servlet>
+    <display-name>SpotifyAuth</display-name>
+    <servlet-name>SpotifyAuth</servlet-name>
+    <servlet-class>aiss.controller.oauth.GenericAuthController</servlet-class>
+    <init-param>
+      <param-name>provider</param-name>
+      <param-value>Spotify</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpotifyAuth</servlet-name>
+    <url-pattern>/auth/spotify</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <display-name>SpotifyCallback</display-name>
+    <servlet-name>SpotifyCallback</servlet-name>
+    <servlet-class>aiss.controller.oauth.OAuth2Callback</servlet-class>
+    <init-param>
+      <param-name>provider</param-name>
+      <param-value>Spotify</param-value>
+    </init-param>
+    <init-param>
+      <param-name>onSuccess</param-name>
+      <param-value>redirect:/</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpotifyCallback</servlet-name>
+    <url-pattern>/oauth2callback/Spotify</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Require HTTPS -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Force HTTPS</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
 </web-app>

@@ -27,6 +27,10 @@ public class LandingController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		if (request.getSession().getAttribute("UUID") != null) {
+			response.sendRedirect("/map");
+			return;
+		}
 		request.getRequestDispatcher("/WEB-INF/views/landingPage.html").forward(request, response);
 	}
 

@@ -35,6 +35,11 @@ public class LocationController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		if (request.getSession().getAttribute("UUID") != null) {
+			response.sendRedirect("/map");
+			return;
+		}
+		
 		String nombre = request.getParameter("name");
 		if (nombre == null || nombre.isEmpty()) {
 			response.sendRedirect("/registerUser");

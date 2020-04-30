@@ -33,6 +33,10 @@ public class RegisterUserController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		if (request.getSession().getAttribute("UUID") != null) {
+			response.sendRedirect("/map");
+			return;
+		}
 		request.getRequestDispatcher("WEB-INF/views/register.html").forward(request, response);
 	}
 
@@ -42,6 +46,11 @@ public class RegisterUserController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		if (request.getSession().getAttribute("UUID") != null) {
+			response.sendRedirect("/map");
+			return;
+		}
+		
 		String name = request.getParameter("name"), location = request.getParameter("location"),
 				country = request.getParameter("country"), state = request.getParameter("state");
 
@@ -71,10 +80,7 @@ public class RegisterUserController extends HttpServlet {
 		User user = User.of(name, geolocation);
 		UserResource.getInstance().registerUser(user);
 		request.getSession().setAttribute("UUID", user.getUUID());
-		response.getWriter().write("User registered successfully");
-		response.getWriter().write("Name: " + user.getName());
-		response.getWriter().write("Latitude: " + user.getGeolocation().getLatitude());
-		response.getWriter().write("Longitude: " + user.getGeolocation().getLongitude());
+		response.sendRedirect("/map");
 		return;
 	}
 
