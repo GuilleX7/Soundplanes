@@ -3,8 +3,6 @@
   <welcome-file-list>
     <welcome-file>landing</welcome-file>
   </welcome-file-list>
-  
-  <!-- Regular controllers -->
   <servlet>
     <display-name>LandingController</display-name>
     <servlet-name>LandingController</servlet-name>
@@ -42,8 +40,16 @@
     <servlet-name>MapController</servlet-name>
     <url-pattern>/map</url-pattern>
   </servlet-mapping>
-  
-  <!-- Spotify OAuth controllers -->
+    <servlet>
+    <description></description>
+    <display-name>LogoutController</display-name>
+    <servlet-name>LogoutController</servlet-name>
+    <servlet-class>aiss.controller.LogoutController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LogoutController</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
   <servlet>
     <display-name>SpotifyAuth</display-name>
     <servlet-name>SpotifyAuth</servlet-name>
@@ -74,8 +80,6 @@
     <servlet-name>SpotifyCallback</servlet-name>
     <url-pattern>/oauth2callback/Spotify</url-pattern>
   </servlet-mapping>
-  
-  <!-- Require HTTPS -->
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Force HTTPS</web-resource-name>
@@ -85,4 +89,14 @@
       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
+  <servlet>
+    <description></description>
+    <display-name>GetUserInfo</display-name>
+    <servlet-name>GetUserInfo</servlet-name>
+    <servlet-class>aiss.controller.client.GetUserInfo</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetUserInfo</servlet-name>
+    <url-pattern>/client/getUserInfo</url-pattern>
+  </servlet-mapping>
 </web-app>

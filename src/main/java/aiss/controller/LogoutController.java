@@ -7,15 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class MapController
+ * Servlet implementation class LogoutController
  */
-public class MapController extends HttpServlet {
+public class LogoutController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public MapController() {
+    public LogoutController() {
         super();
     }
 
@@ -23,11 +23,8 @@ public class MapController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (request.getSession().getAttribute("UUID") != null) {
-			request.getRequestDispatcher("WEB-INF/views/map.html").forward(request, response);
-		} else {
-			response.sendRedirect("/registerUser");
-		}
+		request.getSession().removeAttribute("UUID");
+		response.sendRedirect("/");
 	}
 
 	/**
@@ -36,4 +33,5 @@ public class MapController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
+
 }
