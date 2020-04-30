@@ -112,7 +112,7 @@
 	}
 	
 	$(document).ready(function() {
-		$("#form-user-register").on("submit", function (e) {
+		$("#form-user-register").on("submit", (e) => {
 			if (!e._ready) {
 				//Prevents default browser behaviour when
 				//submiting a cached form
@@ -121,7 +121,7 @@
 		});
 		
 		if (navigator.geolocation) {
-			$("#btn-use-location").on("click", function() {
+			$("#btn-use-location").on("click", () => {
 				if (isGeolocated()) {
 					submitForm("/registerUser");
 				} else {
@@ -130,7 +130,7 @@
 			});
 			
 			if (navigator.permissions) {
-				navigator.permissions.query({name: "geolocation"}).then(function (status) {
+				navigator.permissions.query({name: "geolocation"}).then((status) => {
 					if (status.state == "granted") {
 						geolocate();
 					}
