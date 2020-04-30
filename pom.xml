@@ -169,9 +169,11 @@
 					<port>8090</port>
 					<!-- Comment in the below snippet to enable local debugging with a remote 
 						debugger like those included with Eclipse or IntelliJ -->
+					<!--
 					<jvmFlags>
 						<jvmFlag>-agentlib:jdwp=transport=dt_socket,address=8001,server=y,suspend=n</jvmFlag>
 					</jvmFlags>
+					-->
 				</configuration>
 			</plugin>
 
