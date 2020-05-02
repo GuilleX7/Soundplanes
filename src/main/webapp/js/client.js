@@ -146,21 +146,15 @@ class Player {
 		};
 		
 		this.ui.btn.play.on("click", () => {
-			if (this.searchAndPlay(this.ui.input.search.val()) == 0) {
-				this.ui.label.playing.text("Now playing: " + this.playing.title);
-			}
+			this.searchAndPlay(this.ui.input.search.val());
 		});
 		
 		this.ui.btn.resume.on("click", () => {
-			if (this.resume() == 0) {
-				this.ui.label.playing.text("Resuming: " + this.playing.title);
-			}
+			this.resume();
 		});
 		
 		this.ui.btn.pause.on("click", () => {
-			if (this.pause() == 0) {
-				this.ui.label.playing.text("Paused: " + this.playing.title);
-			}
+			this.pause();
 		});
 	}
 	
@@ -168,13 +162,26 @@ class Player {
 		this.ready = true;
 	}
 	
-	onYoutubePlayerError(e) {
+	onYoutubePlayerError() {
 		this.nextVideo();
 	}
 	
 	onYoutubePlayerStateChange(e) {
-		if (e.data == YT.PlayerState.ENDED && this.playing.title != null) {
-			this.stop();
+		if (this.playing.title != null) {
+			switch (e.data) {
+			case YT.PlayerState.ENDED:
+				this.ui.label.playing.text("Stopped: " + this.playing.title + "(" + this.playing.position + ")");
+				this.stop();
+				break;
+			case YT.PlayerState.PLAYING:
+				this.ui.label.playing.text("Playing: " + this.playing.title + "(" + this.playing.position + ")");
+				break;
+			case YT.PlayerState.PAUSED:
+				this.ui.label.playing.text("Paused: " + this.playing.title + "(" + this.playing.position + ")");
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	
@@ -219,7 +226,6 @@ class Player {
 		if (!this.isReady()) return -1;
 		this.player.nextVideo();
 		this.playing.position++;
-		this.ui.label.playing.text("Now playing: " + this.playing.title + " (" + this.playing.position + ")");
 		return 0;
 	}
 	
