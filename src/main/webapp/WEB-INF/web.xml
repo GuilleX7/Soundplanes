@@ -149,6 +149,16 @@
     <servlet-name>DebugController</servlet-name>
     <url-pattern>/debug</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <description></description>
+    <display-name>ClientAirportLandingController</display-name>
+    <servlet-name>ClientAirportLandingController</servlet-name>
+    <servlet-class>aiss.controller.client.ClientAirportLandingController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ClientAirportLandingController</servlet-name>
+    <url-pattern>/client/airport/landing</url-pattern>
+  </servlet-mapping>
   <servlet>
     <description></description>
     <display-name>ClientAirportPlaylistController</display-name>
@@ -156,8 +166,8 @@
     <servlet-class>aiss.controller.client.ClientAirportPlaylistController</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>ClientAirportPlaylistController</servlet-name>
-  	<url-pattern>/client/airport/playlist</url-pattern>
+    <servlet-name>ClientAirportPlaylistController</servlet-name>
+    <url-pattern>/client/airport/playlist</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
@@ -166,8 +176,8 @@
     <servlet-class>aiss.controller.client.ClientAirportsController</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>ClientAirportsController</servlet-name>
-  	<url-pattern>/client/airports</url-pattern>
+    <servlet-name>ClientAirportsController</servlet-name>
+    <url-pattern>/client/airports</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
@@ -176,18 +186,18 @@
     <servlet-class>aiss.controller.client.ClientAirportTrackController</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>ClientAirportTrackController</servlet-name>
-  	<url-pattern>/client/airport/track</url-pattern>
+    <servlet-name>ClientAirportTrackController</servlet-name>
+    <url-pattern>/client/airport/track</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>ClientAirportLandingController</display-name>
-    <servlet-name>ClientAirportLandingController</servlet-name>
-    <servlet-class>aiss.controller.client.ClientAirportLandingController</servlet-class>
+    <display-name>ClientUserAirportController</display-name>
+    <servlet-name>ClientUserAirportController</servlet-name>
+    <servlet-class>aiss.controller.client.ClientUserAirportController</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>ClientAirportLandingController</servlet-name>
-  	<url-pattern>/client/airport/landing</url-pattern>
+    <servlet-name>ClientUserAirportController</servlet-name>
+    <url-pattern>/client/user/airport</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
@@ -196,8 +206,8 @@
     <servlet-class>aiss.controller.client.ClientUserPlaylistsController</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>ClientUserPlaylistsController</servlet-name>
-  	<url-pattern>/client/user/playlists</url-pattern>
+    <servlet-name>ClientUserPlaylistsController</servlet-name>
+    <url-pattern>/client/user/playlists</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
@@ -206,7 +216,7 @@
     <servlet-class>aiss.controller.client.ClientUserProfileController</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>ClientUserProfileController</servlet-name>
-  	<url-pattern>/client/user/profile</url-pattern>
+    <servlet-name>ClientUserProfileController</servlet-name>
+    <url-pattern>/client/user/profile</url-pattern>
   </servlet-mapping>
 </web-app>
