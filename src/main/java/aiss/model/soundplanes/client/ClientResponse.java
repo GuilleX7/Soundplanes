@@ -1,4 +1,4 @@
-package aiss.model.client;
+package aiss.model.soundplanes.client;
 
 public class ClientResponse {
 	private ClientResponseStatus status;

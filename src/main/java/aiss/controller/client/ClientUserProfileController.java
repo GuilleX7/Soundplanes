@@ -10,21 +10,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import aiss.model.client.ClientResponse;
-import aiss.model.client.ClientResponseStatus;
 import aiss.model.resource.UserResource;
-import aiss.model.user.User;
+import aiss.model.soundplanes.User;
+import aiss.model.soundplanes.client.ClientResponse;
+import aiss.model.soundplanes.client.ClientResponseStatus;
 
 /**
- * Servlet implementation class GetUserInfo
+ * Servlet implementation class ClientUserProfileController
  */
-public class GetUserInfo extends HttpServlet {
+public class ClientUserProfileController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public GetUserInfo() {
+	public ClientUserProfileController() {
 		super();
 	}
 
@@ -38,9 +38,9 @@ public class GetUserInfo extends HttpServlet {
 
 		UUID uuid = (UUID) request.getSession().getAttribute("UUID");
 		if (uuid != null) {
-			System.out.println("Searching for " + uuid);
+			System.out.println("Client connected as " + uuid);
 			User user = UserResource.getInstance().getUser(uuid);
-			System.out.println("Finded " + user);
+			System.out.println("User data: " + user);
 			if (user != null) {
 				cr.setStatus(ClientResponseStatus.OK);
 				cr.setData(user);
