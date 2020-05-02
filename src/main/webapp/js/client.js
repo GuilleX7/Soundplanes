@@ -99,6 +99,104 @@ class Overlay {
 	}
 }
 
+class Player {
+	constructor(id) {
+		this.id = id;
+		this.player = new YT.Player(id, {
+	    	height: "320",
+	        playerVars: {
+	        	autoplay: 0,
+	        	controls: 0,
+	        	disablekb: 1,
+	        	rel: 0,
+	        	showinfo: 0
+	        },
+	        events: {
+	            "onReady": () => {
+	            	this.onYoutubePlayerReady();
+	            }
+	        }
+	    });
+		
+		this.ready = false;
+		
+		this.ui = {
+			label: {
+				playing: $("#" + id + "-label-playing")
+			},
+			input: {
+				search: $("#" + id + "-input-search")
+			},
+			btn: {
+				play: $("#" + id + "-btn-play"),
+				resume: $("#" + id + "-btn-resume"),
+				pause: $("#" + id + "-btn-pause")
+			}
+		};
+		
+		this.playing = {
+			title: null
+		};
+		
+		this.ui.btn.play.on("click", () => {
+			if (this.searchAndPlay(this.ui.input.search.val()) == 0) {
+				this.ui.label.playing.text("Now playing: " + this.playing.title);
+			}
+		});
+		
+		this.ui.btn.resume.on("click", () => {
+			if (this.resume() == 0) {
+				this.ui.label.playing.text("Resuming: " + this.playing.title);
+			}
+		});
+		
+		this.ui.btn.pause.on("click", () => {
+			if (this.pause() == 0) {
+				this.ui.label.playing.text("Paused: " + this.playing.title);
+			}
+		});
+	}
+	
+	onYoutubePlayerReady() {
+		this.ready = true;
+	}
+	
+	isReady() {
+		return this.ready;
+	}
+	
+	searchAndPlay(title) {
+		if (!this.isReady()) return -1;
+		this.player.loadPlaylist({
+			"list": title,
+			"listType": "search"
+		})
+		this.playing.title = title;
+		return 0;
+	}
+	
+	play(id) {
+		if (!this.isReady()) return -1;
+		this.player.loadVideoById(id);
+		return 0;
+	}
+	
+	pause() {
+		if (!this.isReady()) return -1;
+		this.player.pauseVideo();
+		return 0;
+	}
+	
+	resume() {
+		if (!this.isReady()) return -1;
+		if (this.player.getPlayerState() == 2) {
+			this.player.playVideo();
+			return 0;
+		}
+		return 1;
+	}
+}
+
 // Global variables
 var map, tile, user, statusModal, player, overlay;
 
@@ -129,28 +227,8 @@ $(window).resize(onWindowResize);
 
 // Events
 window.onYouTubeIframeAPIReady = () => {
-    player = new YT.Player('player', {
-    	height: "320",
-        playerVars: {
-        	autoplay: 0,
-        	controls: 0,
-        	disablekb: 1,
-        	rel: 0,
-        	showinfo: 0
-        },
-        events: {
-            "onReady": onYoutubePlayerIsReady
-        }
-    });
+    player = new Player("player");
 };
-
-function onYoutubePlayerIsReady() {
-	// DEBUG
-	player.loadPlaylist({
-		"list": "Avicii - Levels",
-		"listType": "search"
-	})
-}
 
 function onDocumentReady() {
 	// Load youtube iframe API

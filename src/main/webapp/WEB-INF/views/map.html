@@ -19,7 +19,6 @@
 
 <body class="bg-dark">
 	<div id="map"></div>
-	<div id="player"></div>
 	<button id="overlay-toggler" class="overlay-toggler" type="button"></button>
 	<div id="overlay" class="overlay overlay-hidden">
 		<div class="overlay-content container-sm">
@@ -40,15 +39,47 @@
 					data-toggle="tab" href="#airport" role="tab"
 					aria-controls="airport" aria-selected="false">Airport</a></li>
 			</ul>
-			<div class="tab-content" id="myTabContent">
+			<div class="tab-content pt-2" id="myTabContent">
 				<div class="tab-pane fade show active" id="music" role="tabpanel"
-					aria-labelledby="home-tab">...</div>
+					aria-labelledby="home-tab">
+					<div id="player"></div>
+					<div class="form-group">
+						<label id="player-label-playing"></label>
+					</div>
+					<div class="form-group">
+						<div class="form-row">
+							<div class="col">
+								<input type="text" class="form-control" id="player-input-search">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="form-row">
+							<div class="col">
+								<button type="button" class="btn btn-dark btn-block"
+									id="player-btn-play">Search and play</button>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="form-row">
+							<div class="col">
+								<button type="button" class="btn btn-dark btn-block"
+									id="player-btn-resume">Resume</button>
+							</div>
+							<div class="col">
+								<button type="button" class="btn btn-dark btn-block"
+									id="player-btn-pause">Pause</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="tab-pane fade" id="chat" role="tabpanel"
 					aria-labelledby="profile-tab">...</div>
 				<div class="tab-pane fade" id="profile" role="tabpanel"
 					aria-labelledby="contact-tab">...</div>
 				<div class="tab-pane fade" id="airport" role="tabpanel"
-					aria-labelledby="contact-tab">...</div>
+					aria-labelledby="airport-tab">...</div>
 			</div>
 		</div>
 	</div>
