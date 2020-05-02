@@ -1,24 +1,26 @@
 package aiss.model.resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import aiss.model.user.User;
+import aiss.model.soundplanes.User;
 
 public class UserResource {
 	private static Logger log = Logger.getLogger(CountryStatesResource.class.getName());
 	private static UserResource instance;
 	
 	private Map<UUID, User> users;
-	private Map<String, UUID> uuidByFacebookID;
-	private Map<String, UUID> uuidBySpotifyID;
+	private Map<String, UUID> uuidByFacebookId;
+	private Map<String, UUID> uuidBySpotifyId;
 	
 	private UserResource() {
 		users = new HashMap<UUID, User>();
-		uuidByFacebookID = new HashMap<String, UUID>();
-		uuidBySpotifyID = new HashMap<String, UUID>();
+		uuidByFacebookId = new HashMap<String, UUID>();
+		uuidBySpotifyId = new HashMap<String, UUID>();
 	}
 	
 	public static UserResource getInstance() {
@@ -27,6 +29,10 @@ public class UserResource {
 		}
 		
 		return instance;
+	}
+	
+	public List<User> getUsers() {
+		return new ArrayList<User>(users.values());
 	}
 	
 	public User getUser(UUID uuid) {
@@ -42,22 +48,39 @@ public class UserResource {
 		log.info(String.format("User %s with UUID %s registered succesfully", user.getName(), user.getUUID()));
 	}
 	
-	public User getUserbyFacebookID(String facebookID) {
+	public Boolean indexUserByFacebookId(User user, String facebookId) {
+		if (!uuidByFacebookId.containsKey(facebookId)) {
+			uuidByFacebookId.put(facebookId, user.getUUID());
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public Boolean indexUserBySpotifyId(User user, String spotifyId) {
+		if (!uuidBySpotifyId.containsKey(spotifyId)) {
+			uuidBySpotifyId.put(spotifyId, user.getUUID());
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public User getUserByFacebookId(String facebookId) {
 		User result = null;
-		UUID uuid = uuidByFacebookID.getOrDefault(facebookID, null);
+		UUID uuid = uuidByFacebookId.getOrDefault(facebookId, null);
 		if (uuid != null) {
 			result = getUser(uuid);
 		}
 		return result;
 	}
 	
-	public User getUserbySpotifyID(String spotifyID) {
+	public User getUserBySpotifyId(String spotifyId) {
 		User result = null;
-		UUID uuid = uuidBySpotifyID.getOrDefault(spotifyID, null);
+		UUID uuid = uuidBySpotifyId.getOrDefault(spotifyId, null);
 		if (uuid != null) {
 			result = getUser(uuid);
 		}
 		return result;
 	}
-
 }

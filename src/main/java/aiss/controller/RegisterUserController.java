@@ -7,11 +7,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import aiss.model.resource.GeocodingResource;
 import aiss.model.resource.UserResource;
+import aiss.model.soundplanes.User;
 import aiss.model.geocoding.Location;
-import aiss.model.user.User;
 
 /**
  * Servlet implementation class RegisterUserController
@@ -37,7 +38,7 @@ public class RegisterUserController extends HttpServlet {
 			response.sendRedirect("/map");
 			return;
 		}
-		request.getRequestDispatcher("WEB-INF/views/register.html").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/views/register.jsp").forward(request, response);
 	}
 
 	/**
@@ -46,7 +47,9 @@ public class RegisterUserController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		if (request.getSession().getAttribute("UUID") != null) {
+		HttpSession session = request.getSession();
+		
+		if (session.getAttribute("UUID") != null) {
 			response.sendRedirect("/map");
 			return;
 		}
@@ -79,7 +82,27 @@ public class RegisterUserController extends HttpServlet {
 		
 		User user = User.of(name, geolocation);
 		UserResource.getInstance().registerUser(user);
-		request.getSession().setAttribute("UUID", user.getUUID());
+		session.setAttribute("UUID", user.getUUID());
+		
+		String spotifyId = (String) session.getAttribute("Spotify-id");
+		String facebookId = (String) session.getAttribute("Facebook-id");
+		
+		if (spotifyId != null) { // User wanted to link Spotify id
+			if (UserResource.getInstance().getUserBySpotifyId(spotifyId) == null) { // If nothing holds that Id yet
+				user.setSpotifyId(spotifyId); // Link Id with user
+				UserResource.getInstance().indexUserBySpotifyId(user, spotifyId);
+				session.removeAttribute("Spotify-id");
+			}
+		}
+		
+		if (facebookId != null) { // User wanted to link Facebook id
+			if (UserResource.getInstance().getUserByFacebookId(facebookId) == null) { // If nothing holds that Id yet
+				user.setFacebookId(facebookId); // Link Id with user
+				UserResource.getInstance().indexUserByFacebookId(user, facebookId);
+				session.removeAttribute("Facebook-id");
+			}
+		}
+		
 		response.sendRedirect("/map");
 		return;
 	}
