@@ -7,5 +7,12 @@
 		"scopes": [
 			"playlist-read-private"
 		]
+	},
+	"Facebook": {
+		"tokenUrl": "https://graph.facebook.com/v6.0/oauth/access_token",
+		"clientId": "2662303910715409",
+		"clientSecret": "a5b6a038bd45cd7b2ab617778d94493b",
+		"authorizationFormUrl": "https://www.facebook.com/v6.0/dialog/oauth",
+		"scopes": []
 	}
 }
