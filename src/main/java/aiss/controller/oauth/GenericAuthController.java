@@ -41,6 +41,7 @@ public class GenericAuthController extends AbstractAuthorizationCodeServlet {
 	protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
 		String provider = getInitParameter("provider");
 		GenericUrl url = new GenericUrl(req.getRequestURL().toString());
+		url.setScheme("https");
 		url.setRawPath("/oauth2callback/" + provider);
 		return url.build();
 	}
