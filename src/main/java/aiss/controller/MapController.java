@@ -23,11 +23,12 @@ public class MapController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (request.getSession().getAttribute("UUID") != null) {
-			request.getRequestDispatcher("WEB-INF/views/map.html").forward(request, response);
-		} else {
+		if (request.getSession().getAttribute("UUID") == null) {
 			response.sendRedirect("/registerUser");
+			return;
 		}
+		
+		request.getRequestDispatcher("WEB-INF/views/map.html").forward(request, response);
 	}
 
 	/**
