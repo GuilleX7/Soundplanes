@@ -11,6 +11,7 @@
 	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
 	crossorigin="anonymous">
 <link rel="stylesheet" href="/css/global.css">
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 </head>
 
 <body class="bg-dark-sp">
@@ -25,7 +26,7 @@
 	<div class="container-sm">
 		<div class="jumbotron text-center text-white bg-transparent">
 			<form method="POST" id="form-user-register">
-				<div clas="form-group">
+				<div class="form-group">
 					<h3>Your nickname:</h3>
 					<input type="text" class="form-control" name="name" id="input-name"
 						placeholder="Type here your nickname" pattern="\w+" required>
@@ -47,10 +48,49 @@
 				</div>
 				<input type="hidden" name="location" value="" id="hidden-location">
 			</form>
+			<div class="row my-3">
+				<div class="col">
+					<hr class="bg-white">
+				</div>
+				<div class="col-auto">ALSO</div>
+				<div class="col">
+					<hr class="bg-white">
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-12 col-sm-8 col-md-6 col-lg-4">
+					<% if (request.getSession().getAttribute("Spotify-id") == null) { %>
+					<a class="btn btn-spotify btn-lg btn-block" href="/auth/spotify" role="button">
+						<span class="icon icon-spotify mr-2"></span>
+						Log in with Spotify
+					</a>
+					<% } else { %>
+					<a class="btn btn-spotify btn-lg btn-block disabled" href="/auth/spotify" role="button">
+						<span class="icon icon-spotify mr-2"></span>
+						Logged with Spotify!
+					</a>
+					<% } %>
+				</div>
+				<div class="w-100 my-1"></div>
+				<div class="col-12 col-sm-8 col-md-6 col-lg-4">
+					<% if (request.getSession().getAttribute("Facebook-id") == null) { %>
+					<a class="btn btn-facebook btn-lg btn-block" href="/auth/facebook" role="button">
+						<span class="icon icon-facebook mr-2"></span>
+						Log in with Facebook
+					</a>
+					<% } else { %>
+					<a class="btn btn-facebook btn-lg btn-block disabled" href="/auth/facebook" role="button">
+						<span class="icon icon-facebook mr-2"></span>
+						Logged with Facebook!
+					</a>
+					<% } %>
+				</div>
+			</div>
 		</div>
 	</div>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
 		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
@@ -87,7 +127,7 @@
 				isGeolocating = false;
 				$("#p-lead").html("We got it! now you can go ahead using your location or choosing one")
 				$("#btn-use-location")
-					.html("Continue using my location")
+					.html("Use my location")
 					.addClass("btn-success")
 				$("#hidden-location").val(position.coords.latitude + "," + position.coords.longitude);
 			},

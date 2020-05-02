@@ -11,3 +11,48 @@
     height: 40%;
     z-index: -1; /* We don't want it to overlap anything */
 }
+
+/* Social */
+
+.btn-spotify {
+	color: #fff;
+	background-color: #198632;
+	border-color: #198632;
+}
+
+.btn-spotify:hover {
+	color: #fff;
+	background-color: #20ac40;
+	border-color: #20ac40;
+}
+
+.btn-facebook {
+	color: #fff;
+	background-color: #004ea1;
+	border-color: #004ea1;
+}
+
+.btn-facebook:hover {
+	color: #fff;
+	background-color: #006fe6;
+	border-color: #006fe6;
+}
+
+.icon {
+	display: inline-block;
+	vertical-align: top;
+	height: 30px;
+	width: 30px;
+	background-color: transparent;
+	background-position: center;
+	background-size: 100%;
+	background-repeat: no-repeat;
+}
+
+.icon.icon-spotify {	
+	background-image: url("/images/spotify-icon.svg");
+}
+
+.icon.icon-facebook {
+	background-image: url("/images/facebook-icon.svg");
+}

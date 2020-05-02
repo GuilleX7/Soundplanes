@@ -1,8 +1,11 @@
+// Clases
 class User {
-	constructor(uuid, name, geolocation) {
+	constructor(uuid, name, geolocation, spotifyId, facebookId) {
 		this.uuid = uuid;
 		this.name = name;
 		this.geolocation = geolocation;
+		this.spotifyId = spotifyId;
+		this.facebookId = facebookId;
 		this.icon = L.icon({
 			iconUrl: "/images/user-icon.png",
 			iconRetinaUrl: "/images/user-icon.svg",
@@ -14,8 +17,8 @@ class User {
 		});
 	}
 	
-	static fromData(uuid, name, geolocation) {
-		return new User(uuid, name, geolocation);
+	static fromData(uuid, name, geolocation, spotifyId, facebookId) {
+		return new User(uuid, name, geolocation, spotifyId, facebookId);
 	}
 };
 
@@ -24,7 +27,7 @@ class Modal {
 		this.id = id;
 		this.container = $("#" + id);
 		this.container.modal(options);
-		this.shown = (options.show == undefined) ? true : false;
+		this.shown = options.show;
 		this.container.on("show.bs.modal", () => {
 			this.shown = true;
 		});
@@ -48,14 +51,115 @@ class Modal {
 	static from(id, options={}) {
 		return new Modal(id, options);
 	}
+	
+	show() {
+		this.shown = true;
+		this.container.modal("show");
+	}
+	
+	hide() {
+		this.shown = false;
+		this.container.modal("hide");
+	}
+	
+	toggle() {
+		this.shown = !this.shown;
+		this.container.modal("toggle");
+	}
 }
 
-var map, tile, user, statusModal;
+class Overlay {
+	constructor(id, hidden) {
+		this.id = id;
+		this.hidden = hidden;
+		this.container = $("#" + id);
+		this.toggler = $("#" + id + "-toggler");
+		this.toggler.on("click", () => {
+			this.toggle();
+		});
+		this.title = $("#" + id + "-title");
+		this.update();
+	}
+	
+	static from(id, hidden) {
+		return new Overlay(id, hidden);
+	}
+	
+	update() {
+		if (this.hidden) {
+			this.container.addClass("overlay-hidden");
+		} else {
+			this.container.removeClass("overlay-hidden");
+		}
+	}
+	
+	toggle() {
+		this.hidden = !this.hidden;
+		this.update();
+	}
+}
 
+// Global variables
+var map, tile, user, statusModal, player, overlay;
+
+// Load functions
+function loadYoutubeIframeAPI() {
+	let tag = document.createElement('script');
+	tag.src = "https://www.youtube.com/iframe_api";
+	let firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+function getClientUserProfile() {	
+	$.getJSON("/client/user/profile", (response) => {
+		switch (response.status) {
+		case "OK":
+			onClientUserProfileSuccess(response.data);
+			break;
+		default:
+			window.location.replace("/logout");
+			break;
+		}
+	})
+}
+
+// Listeners
 $(document).ready(onDocumentReady);
 $(window).resize(onWindowResize);
 
+// Events
+window.onYouTubeIframeAPIReady = () => {
+    player = new YT.Player('player', {
+    	height: "320",
+        playerVars: {
+        	autoplay: 0,
+        	controls: 0,
+        	disablekb: 1,
+        	rel: 0,
+        	showinfo: 0
+        },
+        events: {
+            "onReady": onYoutubePlayerIsReady
+        }
+    });
+};
+
+function onYoutubePlayerIsReady() {
+	// DEBUG
+	player.loadPlaylist({
+		"list": "Avicii - Levels",
+		"listType": "search"
+	})
+}
+
 function onDocumentReady() {
+	// Load youtube iframe API
+	loadYoutubeIframeAPI();
+
+	// Load overlay
+	overlay = Overlay.from("overlay", true);
+	
+	// Load Leaflet map
 	map = L.map("map", {
 		// Control options
 		zoomControl: false,
@@ -78,8 +182,19 @@ function onDocumentReady() {
 	})
 	tile.addTo(map);
 	
+	// Load status modal
+	statusModal = Modal.from("modal-status", {
+		show: true,
+		backdrop: "static"
+	});
+	statusModal.title.text("Loading...");
+	statusModal.body.html("<p>Some magic is happening!</p>");
+	
+	// Dispatch initial resize event
 	onWindowResize();
-	loadUser();
+	
+	// Request client user data
+	getClientUserProfile();
 }
 
 function onWindowResize() {
@@ -88,29 +203,10 @@ function onWindowResize() {
 	map.invalidateSize();
 }
 
-function loadUser() {	
-	statusModal = Modal.from("modal-status", {
-		show: true,
-		backdrop: "static"
-	});
-	statusModal.title.text("Loading...");
-	statusModal.body.html("<p>Some magic is happening!</p>");
-	
-	$.getJSON("client/getUserInfo", (response) => {
-		switch (response.status) {
-		case "OK":
-			onUserLoaded(response.data);
-			break;
-		default:
-			window.location.replace("/logout");
-			break;
-		}
-	})
-}
-
-function onUserLoaded(data) {
-	user = User.fromData(data.uuid, data.name, data.geolocation);
-	statusModal.container.modal("hide");
+function onClientUserProfileSuccess(data) {
+	user = User.fromData(data.uuid, data.name, data.geolocation, data.spotifyId, data.facebookId);
 	map.addLayer(user.marker);
 	map.panTo(L.latLng(user.geolocation.lat, user.geolocation.lng));
+	overlay.title.text(user.name);
+	statusModal.hide();
 }

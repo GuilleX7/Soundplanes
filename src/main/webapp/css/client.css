@@ -1,0 +1,55 @@
+body {
+	overflow: hidden;
+}
+
+#player {
+	display: none;
+}
+
+#overlay-toggler {
+	position: fixed;
+	background-image: url('/images/hamburguer-button.svg');
+	background-color: transparent;
+	background-position: center;
+	background-size: 100%;
+	border: none;
+	width: 45px;
+	height: 45px;
+	top: 15px;
+	right: 15px;
+	z-index: 2001;
+}
+
+.overlay {
+	position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 2000;
+}
+
+.overlay.overlay-hidden {
+	display: none;
+}
+
+.overlay-content {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.overlay-header {
+	margin-top: 25px;
+	margin-bottom: 25px;
+}
+
+@media (min-width: 700px) {
+	#overlay-toggler {
+		width: 50px;
+		height: 50px;
+		top: 25px;
+		right: 25px;
+	}
+}
