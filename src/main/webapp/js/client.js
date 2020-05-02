@@ -112,8 +112,14 @@ class Player {
 	        	showinfo: 0
 	        },
 	        events: {
-	            "onReady": () => {
+	            onReady: () => {
 	            	this.onYoutubePlayerReady();
+	            },
+	            onError: (e) => {
+	            	this.onYoutubePlayerError(e);
+	            },
+	            onStateChange: (e) => {
+	            	this.onYoutubePlayerStateChange(e);
 	            }
 	        }
 	    });
@@ -135,7 +141,8 @@ class Player {
 		};
 		
 		this.playing = {
-			title: null
+			title: null,
+			position: null
 		};
 		
 		this.ui.btn.play.on("click", () => {
@@ -161,23 +168,35 @@ class Player {
 		this.ready = true;
 	}
 	
+	onYoutubePlayerError(e) {
+		this.nextVideo();
+	}
+	
+	onYoutubePlayerStateChange(e) {
+		if (e.data == YT.PlayerState.ENDED && this.playing.title != null) {
+			this.stop();
+		}
+	}
+	
 	isReady() {
 		return this.ready;
 	}
 	
 	searchAndPlay(title) {
 		if (!this.isReady()) return -1;
+		this.playing.title = title;
+		this.playing.position = 1;
 		this.player.loadPlaylist({
 			"list": title,
 			"listType": "search"
 		})
-		this.playing.title = title;
 		return 0;
 	}
 	
-	play(id) {
+	stop() {
 		if (!this.isReady()) return -1;
-		this.player.loadVideoById(id);
+		this.player.stopVideo();
+		this.playing.title = null;
 		return 0;
 	}
 	
@@ -189,11 +208,26 @@ class Player {
 	
 	resume() {
 		if (!this.isReady()) return -1;
-		if (this.player.getPlayerState() == 2) {
+		if (this.player.getPlayerState() == YT.PlayerState.PAUSED) {
 			this.player.playVideo();
 			return 0;
 		}
 		return 1;
+	}
+	
+	nextVideo() {
+		if (!this.isReady()) return -1;
+		this.player.nextVideo();
+		this.playing.position++;
+		this.ui.label.playing.text("Now playing: " + this.playing.title + " (" + this.playing.position + ")");
+		return 0;
+	}
+	
+	previousVideo() {
+		if (!this.isReady()) return -1;
+		this.player.previousVideo();
+		this.playing.position--;
+		return 0;
 	}
 }
 
