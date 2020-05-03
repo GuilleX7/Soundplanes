@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "soundplanes",
+  "private_key_id": "d6675f5fe132ce92ba8d4629ac5c0256cec75d38",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCgaYeIIjfzCRUN\nSrvEtqKbtofLquTAzkxTVOx0IAkEzvtWGvsRLs0a8TH5UTAgpjPE+uXwJdVYVX0t\nFDoHNKwf+qWmpmuE8raZDbAD7bCzzc2AAp8tiGriPibP4PSnHRpXb8VBaNFZzlOr\n5D7drR/V26xiViyMOYeAt8meV6Z7WleiO8VIuXCkmfPPGvc803wd5L8G08/KfVyK\nWWiAxKdMuikqGJL2yTxekflZAXdADrEcgW3MdVsZz4teSoGWG04RbcJx5qekLZLu\nHi30tD+WVPJ1xXDpI60l2AuB2OTZZXiIqfFmaFMvVptvubTN3lTiXR9IhURLctqX\nvP451zbzAgMBAAECggEAIFfmyd4MZeZo5jsxTOJ+OuM80iXs5asy3IJ9ApUK/Hs3\nVg8unDJRjKMhLmHeUFbyjT8BacBXGe5yxMoVQSqvoesJx2Y6u52sj4Og/8nHHRnb\n23mr2qRs2J0rejKjYaaOjx6sKRoXTAI8AKaOvmePybD3OwShCsz2s09bSZ/mo2wr\n/MP5wlejann4+BI3s5E1xFNHSIh/XzKGSLajSvDwr1pj2n95FXZ9dMARZ6kUQ2/e\nYA1Jkof3p0plBbygKl/DvwVNl1alSG3+t5lzbwgOca23vwq9FAwvRa7uqqHhP9Mv\n+HZ25elt6gck7nBe6JK8JWlDH8ROBIOedZKVKi1awQKBgQDUPoUAZcW275nfkBYh\ngzROfBoytkPW+00m8wrEd122q18rQp/63y4SagkW/LUWYnSfIPUIzgL3qfdjTqz2\n5E62/Mv3wUQXRo2FRSL1pyOJvMb3Kdr6WqdYjSy17PVWlPTmmYvdNRou4TcOkrd4\nq4bXCs7p9ySU8wZ16argDXFaUQKBgQDBe4FTvWEcvdivMZbqJhhaMyYdRSLmzEjI\n68vK8lff7LxguuL2Tmb+L6H9N6JvvAF9Mk3dTmPuqyBCGKZ0lukHKOo8g/5/fXNH\nUrpMjub4icWYKuTrhJStNnsgZATDlrDQ8W8ScRN7iOGxGYGH3aaPUGEiqSZz5FhX\no1FWnN6oAwKBgAyFK59cYY9rDu6rN0L+1GUU2Q7IxbO221RC3g285OBTt6d7pKhN\n5g/cBXE/swcBA9QnQ40jafVmJ1vKVlWyHhqZSwbwda3R0aNc8rT/CQ+k/S+zXmGK\nW3jTyyFoOwjCfLflsuR3r3W4f2DysrQBmlCxKIeQtq26sFTgVd4lrNwhAoGAP1mC\n5LozG8gFNIeWFCBZBN+OcTL71Hm6sx6RYWer4gOPQlSuj1roWf2ammAm7VKvYiCg\nYf+StMiPDVUo2y+2KMP6vcmyAGhA4G9z1DFN6r6hVctlnL+SNoyKD/bvoGKsjh0e\n8vjXGjGdQ/FH+gZWzMHSrBiaIIP5cOhmb2d5d6UCgYEAzLaWijxE8giT13JrQAJV\nS120OLQeRv3JUHrYi3GgdpX3j60cJm1eVp9TuNtG+MP8Gg6duBZkpGaP3MEG125B\nMqlHLv2h2/XBJ48TFREnQz2GAAfGt1pc1ZYsT8MqAAswucJG12mLNN7UnVZ+bm8p\neVgskoX8dkBxWB4OzLxXctQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "soundplanes@appspot.gserviceaccount.com",
+  "client_id": "112590316673782677070",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/soundplanes%40appspot.gserviceaccount.com"
+}

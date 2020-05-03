@@ -1,7 +1,6 @@
 package aiss.controller.oauth;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,21 +30,18 @@ public class LinkSpotifyController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		UUID uuid = (UUID) session.getAttribute("UUID");
+		String uuid = (String) session.getAttribute("UUID");
 		String spotifyId = new SpotifyResource((String) session.getAttribute("Spotify-token")).getUserProfile().getId();
-		User linkedUser = UserResource.getInstance().getUserBySpotifyId(spotifyId); //Get user linked with that Spotify ID
-		User user;
+		User linkedUser = UserResource.getUserBySpotifyId(spotifyId); //Get user linked with that Spotify ID
 		
 		if (linkedUser != null) { // There is already a linked user
-			session.setAttribute("UUID", linkedUser.getUUID()); // Log in
+			session.setAttribute("UUID", linkedUser.getUuid()); // Log in
 			session.removeAttribute("Spotify-id");
 			session.removeAttribute("Facebook-id");
 			response.sendRedirect("/map");
 		} else { // There is not a linked user
 			if (uuid != null) { // But user is logged
-				user = UserResource.getInstance().getUser(uuid);
-				user.setSpotifyId(spotifyId); // Link the Spotify Id
-				UserResource.getInstance().indexUserBySpotifyId(user, spotifyId);
+				UserResource.linkUserWithSpotifyId(uuid, spotifyId); // Link user with that Spotify Id
 				response.sendRedirect("/map");
 			} else { // And user is not logged
 				session.setAttribute("Spotify-id", spotifyId); // Save Spotify Id for future linking

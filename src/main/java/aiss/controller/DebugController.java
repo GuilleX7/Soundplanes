@@ -26,7 +26,7 @@ public class DebugController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		for (User user : UserResource.getInstance().getUsers()) {
+		for (User user : UserResource.getUsers()) {
 			response.getWriter().append(user.toString());
 		}
 	}

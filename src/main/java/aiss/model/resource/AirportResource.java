@@ -1,67 +1,37 @@
 package aiss.model.resource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import aiss.model.soundplanes.Airport;
-import aiss.model.soundplanes.User;
 
 public class AirportResource {
 	private static Logger log = Logger.getLogger(CountryStatesResource.class.getName());
-	private static AirportResource instance;
 	
-	private Map<UUID, Airport> airports;
-	private Map<User, UUID> uuidByUser;
-	
-	private AirportResource() {
-		airports = new HashMap<UUID, Airport>();
-		uuidByUser = new HashMap<User, UUID>();
+	public static List<Airport> getAirports() {
+		return ofy().load().type(Airport.class).list();
 	}
 	
-	public static AirportResource getInstance() {
-		if (instance == null) {
-			instance = new AirportResource();
+	public static Airport getAirport(String uuid) {
+		return ofy().load().type(Airport.class).id(uuid).now();
+	}
+	
+	public static void registerAirport(Airport airport) {
+		ofy().save().entity(airport);
+		log.info(String.format("Airport with UUID %s registered successfully with owner UUID %s", airport.getUUID(), airport.getOwnerUuid()));
+	}
+	
+	public static void indexAirportByUser(String uuid, String userUuid) {
+		Airport airport = ofy().load().type(Airport.class).id(uuid).now();
+		if (airport != null) {
+			airport.setOwner(userUuid);
+			ofy().save().entity(airport);
 		}
-		
-		return instance;
 	}
 	
-	public List<Airport> getAirports() {
-		return new ArrayList<Airport>(airports.values());
-	}
-	
-	public Airport getAirport(UUID uuid) {
-		return airports.getOrDefault(uuid, null);
-	}
-	
-	public Boolean existsAirport(UUID uuid) {
-		return airports.containsKey(uuid);
-	}
-	
-	public void registerAirport(Airport airport) {
-		airports.put(airport.getUUID(), airport);
-		log.info(String.format("Airport with UUID %s registered successfully with owner UUID %s", airport.getUUID(), airport.getOwner().getUUID()));
-	}
-	
-	public Boolean indexAirportByUser(Airport airport, User user) {
-		if (!uuidByUser.containsKey(user)) {
-			uuidByUser.put(user, airport.getUUID());
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public Airport getAirportByUser(User user) {
-		Airport result = null;
-		UUID uuid = uuidByUser.getOrDefault(user, null);
-		if (uuid != null) {
-			result = getAirport(uuid);
-		}
-		return result;
+	public static Airport getAirportByUser(String userUuid) {
+		return ofy().load().type(Airport.class).filter("ownerUuid", userUuid).first().now();
 	}
 }

@@ -1,7 +1,6 @@
 package aiss.controller.client;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,10 +35,10 @@ public class ClientUserProfileController extends HttpServlet {
 			throws ServletException, IOException {
 		ClientResponse cr = ClientResponse.create();
 
-		UUID uuid = (UUID) request.getSession().getAttribute("UUID");
+		String uuid = (String) request.getSession().getAttribute("UUID");
 		if (uuid != null) {
 			System.out.println("Client connected as " + uuid);
-			User user = UserResource.getInstance().getUser(uuid);
+			User user = UserResource.getUser(uuid);
 			System.out.println("User data: " + user);
 			if (user != null) {
 				cr.setStatus(ClientResponseStatus.OK);

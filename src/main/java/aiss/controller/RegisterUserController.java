@@ -81,28 +81,26 @@ public class RegisterUserController extends HttpServlet {
 		}
 		
 		User user = User.of(name, geolocation);
-		UserResource.getInstance().registerUser(user);
-		session.setAttribute("UUID", user.getUUID());
 		
 		String spotifyId = (String) session.getAttribute("Spotify-id");
 		String facebookId = (String) session.getAttribute("Facebook-id");
 		
 		if (spotifyId != null) { // User wanted to link Spotify id
-			if (UserResource.getInstance().getUserBySpotifyId(spotifyId) == null) { // If nothing holds that Id yet
+			if (UserResource.getUserBySpotifyId(spotifyId) == null) { // If nothing holds that Id yet
 				user.setSpotifyId(spotifyId); // Link Id with user
-				UserResource.getInstance().indexUserBySpotifyId(user, spotifyId);
 				session.removeAttribute("Spotify-id");
 			}
 		}
 		
 		if (facebookId != null) { // User wanted to link Facebook id
-			if (UserResource.getInstance().getUserByFacebookId(facebookId) == null) { // If nothing holds that Id yet
+			if (UserResource.getUserByFacebookId(facebookId) == null) { // If nothing holds that Id yet
 				user.setFacebookId(facebookId); // Link Id with user
-				UserResource.getInstance().indexUserByFacebookId(user, facebookId);
 				session.removeAttribute("Facebook-id");
 			}
 		}
 		
+		UserResource.registerUser(user);
+		session.setAttribute("UUID", user.getUuid());
 		response.sendRedirect("/map");
 		return;
 	}

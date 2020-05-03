@@ -2,29 +2,50 @@ package aiss.model.soundplanes;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.googlecode.objectify.annotation.Cache;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
+
 import aiss.model.geocoding.Location;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Cache
 public class User {
-	private UUID uuid;
+	@Id
+	private String uuid;
 	private String name;
 	private Location geolocation;
+	@Index
 	private String spotifyId;
+	@Index
 	private String facebookId;
 	
 	public static User of(String name, Location geolocation) {
-		return new User(UUID.randomUUID(), name, geolocation, null, null);
+		return new User(UUID.randomUUID().toString(), name, geolocation, null, null);
 	}
 	
-	private User(UUID uuid, String name, Location geolocation, String spotifyId, String facebookId) {
+	private User(String uuid, String name, Location geolocation, String spotifyId, String facebookId) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
 		this.geolocation = geolocation;
-		this.setSpotifyId(spotifyId);
-		this.setFacebookId(facebookId);
+		this.spotifyId = spotifyId;
+		this.facebookId = facebookId;
 	}
 	
-	public UUID getUUID() {
+	private User() {
+		super();
+		this.uuid = null;
+		this.name = null;
+		this.geolocation = null;
+		this.spotifyId = null;
+		this.facebookId = null;
+	}
+	
+	public String getUuid() {
 		return uuid;
 	}
 	

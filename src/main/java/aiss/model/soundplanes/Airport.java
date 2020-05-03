@@ -5,47 +5,63 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.googlecode.objectify.annotation.Cache;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 import aiss.model.geocoding.Location;
 import aiss.model.spotify.Track;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Cache
 public class Airport {
-	private UUID uuid;
-	private User owner;
+	@Id
+	private String uuid;
+	@Index
+	private String ownerUuid;
 	@JsonIgnore(true)
-	private List<Track> playlist;
+	private List<Track> playlist = new ArrayList<Track>();
 	private Location location;
 	
-	public static Airport of(String name, Location location, User owner, List<Track> playlist) {
-		return new Airport(UUID.randomUUID(), location, owner, playlist);
+	public static Airport of(String name, Location location, String ownerUuid, List<Track> playlist) {
+		return new Airport(UUID.randomUUID().toString(), location, ownerUuid, playlist);
 	}
 	
-	public static Airport of(String name, Location location, User owner) {
-		return new Airport(UUID.randomUUID(), location, owner, new ArrayList<Track>());
+	public static Airport of(String name, Location location, String ownerUuid) {
+		return new Airport(UUID.randomUUID().toString(), location, ownerUuid, new ArrayList<Track>());
 	}
 	
-	public Airport(UUID uuid, Location location, User owner, List<Track> playlist) {
-		super();
+	private Airport(String uuid, Location location, String ownerUuid, List<Track> playlist) {
 		this.uuid = uuid;
-		this.owner = owner;
+		this.ownerUuid = ownerUuid;
 		this.playlist = playlist;
 		this.location = location;
 	}
+	
+	private Airport() {
+		this.uuid = null;
+		this.ownerUuid = null;
+		this.playlist = null;
+		this.location = null;
+	}
 
-	public UUID getUUID() {
+	public String getUUID() {
 		return uuid;
 	}
 	
-	public void setUUID(UUID uuid) {
+	public void setUUID(String uuid) {
 		this.uuid = uuid;
 	}
 	
-	public User getOwner() {
-		return owner;
+	public String getOwnerUuid() {
+		return ownerUuid;
 	}
 	
-	public void setOwner(User owner) {
-		this.owner = owner;
+	public void setOwner(String ownerUuid) {
+		this.ownerUuid = ownerUuid;
 	}
 	
 	public List<Track> getPlaylist() {

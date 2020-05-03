@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -80,6 +81,21 @@
 			<version>1.13.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-datastore -->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-datastore</artifactId>
+			<version>1.102.4</version>
+		</dependency>
+
+
+		<!-- Objectify -->
+		<dependency>
+			<groupId>com.googlecode.objectify</groupId>
+			<artifactId>objectify</artifactId>
+			<version>6.0.6</version>
+		</dependency>
+
 		<!-- Jackson 2 core -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -140,12 +156,12 @@
 			<artifactId>google-oauth-client-servlet</artifactId>
 			<version>${google.client.version}</version>
 		</dependency>
-		
+
 		<!-- Apache Jetty for Logging -->
 		<dependency>
-		    <groupId>org.eclipse.jetty</groupId>
-		    <artifactId>apache-jsp</artifactId>
-		    <version>9.4.15.v20190215</version>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>apache-jsp</artifactId>
+			<version>9.4.15.v20190215</version>
 		</dependency>
 
 	</dependencies>
@@ -169,11 +185,8 @@
 					<port>8090</port>
 					<!-- Comment in the below snippet to enable local debugging with a remote 
 						debugger like those included with Eclipse or IntelliJ -->
-					<!--
-					<jvmFlags>
-						<jvmFlag>-agentlib:jdwp=transport=dt_socket,address=8001,server=y,suspend=n</jvmFlag>
-					</jvmFlags>
-					-->
+					<!-- <jvmFlags> <jvmFlag>-agentlib:jdwp=transport=dt_socket,address=8001,server=y,suspend=n</jvmFlag> 
+						</jvmFlags> -->
 				</configuration>
 			</plugin>
 
@@ -192,7 +205,8 @@
 							<target>
 								<property name="target.webapp.dir"
 									value="${project.build.directory}/${project.build.finalName}" />
-								<property name="src.webapp.dir" value="${basedir}/src/main/webapp" />
+								<property name="src.webapp.dir"
+									value="${basedir}/src/main/webapp" />
 
 								<sync verbose="true" todir="${target.webapp.dir}"
 									includeEmptyDirs="true">
