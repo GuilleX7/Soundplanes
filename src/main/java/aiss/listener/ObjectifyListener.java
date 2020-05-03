@@ -46,6 +46,11 @@ public class ObjectifyListener implements ServletContextListener {
 			ObjectifyService.init(new ObjectifyFactory(DatastoreOptions.newBuilder().setHost(DATASTORE_EMULATOR_URL)
 					.setProjectId(PROJECT_ID).build().getService()));
 		} else {
+			/*
+			 * THE FOLLOWING CODE IS INTENDED FOR PRODUCTION USE ONLY. MAKE SURE THAT
+			 * PRODUCTION IS SET TO FALSE WHEN RUNNING THE PROJECT LOCALLY. OTHERWISE THE
+			 * PROJECT WILL USE PRODUCTION DATA.
+			 */
 			GoogleCredentials credentials = null;
 
 			try {
