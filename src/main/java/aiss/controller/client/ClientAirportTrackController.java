@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import aiss.model.genius.Song;
 import aiss.model.resource.GeniusResource;
 import aiss.model.resource.UserResource;
