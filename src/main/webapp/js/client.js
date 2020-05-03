@@ -130,8 +130,12 @@ class Player {
 			label: {
 				playing: $("#" + id + "-label-playing")
 			},
+			p: {
+				lyrics: $("#" + id + "-lyrics")
+			},
 			input: {
-				search: $("#" + id + "-input-search")
+				search: $("#" + id + "-input-search"),
+				volume: $("#" + id + "-volume")
 			},
 			btn: {
 				play: $("#" + id + "-btn-play"),
@@ -147,6 +151,7 @@ class Player {
 		
 		this.ui.btn.play.on("click", () => {
 			this.searchAndPlay(this.ui.input.search.val());
+			this.loadLyrics();
 		});
 		
 		this.ui.btn.resume.on("click", () => {
@@ -156,10 +161,15 @@ class Player {
 		this.ui.btn.pause.on("click", () => {
 			this.pause();
 		});
+		
+		this.ui.input.volume.on("input", () => {
+			this.player.setVolume(this.ui.input.volume.val());
+		});
 	}
 	
 	onYoutubePlayerReady() {
 		this.ready = true;
+		this.ui.p.lyrics.text("Nothing to show!");
 	}
 	
 	onYoutubePlayerError() {
@@ -235,6 +245,24 @@ class Player {
 		this.playing.position--;
 		return 0;
 	}
+	
+	loadLyrics() {
+		$.getJSON("/client/airport/track", {
+			title: this.ui.input.search.val()
+		}).done((data) => {
+			this.onLyricsLoaded(data);
+		}).fail((xhr, message, error) => {
+			this.onLyricsFailed(xhr, message, error);
+		})
+	}
+	
+	onLyricsLoaded(lyrics) {
+		this.ui.p.lyrics.html(lyrics.replace(/\n/g,'<br/>'));
+	}
+	
+	onLyricsFailed() {
+		this.ui.p.lyrics.text("No se pudo cargar la letra de esta canción");
+	}
 }
 
 // Global variables
@@ -249,16 +277,13 @@ function loadYoutubeIframeAPI() {
 }
 
 function getClientUserProfile() {	
-	$.getJSON("/client/user/profile", (response) => {
-		switch (response.status) {
-		case "OK":
-			onClientUserProfileSuccess(response.data);
-			break;
-		default:
-			window.location.replace("/logout");
-			break;
-		}
-	})
+	$.getJSON("/client/user/profile")
+		.done((response) => {
+			onClientUserProfileLoaded(response);
+		})
+		.fail((xhr, message, error) => {
+			onClientUserProfileFailed(xhr, message, error);
+		});
 }
 
 // Listeners
@@ -321,10 +346,14 @@ function onWindowResize() {
 	map.invalidateSize();
 }
 
-function onClientUserProfileSuccess(data) {
+function onClientUserProfileLoaded(data) {
 	user = User.fromData(data.uuid, data.name, data.geolocation, data.spotifyId, data.facebookId);
 	map.addLayer(user.marker);
 	map.panTo(L.latLng(user.geolocation.lat, user.geolocation.lng));
 	overlay.title.text(user.name);
 	statusModal.hide();
+}
+
+function onClientUserProfileFailed() {
+	window.location.replace("/logout");
 }

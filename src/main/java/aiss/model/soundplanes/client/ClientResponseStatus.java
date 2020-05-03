@@ -1,11 +1,13 @@
 package aiss.model.soundplanes.client;
 
 public enum ClientResponseStatus {
-	OK (0),
-	NOT_LOGGED (1),
-	NOT_ALLOWED (2),
-	BAD_LOGIN (3),
-	INTERNAL_ERROR (4);
+	OK (200),
+	BAD_REQUEST (400),
+	UNAUTHORIZED (401),
+	FORBIDDEN (403),
+	NOT_FOUND (404),
+	INTERNAL_ERROR (500),
+	NOT_IMPLEMENTED (501);
 
 	private int code;
 

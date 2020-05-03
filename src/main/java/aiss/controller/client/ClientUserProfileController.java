@@ -34,27 +34,22 @@ public class ClientUserProfileController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		ClientResponse cr = ClientResponse.create();
-
+		
 		String uuid = (String) request.getSession().getAttribute("UUID");
 		if (uuid != null) {
 			System.out.println("Client connected as " + uuid);
 			User user = UserResource.getUser(uuid);
 			System.out.println("User data: " + user);
 			if (user != null) {
-				cr.setStatus(ClientResponseStatus.OK);
 				cr.setData(user);
 			} else {
-				cr.setStatus(ClientResponseStatus.BAD_LOGIN);
+				cr.setStatus(ClientResponseStatus.NOT_FOUND);
 			}
 		} else {
-			cr.setStatus(ClientResponseStatus.NOT_LOGGED);
+			cr.setStatus(ClientResponseStatus.UNAUTHORIZED);
 		}
 		
-		response.setContentType("application/json");
-		response.setStatus(200);
-		ObjectMapper om = new ObjectMapper();
-		om.writeValue(response.getWriter(), cr);
-		response.flushBuffer();
+		cr.writeTo(response);
 	}
 
 	/**
