@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import aiss.model.facebook.UserProfile;
 import aiss.model.resource.FacebookResource;
 import aiss.model.resource.UserResource;
 import aiss.model.soundplanes.User;
@@ -31,7 +32,17 @@ public class LinkFacebookController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		String uuid = (String) session.getAttribute("UUID");
-		String facebookId = new FacebookResource((String) session.getAttribute("Facebook-token")).getUserProfile().getId();
+		String facebookToken = (String) session.getAttribute("Facebook-token");
+		if (facebookToken == null || facebookToken.isEmpty()) {
+			response.sendRedirect("/registerUser");
+			return;
+		}
+		UserProfile profile = new FacebookResource(facebookToken).getUserProfile();
+		if (profile == null) {
+			response.sendRedirect("/registerUser");
+			return;
+		}
+		String facebookId = profile.getId();
 		User linkedUser = UserResource.getUserByFacebookId(facebookId); //Get user linked with that Facebook ID
 		
 		if (linkedUser != null) { // There is already a linked user

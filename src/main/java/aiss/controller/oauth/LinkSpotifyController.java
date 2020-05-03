@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import aiss.model.resource.SpotifyResource;
 import aiss.model.resource.UserResource;
 import aiss.model.soundplanes.User;
+import aiss.model.spotify.UserProfile;
 
 /**
  * Servlet implementation class LinkSpotifyController
@@ -31,7 +32,17 @@ public class LinkSpotifyController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		String uuid = (String) session.getAttribute("UUID");
-		String spotifyId = new SpotifyResource((String) session.getAttribute("Spotify-token")).getUserProfile().getId();
+		String spotifyToken = (String) session.getAttribute("Spotify-token");
+		if (spotifyToken == null || spotifyToken.isEmpty()) {
+			response.sendRedirect("/registerUser");
+			return;
+		}
+		UserProfile profile = new SpotifyResource(spotifyToken).getUserProfile();
+		if (profile == null) {
+			response.sendRedirect("/registerUser");
+			return;
+		}
+		String spotifyId = profile.getId();
 		User linkedUser = UserResource.getUserBySpotifyId(spotifyId); //Get user linked with that Spotify ID
 		
 		if (linkedUser != null) { // There is already a linked user
