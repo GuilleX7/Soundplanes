@@ -165,16 +165,6 @@
 	</servlet-mapping>
 	<servlet>
 		<description></description>
-		<display-name>ClientAirportPlaylistController</display-name>
-		<servlet-name>ClientAirportPlaylistController</servlet-name>
-		<servlet-class>aiss.controller.client.ClientAirportPlaylistController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ClientAirportPlaylistController</servlet-name>
-		<url-pattern>/client/airport/playlist</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<description></description>
 		<display-name>ClientAirportsController</display-name>
 		<servlet-name>ClientAirportsController</servlet-name>
 		<servlet-class>aiss.controller.client.ClientAirportsController</servlet-class>
