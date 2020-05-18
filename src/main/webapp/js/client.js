@@ -4,6 +4,12 @@ class User {
 		this.uuid = uuid;
 		this.name = name;
 		this.geolocation = geolocation;
+		this.moving = false;
+		this.baseSpeed = 0.3;
+		this.speedFactor = {
+			min: 0.3,
+			max: 1.2
+		};
 		this.spotifyId = spotifyId;
 		this.facebookId = facebookId;
 		this.icon = L.icon({
@@ -19,6 +25,37 @@ class User {
 	
 	static fromData(uuid, name, geolocation, spotifyId, facebookId) {
 		return new User(uuid, name, geolocation, spotifyId, facebookId);
+	}
+	
+	update(delta) {
+		if (this.moving) {
+			var position = L.Projection.LonLat.project(this.marker.getLatLng());
+			var screenCenter = map.getSize().divideBy(2);
+			var angle = Math.atan2(screenCenter.y - cursor.y, cursor.x - screenCenter.x);
+			var speedFactor = this.speedFactor.min + 
+				Math.min(
+						screenCenter.distanceTo(cursor) / Math.min(map.getSize().x, map.getSize().y),
+						1
+				) * (this.speedFactor.max - this.speedFactor.min);
+			var displacement = L.point(
+					Math.cos(angle),
+					Math.sin(angle)
+				).multiplyBy(this.baseSpeed * speedFactor * delta / 1000);
+			this.marker.setLatLng(L.Projection.LonLat.unproject(position.add(displacement)));
+			this.marker.setRotationAngle(90 - angle * 180 / Math.PI);
+		}
+	}
+	
+	onUpdate(delta) {
+		this.update(delta);
+	}
+	
+	onMouseDown(e) {
+		this.moving = true;
+	}
+	
+	onMouseUp(e) {
+		this.moving = false;
 	}
 };
 
@@ -266,7 +303,7 @@ class Player {
 }
 
 // Global variables
-var map, tile, user, statusModal, player, overlay;
+var map, tile, user, statusModal, player, overlay, cursor, lastUpdate = null;
 
 // Load functions
 function loadYoutubeIframeAPI() {
@@ -312,7 +349,7 @@ function onDocumentReady() {
 		dragging: false,
 		// Map State options
 		center: L.latLng(0.0, 0.0),
-		zoom: 11,
+		zoom: 10,
 		// Keyboard Navigation options
 		keyboard: false,
 		// Touch Interaction options
@@ -324,6 +361,29 @@ function onDocumentReady() {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	})
 	tile.addTo(map);
+	map.getContainer().addEventListener("touchstart", function (e) {
+		simulatedEvent = {
+			containerPoint: L.point(e.touches[0].clientX, e.touches[0].clientY)
+		};
+		onMapMouseDown(simulatedEvent);
+	}, false);
+	map.getContainer().addEventListener("touchend", function (e) {
+		simulatedEvent = {
+			containerPoint: L.point(e.touches[0].clientX, e.touches[0].clientY)
+		};
+		onMapMouseUp(simulatedEvent);
+	}, false);
+	map.getContainer().addEventListener("touchmove", function (e) {
+		simulatedEvent = {
+			containerPoint: L.point(e.touches[0].clientX, e.touches[0].clientY)
+		};
+		onMapMouseMove(simulatedEvent);
+	}, false);
+	map.on("mousedown", onMapMouseDown);
+	map.on("mouseup", onMapMouseUp);
+	map.on("mousemove", onMapMouseMove);
+	
+	L.Util.requestAnimFrame(onMapUpdate);
 	
 	// Load status modal
 	statusModal = Modal.from("modal-status", {
@@ -356,4 +416,38 @@ function onClientUserProfileLoaded(data) {
 
 function onClientUserProfileFailed() {
 	window.location.replace("/logout");
+}
+
+function onMapUpdate() {
+	if (lastUpdate != null) {
+		var delta = Date.now() - lastUpdate;
+		lastUpdate = Date.now();
+		
+		if (user != undefined) {
+			user.onUpdate(delta);
+			map.panTo(user.marker.getLatLng());
+		}
+	} else {
+		lastUpdate = Date.now();
+	}
+	
+	L.Util.requestAnimFrame(onMapUpdate);
+}
+
+function onMapMouseDown(e) {
+	cursor = e.containerPoint;
+	if (user != undefined) {
+		user.onMouseDown(e);
+	}
+}
+
+function onMapMouseUp(e) {
+	cursor = e.containerPoint;
+	if (user != undefined) {
+		user.onMouseUp(e);
+	}
+}
+
+function onMapMouseMove(e) {
+	cursor = e.containerPoint;
 }
