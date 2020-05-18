@@ -18,13 +18,13 @@ import aiss.model.soundplanes.client.ClientResponseStatus;
 /**
  * Servlet implementation class ClientAirportTrackController
  */
-public class ClientAirportTrackController extends HttpServlet {
+public class ClientAirportPlaylistController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ClientAirportTrackController() {
+    public ClientAirportPlaylistController() {
         super();
         // TODO Auto-generated constructor stub
     }

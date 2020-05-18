@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class ClientUserPlaylistsController
  */
-public class ClientUserPlaylistsController extends HttpServlet {
+public class ClientUserPlaylistController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public ClientUserPlaylistsController() {
+	public ClientUserPlaylistController() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
