@@ -73,10 +73,11 @@ class User {
 		this.moving = false;
 	}
 };
+
 class Plane {
 	constructor(uuid, geolocation){
 		this.uuid = uuid;
-		this.marker = L.marker(L.latLng(geolocation.lat, geolocation.lng), {
+		this.marker = L.marker(geolocation, {
 		    icon: Icons.plane
 		});
 		this.marker.setRotationAngle(45);
@@ -86,38 +87,32 @@ class Plane {
 		return new Plane(uuid, geolocation);
 	}
 	
-	getPos(){
+	getPos() {
 		return this.marker.getLatLng();
 	}
 	
-	setPos(geolocation){
+	setPos(geolocation) {
 		this.marker.setLatLng(geolocation);
 	}
-	
-	
 }
 class PlaneRepository {
-	
 	constructor() {
 		this.planes = {};	
 		this.socket = null;
 	}
 	
-	static create(){
+	static create() {
 		return new PlaneRepository();
 	}
 	
 	start() {
-		this.socket = io.connect('https://movement.meantoplay.games/',{query:"id="+user.uuid+"&lat="+user.geolocation.lat+"&lng="+user.geolocation.lng});
-	    console.log("id="+user.uuid+"&lat="+user.geolocation.lat+"&lng="+user.geolocation.lng);
-		
-	    this.socket.on('movement',(data)=>{
-	        const positions = JSON.parse(data);
-		    this.onPlanesUpdate(positions);
-	    })
-	    this.socket.on('remove',(id)=>{
+		this.socket = io.connect('https://movement.meantoplay.games/',{query: "id=" + user.uuid + "&lat=" + user.geolocation.lat + "&lng=" + user.geolocation.lng});
+	    this.socket.on('movement', (data) => {
+		    this.onPlanesUpdate(JSON.parse(data));
+	    });
+	    this.socket.on('remove', (id) => {
 	    	this.onPlaneDisconnect(id);
-	    })
+	    });
 	}
 	
 	addPlane(plane) {
@@ -130,54 +125,49 @@ class PlaneRepository {
 	}
 	
 	deletePlane(uuid){
-		const plane = this.planes[uuid];
-		map.removeLayer(plane.marker);
+		map.removeLayer(this.planes[uuid].marker);
 		delete this.planes[uuid];
 	}
 	
 	planesUpdate(positions) {
-		for(let uuid in positions){
-			const pos =  positions[uuid];
-			const geolocation = L.latLng(pos.lat, pos.lng);
+		for (let uuid in positions){
+			const geolocation = positions[uuid];
 			let plane = this.planes[uuid];
-			if(plane){
+			if (plane) {
 				plane.setPos(geolocation);
-			}
-			else{
+			} else {
 				plane = Plane.from(uuid, geolocation);
 				this.addPlane(plane);
-				
 			}	
-			plane.marker.setRotationAngle(pos.angle);
+			plane.marker.setRotationAngle(geolocation.angle);
 		}
 	}
 	
-	onPlanesUpdate(positions){
+	onPlanesUpdate(positions) {
 		this.planesUpdate(positions);
 	}
 	
-	onPlaneDisconnect(uuid){
+	onPlaneDisconnect(uuid) {
 		this.deletePlane(uuid);
 	}
 	
-	sendMove(geolocation){
-		const pos = {
+	sendMove(geolocation) {
+		if (this.socket.connected) {
+			this.socket.emit('updatePos',JSON.stringify({
 				lat: geolocation.lat,
 				lng: geolocation.lng
-		}
-		if(this.socket.connected){
-			this.socket.emit('updatePos',JSON.stringify(pos));
+			}));
 		}
 	}
-	
 }
+
 class Airport {
 	constructor(uuid, name, geolocation, creationTimestamp) {
 		this.uuid = uuid;
 		this.name = name;
 		this.geolocation = geolocation;
 		this.creationTimestamp = creationTimestamp;
-		this.marker = L.marker(L.latLng(geolocation.lat, geolocation.lng), {
+		this.marker = L.marker(geolocation, {
 		    icon: Icons.airport
 		});
 		this.marker.uuid = uuid;
@@ -258,18 +248,6 @@ class AirportRepository {
 		for (var i = 0; i < airports.length; i++) {
 			this.putAirport(airports[i]);
 		}
-	}
-	
-	getNearAirports(geolocation) {
-		var result = [];
-		
-		this.airports.forEach((value, key, map) => {
-			if (value.marker.getLatLng().distanceTo(geolocation) < AirportRepository.getRequiredProximity()) {
-				result.push(value);
-			} 
-		});
-		
-		return result;
 	}
 }
 
