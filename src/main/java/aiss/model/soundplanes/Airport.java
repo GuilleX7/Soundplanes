@@ -1,18 +1,17 @@
 package aiss.model.soundplanes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Index;
 
-import aiss.model.geocoding.Location;
-import aiss.model.spotify.Track;
+import aiss.model.ircchat.Channel;
+import aiss.model.resource.IrcChatResource;
+import aiss.model.resource.UserResource;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -20,64 +19,61 @@ import aiss.model.spotify.Track;
 public class Airport {
 	@Id
 	private String uuid;
-	@Index
-	private String ownerUuid;
-	@JsonIgnore(true)
-	private List<Track> playlist = new ArrayList<Track>();
-	private Location location;
+	private Ref<User> owner;
+	private Channel channel;
+	private Long creationTimestamp;
 	
-	public static Airport of(String name, Location location, String ownerUuid, List<Track> playlist) {
-		return new Airport(UUID.randomUUID().toString(), location, ownerUuid, playlist);
+	public static Airport of(String ownerUuid) {
+		return new Airport(ownerUuid, UserResource.getUser(ownerUuid), IrcChatResource.createChannel(UUID.randomUUID().toString()), Instant.now().getEpochSecond());
 	}
 	
-	public static Airport of(String name, Location location, String ownerUuid) {
-		return new Airport(UUID.randomUUID().toString(), location, ownerUuid, new ArrayList<Track>());
+	public static Airport of(User owner) {
+		return new Airport(owner.getUuid(), owner, IrcChatResource.createChannel(UUID.randomUUID().toString()), Instant.now().getEpochSecond());
 	}
 	
-	private Airport(String uuid, Location location, String ownerUuid, List<Track> playlist) {
+	private Airport(String uuid, User owner, Channel channel, Long creationTimestamp) {
 		this.uuid = uuid;
-		this.ownerUuid = ownerUuid;
-		this.playlist = playlist;
-		this.location = location;
+		this.setOwner(owner);
+		this.channel = channel;
+		this.creationTimestamp = creationTimestamp;
 	}
 	
 	private Airport() {
 		this.uuid = null;
-		this.ownerUuid = null;
-		this.playlist = null;
-		this.location = null;
+		this.owner = null;
+		this.creationTimestamp = null;
 	}
 
-	public String getUUID() {
+	public String getUuid() {
 		return uuid;
 	}
 	
-	public void setUUID(String uuid) {
+	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	
-	public String getOwnerUuid() {
-		return ownerUuid;
+
+	public User getOwner() {
+		return this.owner.get();
 	}
-	
-	public void setOwner(String ownerUuid) {
-		this.ownerUuid = ownerUuid;
+
+	public void setOwner(User owner) {
+		this.owner = Ref.create(owner);
 	}
-	
-	public List<Track> getPlaylist() {
-		return playlist;
+
+	public Long getCreationTimestamp() {
+		return creationTimestamp;
 	}
-	
-	public void setPlaylist(List<Track> playlist) {
-		this.playlist = playlist;
+
+	public void setCreationTimestamp(Long creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
 	}
-	
-	public Location getLocation() {
-		return location;
+
+	public Channel getChannel() {
+		return channel;
 	}
-	
-	public void setLocation(Location location) {
-		this.location = location;
+
+	public void setChannel(Channel channel) {
+		this.channel = channel;
 	}
 
 	@Override

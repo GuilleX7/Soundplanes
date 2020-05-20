@@ -34,19 +34,22 @@ public class ClientUserProfileController extends HttpServlet {
 		ClientResponse cr = ClientResponse.create();
 		
 		String uuid = (String) request.getSession().getAttribute("UUID");
-		if (uuid != null) {
-			System.out.println("Client connected as " + uuid);
-			User user = UserResource.getUser(uuid);
-			System.out.println("User data: " + user);
-			if (user != null) {
-				cr.setData(user);
-			} else {
-				cr.setStatus(ClientResponseStatus.NOT_FOUND);
-			}
-		} else {
+		if (uuid == null) {
 			cr.setStatus(ClientResponseStatus.UNAUTHORIZED);
+			cr.writeTo(response);
+			return;
 		}
 		
+		System.out.println("Client connected as " + uuid);
+		User user = UserResource.getUser(uuid);
+		if (user == null) {
+			cr.setStatus(ClientResponseStatus.INTERNAL_ERROR);
+			cr.writeTo(response);
+			return;
+		}
+		
+		cr.setData(user);
+		cr.setStatus(ClientResponseStatus.OK);
 		cr.writeTo(response);
 	}
 
@@ -58,5 +61,4 @@ public class ClientUserProfileController extends HttpServlet {
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
-
 }

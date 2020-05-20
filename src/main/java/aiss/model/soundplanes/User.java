@@ -2,6 +2,7 @@ package aiss.model.soundplanes;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
@@ -22,18 +23,24 @@ public class User {
 	private String spotifyId;
 	@Index
 	private String facebookId;
+	@JsonIgnore
+	private String landedOn;
+	@JsonIgnore
+	private String chatToken;
 	
 	public static User of(String name, Location geolocation) {
-		return new User(UUID.randomUUID().toString(), name, geolocation, null, null);
+		return new User(UUID.randomUUID().toString(), name, geolocation, null, null, null, null);
 	}
 	
-	private User(String uuid, String name, Location geolocation, String spotifyId, String facebookId) {
+	private User(String uuid, String name, Location geolocation, String spotifyId, String facebookId, String landedOn, String chatToken) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
 		this.geolocation = geolocation;
 		this.spotifyId = spotifyId;
 		this.facebookId = facebookId;
+		this.landedOn = landedOn;
+		this.chatToken = chatToken;
 	}
 	
 	private User() {
@@ -43,6 +50,8 @@ public class User {
 		this.geolocation = null;
 		this.spotifyId = null;
 		this.facebookId = null;
+		this.landedOn = null;
+		this.chatToken = null;
 	}
 	
 	public String getUuid() {
@@ -81,14 +90,30 @@ public class User {
 		this.facebookId = facebookId;
 	}
 	
+	public String getLandedOn() {
+		return landedOn;
+	}
+
+	public void setLandedOn(String landedOn) {
+		this.landedOn = landedOn;
+	}
+	
+	public Boolean isLanded() {
+		return this.landedOn != null;
+	}
+
+	public String getChatToken() {
+		return chatToken;
+	}
+
+	public void setChatToken(String chatToken) {
+		this.chatToken = chatToken;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((facebookId == null) ? 0 : facebookId.hashCode());
-		result = prime * result + ((geolocation == null) ? 0 : geolocation.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((spotifyId == null) ? 0 : spotifyId.hashCode());
 		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
 		return result;
 	}

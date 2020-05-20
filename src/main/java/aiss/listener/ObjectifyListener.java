@@ -13,6 +13,7 @@ import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
 import aiss.model.soundplanes.Airport;
+import aiss.model.soundplanes.AirportPlaylist;
 import aiss.model.soundplanes.User;
 
 /**
@@ -70,6 +71,7 @@ public class ObjectifyListener implements ServletContextListener {
 
 		ObjectifyService.register(User.class);
 		ObjectifyService.register(Airport.class);
-		System.out.println("ObjectifyService registered 2 classes");
+		ObjectifyService.register(AirportPlaylist.class);
+		System.out.println("ObjectifyService registered 3 classes");
 	}
 }

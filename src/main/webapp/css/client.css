@@ -35,14 +35,22 @@ body {
 }
 
 .overlay-content {
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+ 	height: 100%;  
 }
 
 .overlay-header {
 	margin-top: 25px;
 	margin-bottom: 25px;
+}
+
+#overlay-tabs-content {
+	height: 100% !important;
+	overflow-y: auto !important;
+    overflow-x: hidden;
+}
+
+#chat-messages {
+	padding-bottom: 200px;
 }
 
 @media (min-width: 700px) {
