@@ -229,6 +229,7 @@ class Overlay {
 		this.id = id;
 		this.hidden = hidden;
 		this.container = $("#" + id);
+		this.tabsContent = $("#" + id + "-tabs-content");
 		this.toggler = $("#" + id + "-toggler");
 		this.toggler.on("click", () => {
 			this.toggle();
@@ -504,8 +505,13 @@ class OverlayChat {
 		this.lastAirport = null;
 		
 		this.sendBtn.on("click", () => {
-			this.sendMessage(this.input.val());
+			this.sendMessage();
 		});
+		
+		this.form.on("submit", (e) => {
+			e.preventDefault();
+			this.sendMessage();
+		})
 	}
 	
 	static from(id) {
@@ -568,10 +574,12 @@ class OverlayChat {
 		this.putMessage(message);
 	}
 	
-	sendMessage(input) {
+	sendMessage() {
 		if (this.socket != null) {
-			this.socket.emit("message", input);
+			this.socket.emit("message", this.input.val());
 		}
+		this.input.val("");
+		overlay.tabsContent.scrollTop(overlay.tabsContent[0].scrollHeight);
 	}
 }
 
