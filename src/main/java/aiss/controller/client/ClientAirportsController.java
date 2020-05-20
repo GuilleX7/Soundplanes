@@ -86,6 +86,7 @@ public class ClientAirportsController extends HttpServlet {
 			return;
 		}
 
+		cr.setStatus(ClientResponseStatus.OK);
 		cr.setData(airports);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -140,7 +141,14 @@ public class ClientAirportsController extends HttpServlet {
 		AirportResource.registerAirport(airport);
 		AirportPlaylist airportPlaylist = AirportPlaylist.empty(airport.getUuid());
 		AirportResource.registerAirportPlaylist(airportPlaylist);
-		cr.setStatus(ClientResponseStatus.OK);
-		cr.writeTo(response);
+		
+		cr.setStatus(ClientResponseStatus.CREATED);
+		cr.setData(airport);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		SimpleModule simpleModule = new SimpleModule("SimpleModule");
+		simpleModule.addSerializer(Airport.class, ClientAirportSerializer.create());
+		mapper.registerModule(simpleModule);
+		cr.customWriteTo(response, mapper);
 	}
 }

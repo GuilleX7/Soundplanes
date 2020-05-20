@@ -8,6 +8,7 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 import aiss.model.ircchat.Channel;
 import aiss.model.resource.IrcChatResource;
@@ -21,6 +22,7 @@ public class Airport {
 	private String uuid;
 	private Ref<User> owner;
 	private Channel channel;
+	@Index
 	private Long creationTimestamp;
 	
 	public static Airport of(String ownerUuid) {

@@ -73,6 +73,7 @@ public class ClientAirportLandingController extends HttpServlet {
 			return;
 		}
 		
+		cr.setStatus(ClientResponseStatus.OK);
 		cr.setData(user);
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -108,16 +109,16 @@ public class ClientAirportLandingController extends HttpServlet {
 		}
 		
 		String airportUuid = request.getParameter("airportUUID");
-		
-		Airport airport = AirportResource.getAirport(airportUuid);
-		if (airport == null) {
-			cr.setStatus(ClientResponseStatus.NOT_FOUND);
+		if (user.isLanded() && user.getLandedOn() != airportUuid) {
+			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
 			cr.writeTo(response);
 			return;
 		}
 		
-		if (user.isLanded() && user.getLandedOn() != airport.getUuid()) {
-			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
+		Airport airport = AirportResource.getAirport(airportUuid);
+		if (airport == null) {
+			cr.setData(airportUuid);
+			cr.setStatus(ClientResponseStatus.NOT_FOUND);
 			cr.writeTo(response);
 			return;
 		}
@@ -129,12 +130,14 @@ public class ClientAirportLandingController extends HttpServlet {
 		user.setChatToken(IrcChatResource.createToken(airport.getChannel(), user, Rol.getDefaultUserRoles(), 3600));
 		UserResource.registerUser(user);
 		
+		cr.setStatus(ClientResponseStatus.OK);
 		cr.setData(user);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule("SimpleModule");
 		simpleModule.addSerializer(User.class, ClientAirportLandingSerializer.create());
 		mapper.registerModule(simpleModule);
+		
 		cr.customWriteTo(response, mapper);
 	}
 	
@@ -162,12 +165,22 @@ public class ClientAirportLandingController extends HttpServlet {
 			return;
 		}
 		
+		Airport airport = AirportResource.getAirport(user.getLandedOn());
+		if (airport == null) {
+			cr.setData(user.getLandedOn());
+			cr.setStatus(ClientResponseStatus.NOT_FOUND);
+		} else {
+			cr.setStatus(ClientResponseStatus.NO_CONTENT);
+		}
+		
 		user.setLandedOn(null);
 		if (user.getChatToken() != null) {
 			IrcChatResource.invalidateToken(user.getChatToken());
 		}
 		user.setChatToken(null);
 		UserResource.registerUser(user);
+		
+		cr.writeTo(response);
 	}
 	
 }

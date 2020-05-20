@@ -25,17 +25,26 @@ class User {
 		this.facebookId = facebookId;
 		this.landedOn = null;
 		this.chatToken = null;
-		
 	}
 	
 	static fromData(uuid, name, geolocation, spotifyId, facebookId) {
 		return new User(uuid, name, geolocation, spotifyId, facebookId);
 	}
 	
-	static getClientUserProfile() {	
+	static loadClientUserProfile() {	
 		$.getJSON("/client/user/profile")
 		.done((response) => {
 			onClientUserProfileLoaded(response);
+		})
+		.fail((xhr, message, error) => {
+			onClientUserProfileFailed(xhr, message, error);
+		});
+	}
+	
+	static reloadClientUserProfile() {
+		$.getJSON("/client/user/profile")
+		.done((response) => {
+			onClientUserProfileReloaded(response);
 		})
 		.fail((xhr, message, error) => {
 			onClientUserProfileFailed(xhr, message, error);
@@ -54,11 +63,14 @@ class User {
 		this.canMove = true;
 	}
 	
+	moveTo(geolocation) {
+		planeRepository.sendMove(geolocation);
+	}
+	
 	update() {
         if (this.moving && this.canMove) {
-            planeRepository.sendMove(cursor);
+        	this.moveTo(cursor);
         }
-		
 	}
 	
 	onUpdate() {
@@ -66,7 +78,9 @@ class User {
 	}
 	
 	onMouseDown(e) {
-		this.moving = true;
+		if (e.sourceTarget._popup == null) {
+			this.moving = true;
+		}
 	}
 	
 	onMouseUp(e) {
@@ -171,6 +185,10 @@ class Airport {
 		    icon: Icons.airport
 		});
 		this.marker.uuid = uuid;
+		
+		this.marker.on("click", (e) => {
+			overlay.overlayAirports.onAirportMarkerClick(e.target.uuid);
+		})
 	}
 	
 	static fromData(uuid, name, geolocation, creationTimestamp) {
@@ -180,8 +198,8 @@ class Airport {
 
 class AirportRepository {
 	constructor() {
-		this.airports = new Map();
-		this.lastTimestamp = 0;
+		this.airports = null;
+		this.lastTimestamp = null;
 		this.timer = null;
 	}
 	
@@ -189,20 +207,26 @@ class AirportRepository {
 		return new AirportRepository();
 	}
 	
-	static getRequiredProximity() {
-		return 30000;
-	}
-	
 	static getUpdateInterval() {
 		return 5000;
 	}
 	
 	start() {
+		this.airports = new Map();
+		this.lastTimestamp = 0;
 		this.updateAirports();
 	}
 	
 	getAirport(uuid) {
 		return this.airports.get(uuid);
+	}
+	
+	deleteAirport(uuid) {
+		const airport = this.getAirport(uuid);
+		if (airport != undefined) {
+			map.removeLayer(airport.marker);
+			this.airports.delete(airport.uuid);
+		}
 	}
 	
 	updateAirports() {
@@ -232,21 +256,23 @@ class AirportRepository {
 		console.log("WARNING: Couldn't fetch airports!: " + error + " / Retrying in " + AirportRepository.getUpdateInterval() + "ms");
 	}
 	
-	putAirport(airport) {
+	putAirport(airport, update = true) {
+		if (this.airports.get(airport.uuid) != undefined) {
+			return;
+		}
+		
 		var airportEntity = Airport.fromData(airport.uuid, airport.name, airport.geolocation, airport.creationTimestamp);
 		this.airports.set(airportEntity.uuid, airportEntity);
 		map.addLayer(airportEntity.marker);
-		airportEntity.marker.on("dblclick", (e) => {
-			overlay.overlayAirports.land(e.target.uuid);
-		});
-		if (this.lastTimestamp < airportEntity.creationTimestamp) {
+		
+		if (update && this.lastTimestamp < airportEntity.creationTimestamp) {
 			this.lastTimestamp = airportEntity.creationTimestamp;
 		}
 	}
 	
-	putAirports(airports) {
+	putAirports(airports, update = true) {
 		for (var i = 0; i < airports.length; i++) {
-			this.putAirport(airports[i]);
+			this.putAirport(airports[i], update);
 		}
 	}
 }
@@ -435,18 +461,17 @@ class OverlayProfileAirport {
 	}
 	
 	onCreateAirportSuccess(response) {
-		this.updateUserAirport();
+		this.onUserAirportLoaded(response);
 	}
 	
 	onCreateAirportFailed(xhr, message, error) {
-		this.createStatus.text("Sorry, but we weren't able to create your airport :(");
-		this.createBtn.removeClass("disabled");
+		user.reloadClientUserProfile();
 	}
 	
 	onUserAirportLoaded(response) {
+		airportRepository.putAirport(response, false);
 		this.containers.create.addClass("d-none");
 		this.containers.manage.removeClass("d-none");
-		
 	}
 	
 	onUserAirportFailed(xhr, message, error) {
@@ -478,71 +503,128 @@ class OverlayProfileAirport {
 class OverlayAirports {
 	constructor(id) {
 		this.id = id;
-		this.tab = $("#" + id + "-tab");
-		this.tab.tab();
-		this.containers = {
-			landed: $("#" + id + "-landed")
-		}
-		this.info = $("#" + id + "-info");
-		this.takeoffBtn = $("#" + id + "-takeoff-btn");
-		
-		this.takeoffBtn.on("click", () => {
-			this.takeoff();
-		})
+		this.popup = null;
 	}
 	
 	static from(id) {
 		return new OverlayAirports(id);
 	}
 	
-	updateLanding() {
+	updateLandStatus() {
 		$.getJSON("/client/airport/landing")
 		.done((response) => {
-			this.onLandingUpdateSuccess(response);
+			this.onLandStatusUpdateSuccess(response);
 		})
 		.fail((xhr, message, error) => {
-			this.onLandingUpdateFailed(xhr, message, error);
+			this.onLandStatusUpdateFailed(xhr, message, error);
 		});
 	}
 	
-	onLandingUpdateSuccess(response) {
+	onLandStatusUpdateSuccess(response) {
 		user.disableMovement();
 		user.landedOn = response.landedOn;
 		user.chatToken = response.chatToken;
-		overlay.show();
 		overlay.overlayChat.update();
-		this.tab.tab("show");
-		this.containers.landed.removeClass("d-none");
-		this.info.html("You are currently landed on <strong>" + airportRepository.getAirport(user.landedOn).name + "</strong>");
+		
+		const airport = airportRepository.getAirport(user.landedOn);
+		user.moveTo(airport.geolocation);
+		
+		this.popup = L.popup({
+			closeOnClick: false,
+			closeButton: false,
+			autoClose: false,
+			closeOnEscapeKey: false
+		})
+		.setLatLng(airport.geolocation)
+		.setContent(
+			"<p>You are currently landed on <strong>" + airport.name + "</strong><p>" +
+			"<button class='btn btn-danger btn-block " + this.id+ "-takeoff-btn'>Take off</button>"
+		);
+		map.openPopup(this.popup);
+		
+		$("." + this.id + "-takeoff-btn").on("click", () => {
+			this.popup.setContent("<p>Taking off... this may take a moment!</p>");
+			this.popup.update();
+			this.takeoff();
+		});
 	}
 	
-	onLandingUpdateFailed(xhr, message, error) {
+	onLandStatusUpdateFailed(xhr, message, error) {
 		user.enableMovement();
 		user.landedOn = null;
 		user.chatToken = null;
 		overlay.overlayChat.update();
-		overlay.hide();
-		this.containers.landed.addClass("d-none");
-		this.info.text("You are flying right now! click an aiport to land on");
+		
+		if (this.popup != null) {
+			map.closePopup(this.popup);
+			this.popup = null;
+		}
 	}
 	
-	land(airportUUID) {
+	onLandingSuccess(response) {
+		this.onLandStatusUpdateSuccess(response);
+	}
+	
+	onLandingFailed(xhr, message, error) {
+		if (xhr.status == 404) {
+			airportRepository.deleteAirport(xhr.responseJSON);
+		}
+		
+		User.reloadClientUserProfile();
+	}
+	
+	onTakeoffSuccess(response) {
+		this.onLandStatusUpdateFailed(response);
+	}
+	
+	onTakeoffFailed(xhr, message, error) {
+		if (xhr.status == 404) {
+			airportRepository.deleteAirport(xhr.responseJSON);
+		}
+		
+		User.reloadClientUserProfile();
+	}
+	
+	onAirportMarkerClick(uuid) {
+		if (!user.isLanded()) {
+			const airport = airportRepository.getAirport(uuid);
+			
+			this.popup = L.popup({
+				closeOnClick: false
+			})
+			.setLatLng(airport.geolocation)
+			.setContent(
+				"<p><strong>" + airport.name + "</strong><p>" +
+				"<button class='btn btn-success btn-block " + this.id+ "-land-btn'>Land here</button>"
+			);
+			map.openPopup(this.popup);
+			
+			$("." + this.id + "-land-btn").on("click", () => {
+				this.popup.setContent("<p>Landing... this may take a moment!</p>");
+				this.popup.update();
+				this.land(airport.uuid);
+			});
+		}
+	}
+	
+	land(uuid) {
 		if (user.isLanded()) {
 			return;
 		}
-		
-		this.info.text("Landing... this may take a moment, please be patient!");
 		
 		$.ajax("/client/airport/landing", {
 			method: "PUT",
 			dataType: "json",
 			data: {
-				airportUUID: airportUUID
+				airportUUID: uuid
 			}
 		})
-		.always(() => {
-			this.updateLanding();
+		.done((response) => {
+			this.onLandingSuccess(response);
 		})
+		.fail((xhr, message, error) => {
+			this.onLandingFailed(xhr, message, error);
+		});
 	}
 	
 	takeoff() {
@@ -550,19 +632,21 @@ class OverlayAirports {
 			return;
 		}
 		
-		this.info.text("Fasten your belts! we are taking off... now!");
-		
 		$.ajax("/client/airport/landing", {
 			method: "DELETE",
 			dataType: "json"
 		})
-		.always(() => {
-			this.updateLanding();
+		.done((response) => {
+			this.onTakeoffSuccess(response);
 		})
+		.fail((xhr, message, error) => {
+			
+			this.onTakeoffFailed(xhr, message, error);
+		});
 	}
 	
 	update() {
-		this.updateLanding();
+		this.updateLandStatus();
 	}
 }
 
@@ -606,13 +690,16 @@ class OverlayChat {
 		this.socket = io.connect('https://chat.meantoplay.games/chat', {query: "token=Bearer " + token});
 		this.socket.on("join", (message) => {
 			this.onChatJoin(message);
-		})
+		});
 		this.socket.on("message", (message) => {
 			this.onChatMessage(message);
-		})
+		});
 		this.socket.on("disconnected",(message) => {
 			this.onChatDisconnected(message);
-		})
+		});
+		this.socket.on("connect_error", (error) => {
+			this.onChatConnectionError(error);
+		});
 	}
 	
 	disconnect() {
@@ -647,8 +734,14 @@ class OverlayChat {
 		this.putMessage(message);
 	}
 	
-	onChatDisconnected(message){
+	onChatDisconnected(message) {
 		this.putMessage(message);
+	}
+	
+	onChatConnectionError(message) {
+		this.disconnect();
+		this.putMessage("We have some trouble connecting to this channel");
+		user.reloadClientUserProfile();
 	}
 	
 	sendMessage() {
@@ -923,7 +1016,7 @@ function onDocumentReady() {
 	planeRepository = PlaneRepository.create();
 	
 	// Request client user data
-	User.getClientUserProfile();
+	User.loadClientUserProfile();
 }
 
 function onWindowResize() {
@@ -941,26 +1034,25 @@ function onClientUserProfileLoaded(data) {
 	statusModal.hide();
 }
 
+function onClientUserProfileReloaded(data) {
+	user = User.fromData(data.uuid, data.name, data.geolocation, data.spotifyId, data.facebookId);
+	overlay.update();
+	statusModal.hide();
+}
+
 function onClientUserProfileFailed() {
 	window.location.replace("/logout");
 }
 
 function onMapUpdate() {
-	
-	
-	if (lastUpdate != null) {
-		var delta = Date.now() - lastUpdate;
-		lastUpdate = Date.now();
-		
-		if (user != undefined) {
-			const userPlane = planeRepository.getPlane(user.uuid);
-			user.onUpdate(delta);
+	if (user != undefined) {
+		const userPlane = planeRepository.getPlane(user.uuid);
+		user.onUpdate();
+		if (userPlane != undefined) {
 			map.panTo(userPlane.marker.getLatLng());
 		}
-	} else {
-		lastUpdate = Date.now();
 	}
-	
+
 	L.Util.requestAnimFrame(onMapUpdate);
 }
 
