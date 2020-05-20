@@ -121,7 +121,7 @@ public class SpotifyResource {
         		for (Track track : tracks.subList(offset, offset + 100)) {
         			uris.add(track.getUri());
         		}
-        		cr.post(String.format("uris=%s", String.join(",", uris)));
+        		cr.post(uris);
         	}
         } catch (ResourceException re) {
         	log.warning("Error when adding Spotify tracks to a playlist: " + cr.getResponse().getStatus());
