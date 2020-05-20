@@ -25,9 +25,7 @@ class User {
 		this.facebookId = facebookId;
 		this.landedOn = null;
 		this.chatToken = null;
-		this.marker = L.marker(L.latLng(geolocation.lat, geolocation.lng), {
-		    icon: Icons.plane
-		});
+		
 	}
 	
 	static fromData(uuid, name, geolocation, spotifyId, facebookId) {
@@ -56,15 +54,15 @@ class User {
 		this.canMove = true;
 	}
 	
-	update(delta) {
-		if (this.moving && this.canMove) {
-			var antpos = this.marker.getLatLng();
-			this.marker.setLatLng(L.latLng(antpos.lat + 0.003, antpos.lng + 0.003));
-		}
+	update() {
+        if (this.moving && this.canMove) {
+            planeRepository.sendMove(cursor);
+        }
+		
 	}
 	
-	onUpdate(delta) {
-		this.update(delta);
+	onUpdate() {
+		this.update();
 	}
 	
 	onMouseDown(e) {
@@ -75,7 +73,104 @@ class User {
 		this.moving = false;
 	}
 };
-
+class Plane {
+	constructor(uuid, geolocation){
+		this.uuid = uuid;
+		this.marker = L.marker(L.latLng(geolocation.lat, geolocation.lng), {
+		    icon: Icons.plane
+		});
+		this.marker.setRotationAngle(45);
+	}
+	
+	static from(uuid, geolocation){
+		return new Plane(uuid, geolocation);
+	}
+	
+	getPos(){
+		return this.marker.getLatLng();
+	}
+	
+	setPos(geolocation){
+		this.marker.setLatLng(geolocation);
+	}
+	
+	
+}
+class PlaneRepository {
+	
+	constructor() {
+		this.planes = {};	
+		this.socket = null;
+	}
+	
+	static create(){
+		return new PlaneRepository();
+	}
+	
+	start() {
+		this.socket = io.connect('https://movement.meantoplay.games/',{query:"id="+user.uuid+"&lat="+user.geolocation.lat+"&lng="+user.geolocation.lng});
+	    console.log("id="+user.uuid+"&lat="+user.geolocation.lat+"&lng="+user.geolocation.lng);
+		
+	    this.socket.on('movement',(data)=>{
+	        const positions = JSON.parse(data);
+		    this.onPlanesUpdate(positions);
+	    })
+	    this.socket.on('remove',(id)=>{
+	    	this.onPlaneDisconnect(id);
+	    })
+	}
+	
+	addPlane(plane) {
+		plane.marker.addTo(map);
+		this.planes[plane.uuid] = plane;
+	}
+	
+	getPlane(uuid) {
+		return this.planes[uuid];
+	}
+	
+	deletePlane(uuid){
+		const plane = this.planes[uuid];
+		map.removeLayer(plane.marker);
+		delete this.planes[uuid];
+	}
+	
+	planesUpdate(positions) {
+		for(let uuid in positions){
+			const pos =  positions[uuid];
+			const geolocation = L.latLng(pos.lat, pos.lng);
+			let plane = this.planes[uuid];
+			if(plane){
+				plane.setPos(geolocation);
+			}
+			else{
+				plane = Plane.from(uuid, geolocation);
+				this.addPlane(plane);
+				
+			}	
+			plane.marker.setRotationAngle(pos.angle);
+		}
+	}
+	
+	onPlanesUpdate(positions){
+		this.planesUpdate(positions);
+	}
+	
+	onPlaneDisconnect(uuid){
+		this.deletePlane(uuid);
+	}
+	
+	sendMove(geolocation){
+		const pos = {
+				lat: geolocation.lat,
+				lng: geolocation.lng
+		}
+		if(this.socket.connected){
+			this.socket.emit('updatePos',JSON.stringify(pos));
+		}
+	}
+	
+}
 class Airport {
 	constructor(uuid, name, geolocation, creationTimestamp) {
 		this.uuid = uuid;
@@ -537,8 +632,8 @@ class OverlayChat {
 		this.socket.on("message", (message) => {
 			this.onChatMessage(message);
 		})
-		this.socket.on("remove",(userID) => {
-			// TODO Eliminar el marcador en el mapa asociado al usuario
+		this.socket.on("disconnected",(message) => {
+			this.onChatDisconnected(message);
 		})
 	}
 	
@@ -557,8 +652,8 @@ class OverlayChat {
 			this.connect(user.chatToken);
 			this.lastAirport = user.landedOn;
 		} else {
-			this.clearMessages();
-			this.putMessage("You need land on an airport first!");
+			this.putMessage("You have been disconnected from the chat.");
+			this.disconnect();
 		}
 	}
 	
@@ -571,6 +666,10 @@ class OverlayChat {
 	}
 	
 	onChatMessage(message) {
+		this.putMessage(message);
+	}
+	
+	onChatDisconnected(message){
 		this.putMessage(message);
 	}
 	
@@ -751,7 +850,7 @@ class Player {
 
 // Global variables
 var map, tile, user, statusModal, player, overlay, cursor, 
-	airportRepository, lastUpdate = null;
+	airportRepository, planeRepository, lastUpdate = null;
 
 // Load functions
 function loadYoutubeIframeAPI() {
@@ -842,6 +941,9 @@ function onDocumentReady() {
 	airportRepository = AirportRepository.create();
 	airportRepository.start();
 	
+	// Create planes repository
+	planeRepository = PlaneRepository.create();
+	
 	// Request client user data
 	User.getClientUserProfile();
 }
@@ -854,8 +956,9 @@ function onWindowResize() {
 
 function onClientUserProfileLoaded(data) {
 	user = User.fromData(data.uuid, data.name, data.geolocation, data.spotifyId, data.facebookId);
-	map.addLayer(user.marker);
 	map.panTo(L.latLng(user.geolocation.lat, user.geolocation.lng));
+	planeRepository.start();
+	planeRepository.addPlane(Plane.from(user.uuid, user.geolocation));
 	overlay.update();
 	statusModal.hide();
 }
@@ -865,13 +968,16 @@ function onClientUserProfileFailed() {
 }
 
 function onMapUpdate() {
+	
+	
 	if (lastUpdate != null) {
 		var delta = Date.now() - lastUpdate;
 		lastUpdate = Date.now();
 		
 		if (user != undefined) {
+			const userPlane = planeRepository.getPlane(user.uuid);
 			user.onUpdate(delta);
-			map.panTo(user.marker.getLatLng());
+			map.panTo(userPlane.marker.getLatLng());
 		}
 	} else {
 		lastUpdate = Date.now();
