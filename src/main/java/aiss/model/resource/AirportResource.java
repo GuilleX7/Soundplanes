@@ -6,12 +6,17 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import aiss.model.soundplanes.Airport;
+import aiss.model.soundplanes.AirportPlaylist;
 
 public class AirportResource {
 	private static Logger log = Logger.getLogger(CountryStatesResource.class.getName());
 	
-	public static List<Airport> getAirports() {
+	public static List<Airport> getAllAirports() {
 		return ofy().load().type(Airport.class).list();
+	}
+	
+	public static List<Airport> getAirportsAfter(Long queryTimestamp ) {
+		return ofy().load().type(Airport.class).filter("creationTimestamp >", queryTimestamp).list();
 	}
 	
 	public static Airport getAirport(String uuid) {
@@ -19,19 +24,16 @@ public class AirportResource {
 	}
 	
 	public static void registerAirport(Airport airport) {
-		ofy().save().entity(airport);
-		log.info(String.format("Airport with UUID %s registered successfully with owner UUID %s", airport.getUUID(), airport.getOwnerUuid()));
+		ofy().save().entity(airport).now();
+		log.info(String.format("Airport with UUID %s registered successfully with owner UUID %s", airport.getUuid(), airport.getOwner().getUuid()));
 	}
 	
-	public static void indexAirportByUser(String uuid, String userUuid) {
-		Airport airport = ofy().load().type(Airport.class).id(uuid).now();
-		if (airport != null) {
-			airport.setOwner(userUuid);
-			ofy().save().entity(airport);
-		}
+	public static AirportPlaylist getAirportPlaylist(String airportUuid) {
+		return ofy().load().type(AirportPlaylist.class).id(airportUuid).now();
 	}
 	
-	public static Airport getAirportByUser(String userUuid) {
-		return ofy().load().type(Airport.class).filter("ownerUuid", userUuid).first().now();
+	public static void registerAirportPlaylist(AirportPlaylist airportPlaylist) {
+		ofy().save().entity(airportPlaylist).now();
+		log.info(String.format("AirportPlaylist with UUID %s register succesfully", airportPlaylist.getUuid()));
 	}
 }

@@ -2,6 +2,7 @@ package aiss.model.spotify;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,6 +34,17 @@ public class Track {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@JsonIgnore
+	public String getFullName() {
+		String fullName = "";
+		int i = 0;
+		for (Artist artist : this.getArtists()) {
+			if (i != 0) fullName.concat(" & ");
+			fullName.concat(artist.getName());
+		}
+		return fullName;
 	}
 	
 	public String getUri() {
