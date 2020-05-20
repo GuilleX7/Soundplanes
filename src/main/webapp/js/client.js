@@ -182,7 +182,8 @@ class Airport {
 		this.geolocation = geolocation;
 		this.creationTimestamp = creationTimestamp;
 		this.marker = L.marker(geolocation, {
-		    icon: Icons.airport
+		    icon: Icons.airport,
+		    riseOnHover: true
 		});
 		this.marker.uuid = uuid;
 		
@@ -469,7 +470,7 @@ class OverlayProfileAirport {
 	}
 	
 	onUserAirportLoaded(response) {
-		airportRepository.putAirport(response[0], false);
+		airportRepository.putAirport(response, false);
 		this.containers.create.addClass("d-none");
 		this.containers.manage.removeClass("d-none");
 	}
