@@ -143,7 +143,9 @@ public class ClientAirportsController extends HttpServlet {
 		AirportResource.registerAirportPlaylist(airportPlaylist);
 		
 		cr.setStatus(ClientResponseStatus.CREATED);
-		cr.setData(airport);
+		List<Airport> result = new ArrayList<Airport>();
+		result.add(airport);
+		cr.setData(result);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule("SimpleModule");

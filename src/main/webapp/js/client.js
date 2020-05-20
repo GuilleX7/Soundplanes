@@ -139,7 +139,9 @@ class PlaneRepository {
 	}
 	
 	deletePlane(uuid){
-		map.removeLayer(this.planes[uuid].marker);
+		if (this.planes[uuid] != undefined) {
+			map.removeLayer(this.planes[uuid].marker);
+		}
 		delete this.planes[uuid];
 	}
 	
@@ -470,7 +472,7 @@ class OverlayProfileAirport {
 	}
 	
 	onUserAirportLoaded(response) {
-		airportRepository.putAirport(response, false);
+		airportRepository.putAirport(response[0], false);
 		this.containers.create.addClass("d-none");
 		this.containers.manage.removeClass("d-none");
 	}
