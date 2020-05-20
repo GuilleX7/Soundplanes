@@ -469,7 +469,7 @@ class OverlayProfileAirport {
 	}
 	
 	onUserAirportLoaded(response) {
-		airportRepository.putAirport(response, false);
+		airportRepository.putAirport(response[0], false);
 		this.containers.create.addClass("d-none");
 		this.containers.manage.removeClass("d-none");
 	}
@@ -1048,7 +1048,7 @@ function onMapUpdate() {
 	if (user != undefined) {
 		const userPlane = planeRepository.getPlane(user.uuid);
 		user.onUpdate();
-		if (userPlane != undefined) {
+		if (userPlane != undefined && userPlane.marker != undefined) {
 			map.panTo(userPlane.marker.getLatLng());
 		}
 	}

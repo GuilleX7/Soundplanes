@@ -37,8 +37,8 @@
 					data-toggle="tab" href="#profile" role="tab"
 					aria-controls="profile" aria-selected="false">Profile</a></li>
 				<li class="nav-item"><a class="nav-link" id="airport-tab"
-					data-toggle="tab" href="#airports" role="tab"
-					aria-controls="airports" aria-selected="false">Airports</a></li>
+					data-toggle="tab" href="#airport" role="tab"
+					aria-controls="airport" aria-selected="false">Airport</a></li>
 			</ul>
 			<div class="tab-content pt-2" id="overlay-tabs-content">
 				<div class="tab-pane fade show active" id="music" role="tabpanel"
@@ -120,70 +120,54 @@
 				</div>
 				<div class="tab-pane fade" id="profile" role="tabpanel"
 					aria-labelledby="profile-tab">
-					<div class="accordion" id="profile-accordion">
-						<div class="card">
-							<div class="card-header" id="profile-social-header"
-								data-toggle="collapse" data-target="#profile-social"
-								aria-expanded="true" aria-controls="profile-social">
-								<h2 class="mb-0">
-									<button class="btn btn-link" type="button">My social</button>
-								</h2>
-							</div>
-
-							<div id="profile-social" class="collapse show"
-								aria-labelledby="profile-social-header"
-								data-parent="#profile-accordion">
-								<div class="card-body">
-									<a class="btn btn-spotify btn-lg btn-block"
-										id="profile-social-spotify-btn" href="/auth/spotify"
-										role="button"> <span class="icon icon-spotify mr-2"></span>
-										Log in with Spotify
-									</a> <a class="btn btn-facebook btn-lg btn-block"
-										id="profile-social-facebook-btn" href="/auth/facebook"
-										role="button"> <span class="icon icon-facebook mr-2"></span>
-										Log in with Facebook
-									</a>
-								</div>
-							</div>
+					<div class="card">
+						<div class="card-header" id="profile-social-header">
+							<h2 class="mb-0">
+								<button class="btn btn-link" type="button">My social</button>
+							</h2>
 						</div>
 
-						<div class="card">
-							<div class="card-header" id="profile-airport-header"
-								data-toggle="collapse" data-target="#profile-airport"
-								aria-expanded="true" aria-controls="profile-airport">
-								<h2 class="mb-0">
-									<button class="btn btn-link" type="button">My airport</button>
-								</h2>
-							</div>
-
-							<div id="profile-airport" class="collapse"
-								aria-labelledby="profile-airport-header"
-								data-parent="#profile-accordion">
-								<div class="card-body">
-									<div id="profile-airport-create">
-										<label id="profile-airport-create-status"></label>
-										<button class="btn btn-success btn-block" type="button"
-											id="profile-airport-create-btn">Create airport</button>
-									</div>
-									<div id="profile-airport-manage">
-										<p class="text-center">Update airport playlist</p>
-										<button class="btn btn-primary btn-block" type="button"
-											id="profile-airport-manage-update-btn">Reload my
-											playlists</button>
-										<div class="list-group" id="profile-airport-manage-playlists">
-										</div>
-									</div>
-								</div>
+						<div id="profile-social">
+							<div class="card-body">
+								<a class="btn btn-spotify btn-lg btn-block"
+									id="profile-social-spotify-btn" href="/auth/spotify"
+									role="button"> <span class="icon icon-spotify mr-2"></span>
+									Log in with Spotify
+								</a> <a class="btn btn-facebook btn-lg btn-block"
+									id="profile-social-facebook-btn" href="/auth/facebook"
+									role="button"> <span class="icon icon-facebook mr-2"></span>
+									Log in with Facebook
+								</a>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="tab-pane fade" id="airports" role="tabpanel"
-					aria-labelledby="airports-tab">
-					<p class="text-center" id="airports-info"></p>
-					<div id="airports-landed">
-						<button class="btn btn-danger btn-block" id="airports-takeoff-btn">Leave
-							this airport</button>
+				<div class="tab-pane fade" id="airport" role="tabpanel"
+					aria-labelledby="airport-tab">
+					<div class="card">
+						<div class="card-header" id="profile-airport-header">
+							<h2 class="mb-0">
+								<button class="btn btn-link" type="button">My airport</button>
+							</h2>
+						</div>
+
+						<div id="profile-airport">
+							<div class="card-body">
+								<div id="profile-airport-create">
+									<label id="profile-airport-create-status"></label>
+									<button class="btn btn-success btn-block" type="button"
+										id="profile-airport-create-btn">Create airport</button>
+								</div>
+								<div id="profile-airport-manage">
+									<p class="text-center">Update airport playlist</p>
+									<button class="btn btn-primary btn-block" type="button"
+										id="profile-airport-manage-update-btn">Reload my
+										playlists</button>
+									<div class="list-group" id="profile-airport-manage-playlists">
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
