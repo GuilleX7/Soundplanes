@@ -524,12 +524,15 @@ class OverlayChat {
 		if (this.socket != null) {
 			this.disconnect();
 		}
-		this.socket = io.connect('https://chat.meantoplay.games/', {query: "token=" + "Bearer " + token});
+		this.socket = io.connect('https://chat.meantoplay.games/chat', {query: "token=Bearer " + token});
 		this.socket.on("join", (message) => {
 			this.onChatJoin(message);
 		})
 		this.socket.on("message", (message) => {
 			this.onChatMessage(message);
+		})
+		this.socket.on("remove",(userID) => {
+			// TODO Eliminar el marcador en el mapa asociado al usuario
 		})
 	}
 	
