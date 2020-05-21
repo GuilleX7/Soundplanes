@@ -127,6 +127,12 @@ class PlaneRepository {
 	    this.socket.on('remove', (id) => {
 	    	this.onPlaneDisconnect(id);
 	    });
+	    this.socket.on('alreadyConnected',(id) => {
+	    	statusModal.title.text("You are already connected from other device");
+	    	statusModal.body.html("");
+	    	statusModal.show();
+	    	
+	    });
 	}
 	
 	addPlane(plane) {
@@ -164,7 +170,8 @@ class PlaneRepository {
 	}
 	
 	onPlaneDisconnect(uuid) {
-		this.deletePlane(uuid);
+		if(uuid != user.uuid)
+			this.deletePlane(uuid);
 	}
 	
 	sendMove(geolocation) {
