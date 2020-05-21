@@ -5,6 +5,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.cloud.datastore.QueryResults;
+
 import aiss.model.soundplanes.Airport;
 import aiss.model.soundplanes.AirportPlaylist;
 
@@ -28,6 +30,13 @@ public class AirportResource {
 		log.info(String.format("Airport with UUID %s registered successfully with owner UUID %s", airport.getUuid(), airport.getOwner().getUuid()));
 	}
 	
+	public static void removeAllAirports() {
+		QueryResults<Airport> cursor = ofy().load().type(Airport.class).iterator();
+		while (cursor.hasNext()) {
+			ofy().delete().entity(cursor.next()).now();
+		}
+	}
+	
 	public static AirportPlaylist getAirportPlaylist(String airportUuid) {
 		return ofy().load().type(AirportPlaylist.class).id(airportUuid).now();
 	}
@@ -36,4 +45,12 @@ public class AirportResource {
 		ofy().save().entity(airportPlaylist).now();
 		log.info(String.format("AirportPlaylist with UUID %s register succesfully", airportPlaylist.getUuid()));
 	}
+	
+	public static void removeAllAirportPlaylists() {
+		QueryResults<AirportPlaylist> cursor = ofy().load().type(AirportPlaylist.class).iterator();
+		while (cursor.hasNext()) {
+			ofy().delete().entity(cursor.next()).now();
+		}
+	}
+	
 }

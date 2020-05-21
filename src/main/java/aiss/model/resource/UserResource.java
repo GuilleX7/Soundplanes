@@ -5,6 +5,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.cloud.datastore.QueryResults;
+
 import aiss.model.soundplanes.User;
 
 public class UserResource {
@@ -21,6 +23,13 @@ public class UserResource {
 	public static void registerUser(User user) {
 		ofy().save().entity(user).now();
 		log.info(String.format("User %s with UUID %s registered succesfully", user.getName(), user.getUuid()));
+	}
+	
+	public static void removeAllUsers() {
+		QueryResults<User> cursor = ofy().load().type(User.class).iterator();
+		while (cursor.hasNext()) {
+			ofy().delete().entity(cursor.next()).now();
+		}
 	}
 	
 	public static void linkUserWithFacebookId(String uuid, String facebookId) {
