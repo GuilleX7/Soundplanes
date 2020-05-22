@@ -1,6 +1,7 @@
 package aiss.controller.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import aiss.model.genius.Song;
 import aiss.model.resource.AirportResource;
 import aiss.model.resource.GeniusResource;
+import aiss.model.resource.SpotifyResource;
 import aiss.model.resource.UserResource;
+import aiss.model.soundplanes.Airport;
 import aiss.model.soundplanes.AirportPlaylist;
 import aiss.model.soundplanes.User;
 import aiss.model.soundplanes.client.ClientResponse;
 import aiss.model.soundplanes.client.ClientResponseStatus;
+import aiss.model.spotify.Paging;
+import aiss.model.spotify.Playlist;
+import aiss.model.spotify.PlaylistTrack;
 import aiss.model.spotify.Track;
 
 /**
@@ -57,28 +63,54 @@ public class ClientAirportPlaylistController extends HttpServlet {
 		}
 
 		if (!user.isLanded()) {
-			cr.setStatus(ClientResponseStatus.NOT_FOUND);
+			cr.setStatus(ClientResponseStatus.NO_CONTENT);
 			cr.writeTo(response);
 			return;
 		}
 
-		String airportUuid = user.getLandedOn();
+		Airport airport = AirportResource.getAirport(user.getLandedOn());
+		if (airport == null) {
+			cr.setStatus(ClientResponseStatus.NOT_FOUND);
+			cr.setData(user.getLandedOn());
+			cr.writeTo(response);
+			return;
+		}
 
-		AirportPlaylist playlist = AirportResource.getAirportPlaylist(airportUuid);
+		if (!airport.isPlaylistLoaded()) {
+			cr.setStatus(ClientResponseStatus.NO_CONTENT);
+			cr.writeTo(response);
+			return;
+		}
+		
+		Playlist playlistInfo = airport.getPlaylistInfo();
+		AirportPlaylist playlist = AirportResource.getAirportPlaylist(airport.getUuid());
+		if (playlist.getTracks().size() < 0) {
+			cr.setStatus(ClientResponseStatus.NO_CONTENT);
+			cr.writeTo(response);
+		}
+		
 		Track track = playlist.getRandomTrack();
 		String lyrics = null;
 		
 		List<Song> songs = GeniusResource.searchSong(track.getFullName());
-		if (songs.size() > 0) {
-			lyrics = GeniusResource.getLyricsFromSong(songs.get(0));
+	
+		String title = null;
+		for (int i = 0; i < songs.size(); i++) {
+			title = songs.get(i).getFullTitle().toLowerCase();
+			if (title.contains("genius") || title.contains("spotify")) continue;
+			lyrics = GeniusResource.getLyricsFromSong(songs.get(i));
+			if (lyrics != null) {
+				break;
+			}
 		}
 		
-		Map<String, Object> lyricTrack = new HashMap<String, Object>();
-		lyricTrack.put("track", track);
-		lyricTrack.put("lyrics", lyrics);
-
-		cr.setData(lyricTrack);
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("track", track);
+		data.put("lyrics", lyrics);
+		data.put("playlistInfo", playlistInfo);
 		
+		cr.setData(data);
+		cr.setStatus(ClientResponseStatus.OK);
 		cr.writeTo(response);
 	}
 
@@ -90,6 +122,88 @@ public class ClientAirportPlaylistController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+	
+	@Override
+	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ClientResponse cr = ClientResponse.create();
+
+		String uuid = (String) request.getSession().getAttribute("UUID");
+		if (uuid == null) {
+			cr.setStatus(ClientResponseStatus.UNAUTHORIZED);
+			cr.writeTo(response);
+			return;
+		}
+
+		User user = UserResource.getUser(uuid);
+		if (user == null) {
+			cr.setStatus(ClientResponseStatus.INTERNAL_ERROR);
+			cr.writeTo(response);
+			return;
+		}
+		
+		Airport airport = AirportResource.getAirport(user.getUuid());
+		if (airport == null) {
+			cr.setStatus(ClientResponseStatus.NOT_FOUND);
+			cr.setData(user.getUuid());
+			cr.writeTo(response);
+			return;
+		}
+		
+		String playlistId = request.getParameter("playlistId");
+		if (playlistId == null) {
+			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
+			cr.setData("playlistId");
+			cr.writeTo(response);
+			return;
+		}
+		
+		if (user.getSpotifyId() == null) {
+			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
+			cr.setData("SpotifyId");
+			cr.writeTo(response);
+			return;
+		}
+
+		String spotifyToken = (String) request.getSession().getAttribute("Spotify-token");
+		if (spotifyToken == null) {
+			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
+			cr.setData("Spotify-token");
+			cr.writeTo(response);
+			return;
+		}
+
+		SpotifyResource sr = SpotifyResource.fromToken(spotifyToken);
+		Playlist playlist = sr.getPlaylist(playlistId);
+		if (playlist == null) {
+			cr.setStatus(ClientResponseStatus.SEE_OTHER);
+			cr.setData("/auth/spotify");
+			cr.writeTo(response);
+			return;
+		}
+		
+		Paging<PlaylistTrack> playlistTracks = sr.getPlaylistTracks(playlist);
+		if (playlistTracks == null) {
+			cr.setStatus(ClientResponseStatus.SEE_OTHER);
+			cr.setData("/auth/spotify");
+			cr.writeTo(response);
+			return;
+		}
+		
+		List<Track> tracks = new ArrayList<Track>();
+		for (PlaylistTrack playlistTrack : playlistTracks.getItems()) {
+			tracks.add(playlistTrack.getTrack());
+		}
+		
+		AirportPlaylist airportPlaylist = AirportResource.getAirportPlaylist(airport.getUuid());
+		airportPlaylist.setTracks(tracks);
+		AirportResource.registerAirportPlaylist(airportPlaylist);
+		airport.setPlaylistInfo(playlist);
+		AirportResource.registerAirport(airport);
+		
+		cr.setStatus(ClientResponseStatus.OK);
+		cr.setData(playlist);
+		cr.writeTo(response);
 	}
 
 }

@@ -2,6 +2,7 @@ package aiss.model.resource;
 
 import aiss.model.spotify.Paging;
 import aiss.model.spotify.Playlist;
+import aiss.model.spotify.PlaylistTrack;
 import aiss.model.spotify.Track;
 import aiss.model.spotify.UserProfile;
 
@@ -17,11 +18,15 @@ import org.restlet.resource.ResourceException;
 public class SpotifyResource {
     private static final Logger log = Logger.getLogger(SpotifyResource.class.getName());
 
-    private final String ACCESS_TOKEN;
+    private final String accessToken;
     private final static String API_URL = "https://api.spotify.com/v1";
 
-    public SpotifyResource(String access_token) {
-        this.ACCESS_TOKEN = access_token;
+    public static SpotifyResource fromToken(String accessToken) {
+    	return new SpotifyResource(accessToken);
+    }
+    
+    private SpotifyResource(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public Paging<Playlist> getPlaylists(Integer offset, Integer limit) {
@@ -29,7 +34,7 @@ public class SpotifyResource {
         ClientResource cr = new ClientResource(url);
 
         ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
-        chr.setRawValue(ACCESS_TOKEN);
+        chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
 
         Paging<Playlist> playlists = null;
@@ -52,18 +57,18 @@ public class SpotifyResource {
     	return getPlaylists(0, 20);
     }
     
-    public Paging<Track> getPlaylistTracks(Playlist playlist, Integer offset, Integer limit) {
+    public Paging<PlaylistTrack> getPlaylistTracks(Playlist playlist, Integer offset, Integer limit) {
     	String url = String.format("%s/playlists/%s/tracks", API_URL, playlist.getId());
         ClientResource cr = new ClientResource(url);
 
         ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
-        chr.setRawValue(ACCESS_TOKEN);
+        chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
 
-        Paging<Track> tracks = null;
+        Paging<PlaylistTrack> tracks = null;
         
         try {
-            tracks = cr.get(Paging.PagingTrack.class);
+            tracks = cr.get(Paging.PagingPlaylistTrack.class);
         } catch (ResourceException re) {
             log.warning("Error when retrieving Spotify playlist tracks: " + cr.getResponse().getStatus());
             log.warning(url);
@@ -72,12 +77,32 @@ public class SpotifyResource {
         return tracks;
     }
     
-    public Paging<Track> getPlaylistTracks(Playlist playlist, Integer offset) {
+    public Paging<PlaylistTrack> getPlaylistTracks(Playlist playlist, Integer offset) {
     	return getPlaylistTracks(playlist, offset, 100);
     }
     
-    public Paging<Track> getPlaylistTracks(Playlist playlist) {
+    public Paging<PlaylistTrack> getPlaylistTracks(Playlist playlist) {
     	return getPlaylistTracks(playlist, 0, 100);
+    }
+    
+    public Playlist getPlaylist(String playlistId) {
+    	String url = String.format("%s/playlists/%s", API_URL, playlistId);
+        ClientResource cr = new ClientResource(url);
+
+        ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
+        chr.setRawValue(accessToken);
+        cr.setChallengeResponse(chr);
+
+        Playlist playlist = null;
+        
+        try {
+            playlist = cr.get(Playlist.class);
+        } catch (ResourceException re) {
+            log.warning("Error when retrieving Spotify playlist: " + cr.getResponse().getStatus());
+            log.warning(url);
+        }
+        
+        return playlist;
     }
     
     public Playlist createEmptyPlaylist(UserProfile user, String name) {
@@ -85,7 +110,7 @@ public class SpotifyResource {
         ClientResource cr = new ClientResource(url);
 
         ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
-        chr.setRawValue(ACCESS_TOKEN);
+        chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
 
         Playlist playlist = null;
@@ -109,7 +134,7 @@ public class SpotifyResource {
     	ClientResource cr = new ClientResource(url);
     	
     	ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
-        chr.setRawValue(ACCESS_TOKEN);
+        chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
     	
         Boolean result = true;
@@ -137,7 +162,7 @@ public class SpotifyResource {
         ClientResource cr = new ClientResource(url);
 
         ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
-        chr.setRawValue(ACCESS_TOKEN);
+        chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
 
         log.info("Retrieving user Spotify profile");

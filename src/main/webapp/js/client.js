@@ -127,11 +127,10 @@ class PlaneRepository {
 	    this.socket.on('remove', (id) => {
 	    	this.onPlaneDisconnect(id);
 	    });
-	    this.socket.on('alreadyConnected',(id) => {
-	    	statusModal.title.text("You are already connected from other device");
+	    this.socket.on('alreadyConnected', (id) => {
+	    	statusModal.title.text("You are already connected from another device");
 	    	statusModal.body.html("");
 	    	statusModal.show();
-	    	
 	    });
 	}
 	
@@ -170,8 +169,9 @@ class PlaneRepository {
 	}
 	
 	onPlaneDisconnect(uuid) {
-		if(uuid != user.uuid)
+		if (uuid != user.uuid) {
 			this.deletePlane(uuid);
+		}
 	}
 	
 	sendMove(geolocation) {
@@ -192,7 +192,9 @@ class Airport {
 		this.creationTimestamp = creationTimestamp;
 		this.marker = L.marker(geolocation, {
 		    icon: Icons.airport,
-		    riseOnHover: true
+		    riseOnHover: true,
+		    riseOffset: 1001,
+		    zIndexOffset: 1000
 		});
 		this.marker.uuid = uuid;
 		
@@ -343,7 +345,6 @@ class Overlay {
 		this.toggler.on("click", () => {
 			this.toggle();
 		});
-		this.title = $("#" + id + "-title");
 		
 		this.overlayProfileSocial = OverlayProfileSocial.from("profile-social");
 		this.overlayProfileAirport = OverlayProfileAirport.from("profile-airport");
@@ -364,14 +365,9 @@ class Overlay {
 			this.container.removeClass("overlay-hidden");
 		}
 	}
-	
-	updateUserData() {
-		this.title.text(user.name);
-	}
-	
+
 	update() {
 		this.updateVisibility();
-		this.updateUserData();
 		
 		this.overlayProfileSocial.update();
 		this.overlayProfileAirport.update();
@@ -397,6 +393,7 @@ class Overlay {
 class OverlayProfileSocial {
 	constructor(id) {
 		this.id = id;
+		this.socialTitle = $("#" + id + "-title");
 		this.spotifyBtn = $("#" + id + "-spotify-btn");
 		this.facebookBtn = $("#" + id + "-facebook-btn");
 	}
@@ -406,6 +403,8 @@ class OverlayProfileSocial {
 	}
 	
 	updateUserData() {
+		this.socialTitle.text(user.name);
+		
 		if (user.spotifyId == null) {
 			this.spotifyBtn.removeClass("disabled");
 			this.spotifyBtn.html("Log in with Spotify");
@@ -433,16 +432,175 @@ class OverlayProfileAirport {
 		this.id = id;
 		this.containers = {
 			create: $("#" + id + "-create"),
-			manage: $("#" + id + "-manage")
+			manage: $("#" + id + "-manage"),
+			playlists: $("#" + id + "-playlists")
 		};
 		this.createStatus = $("#" + id + "-create-status");
 		this.createBtn = $("#" + id + "-create-btn");
-		this.updateBtn = $("#" + id + "-manage-update-btn");
-		this.playlists = $("#" + id + "-manage-playlists");
+		this.manageStatus = $("#" + id + "-manage-status");
+		this.managePlaylistName = $("#" + id + "-manage-playlist-name");
+		this.managePlaylistImage = $("#" + id + "-manage-playlist-image");
+		this.manageTravelBtn = $("#" + id + "-manage-travel-btn");
+		this.playlistsStatus = $("#" + id + "-playlists-status");
+		this.updatePlaylistsBtn = $("#" + id + "-playlists-update-btn");
+		this.playlists = $("#" + id + "-playlists-list");
 	}
 	
 	static from(id) {
 		return new OverlayProfileAirport(id);
+	}
+	
+	onCreateAirportSuccess(response) {
+		this.onUserAirportLoaded(response);
+	}
+	
+	onCreateAirportFailed(xhr, message, error) {
+		User.reloadClientUserProfile();
+	}
+	
+	onUserAirportLoaded(response) {
+		const airport = response[0];
+		const airportEntity = Airport.fromData(airport.uuid, airport.name, airport.geolocation, airport.creationTimestamp);
+		
+		airportRepository.putAirport(airportEntity, false);
+		this.containers.create.addClass("d-none");
+		this.containers.manage.removeClass("d-none");
+		this.containers.playlists.removeClass("d-none");
+		
+		if (!airport.playlistLoaded) {
+			this.showCurrentPlaylist("(NO PLAYLIST)", "/images/unknown.png");
+		} else {
+			this.showCurrentPlaylist(airport.playlistInfo.name, airport.playlistInfo.images[0].url);
+		}
+		
+		this.manageTravelBtn.removeClass("disabled");
+		this.manageTravelBtn.on("click", () => {
+			this.manageTravel();
+		});
+		
+		this.playlistsStatus.text("You haven't retrieved your Spotify playlists yet!");
+		this.playlists.html("<li class='list-group-item'>No playlists found!</li>");
+		this.updatePlaylistsBtn.removeClass("disabled");
+		this.updatePlaylistsBtn.on("click", () => {
+			this.updatePlaylists();
+		})
+	}
+	
+	onUserAirportFailed(xhr, message, error) {
+		if (xhr.status == 404) {
+			this.containers.create.removeClass("d-none");
+			this.createStatus.text("You don't have an airport yet!");
+			this.createBtn.removeClass("disabled");
+			this.createBtn.on("click", () => {
+				this.createAirport();
+			})
+		} else {
+			User.reloadClientUserProfile();
+		}
+	}
+	
+	onPlaylistsUpdateSuccess(response) {
+		this.clearPlaylists();
+		this.putPlaylists(response);
+		this.playlistsStatus.text("Pick a playlist to load on your airport!");
+	}
+	
+	onPlaylistsUpdateFailed(xhr, message, error) {
+		if (xhr.status == 303) {
+			this.playlistsStatus.text("Sorry, but we need to refresh your Spotify token. You will be redirected in 5 seconds.");
+			setTimeout(() => {
+				window.location.replace(xhr.responseJSON);
+			}, 5000);
+		} else {
+			this.playlistsStatus.text("We couldn't retrieve your playlists");
+		}
+	}
+	
+	onLoadAirportPlaylistSuccess(response) {
+		this.showCurrentPlaylist(response.name, response.images[0].url);
+	}
+	
+	onLoadAirportPlaylistFailed(xhr, message, error) {
+		if (xhr.status == 303) {
+			this.manageStatus.text("Sorry, but we need to refresh your Spotify token. You will be redirected in 5 seconds.");
+			setTimeout(() => {
+				window.location.replace(xhr.responseJSON);
+			}, 5000);
+		} else if (xhr.status == 404) {
+			airportRepository.deleteAirport(xhr.responseJSON);
+			User.reloadClientUserProfile();
+		} else {
+			this.manageStatus("Some unknown error happened during the loading");
+		}
+	}
+	
+	manageTravel() {
+		if (user != undefined && !user.isLanded()) {
+			const airport = airportRepository.getAirport(user.uuid);
+			if (airport != undefined) {
+				user.moveTo(airport.marker.getLatLng());
+				overlay.hide();
+			}
+		}
+	}
+	
+	showCurrentPlaylist(name, imageUrl) {
+		this.manageStatus.text("Currently loaded on your airport:");
+		this.managePlaylistName.text(name);
+		this.managePlaylistImage.attr("src", imageUrl);
+	}
+	
+	updatePlaylists() {
+		this.playlistsStatus.text("Retrieving your playlists...");
+		
+		$.getJSON("/client/user/playlist")
+		.done((response) => {
+			this.onPlaylistsUpdateSuccess(response);
+		})
+		.fail((xhr, message, error) => {
+			this.onPlaylistsUpdateFailed(xhr, message, error);
+		})
+	}
+	
+	putPlaylists(playlists) {
+		for (let i = 0; i < playlists.length; i++) {
+			this.putPlaylist(playlists[i]);
+		}
+		
+		$(".user-playlist").on("click", (e) => {
+			this.loadAirportPlaylist($(e.target).data("id"));
+		});
+	}
+	
+	putPlaylist(playlist) {
+		this.playlists.append("<li class='list-group-item list-group-item-action playlist user-playlist'>" +
+				"<div class='card' data-id='" + playlist.id + "'><div class='row no-gutters' data-id='" + playlist.id + "'><div class='col-4' data-id='" + playlist.id + "'><img src='" + playlist.images[0].url + "' class='card-img' data-id='" + playlist.id + "'></div><div class='col-8' data-id='" + playlist.id + "'><div class='card-body' data-id='" + playlist.id + "'><p class='card-text' data-id='" + playlist.id + "'>" + playlist.name +  "</p></div></div></div></div>"
+				+ "</li>");
+	}
+	
+	clearPlaylists() {
+		this.playlists.html("");
+	}
+	
+	loadAirportPlaylist(id) {
+		this.playlists.html("<li class='list-group-item'>No playlists found!</li>");
+		this.playlistsStatus.text("You haven't retrieved your Spotify playlists yet!");
+		
+		this.manageStatus.text("Loading your playlist...");
+		
+		$.ajax("/client/airport/playlist", {
+			method: "PUT",
+			dataType: "json",
+			data: {
+				playlistId: id
+			}
+		})
+		.done((response) => {
+			this.onLoadAirportPlaylistSuccess(response);
+		})
+		.fail((xhr, message, error) => {
+			this.onLoadAirportPlaylistFailed(xhr, message, error);
+		});
 	}
 	
 	createAirport() {
@@ -460,53 +618,33 @@ class OverlayProfileAirport {
 	}
 	
 	updateUserAirport() {
-		this.createStatus.text("Wait a second! retrieving your current airport data...");
-		$.getJSON("/client/airports", {query: "me"})
-		.done((response) => {
-			this.onUserAirportLoaded(response);
-		})
-		.fail((xhr, message, error) => {
-			this.onUserAirportFailed(xhr, message, error);
-		});
-	}
-	
-	onCreateAirportSuccess(response) {
-		this.onUserAirportLoaded(response);
-	}
-	
-	onCreateAirportFailed(xhr, message, error) {
-		user.reloadClientUserProfile();
-	}
-	
-	onUserAirportLoaded(response) {
-		airportRepository.putAirport(response[0], false);
 		this.containers.create.addClass("d-none");
-		this.containers.manage.removeClass("d-none");
-	}
-	
-	onUserAirportFailed(xhr, message, error) {
-		if (xhr.status == 404) {
-			this.createStatus.text("You don't have an airport yet!");
-			this.createBtn.removeClass("disabled");
-			this.createBtn.on("click", () => {
-				this.createAirport();
-			})
+		this.containers.manage.addClass("d-none");
+		this.containers.playlists.addClass("d-none");
+		
+		this.createBtn.addClass("disabled");
+		this.createBtn.off("click");
+		this.manageTravelBtn.addClass("disabled");
+		this.manageTravelBtn.off("click");
+		this.updatePlaylistsBtn.addClass("disabled");
+		this.updatePlaylistsBtn.off("click");
+		
+		if (user.spotifyId == null) {
+			this.containers.create.removeClass("d-none");
+			this.createStatus.text("Sorry! you need to link with your Spotify account first in order to create your own airport");
 		} else {
-			this.createStatus.text("Oops! some unknown error happened, try refreshing the page");
+			$.getJSON("/client/airports", {query: "me"})
+			.done((response) => {
+				this.onUserAirportLoaded(response);
+			})
+			.fail((xhr, message, error) => {
+				this.onUserAirportFailed(xhr, message, error);
+			});
 		}
 	}
 	
 	update() {
-		this.containers.create.removeClass("d-none");
-		this.containers.manage.addClass("d-none");
-		this.createBtn.addClass("disabled");
-		this.createBtn.off("click");
-		
-		if (user.spotifyId == null) {
-			this.createStatus.text("Sorry! you need to link with your Spotify account first in order to create your own airport");
-		} else {
-			this.updateUserAirport();
-		}
+		this.updateUserAirport();
 	}
 }
 
@@ -531,10 +669,19 @@ class OverlayAirports {
 	}
 	
 	onLandStatusUpdateSuccess(response) {
+		const tokenExpiration = JSON.parse(atob(response.chatToken.split(".")[1])).exp;
+		if (tokenExpiration <= Date.now() / 1000) {
+			return this.land(response.landedOn);
+		}
+		
 		user.disableMovement();
 		user.landedOn = response.landedOn;
 		user.chatToken = response.chatToken;
 		overlay.overlayChat.update();
+		
+		if (player != null && player.isReady()) {
+			player.update();
+		}
 		
 		const airport = airportRepository.getAirport(user.landedOn);
 		user.moveTo(airport.geolocation);
@@ -564,6 +711,10 @@ class OverlayAirports {
 		user.landedOn = null;
 		user.chatToken = null;
 		overlay.overlayChat.update();
+		
+		if (player != null && player.isReady()) {
+			player.update();
+		}
 		
 		if (this.popup != null) {
 			map.closePopup(this.popup);
@@ -618,10 +769,6 @@ class OverlayAirports {
 	}
 	
 	land(uuid) {
-		if (user.isLanded()) {
-			return;
-		}
-		
 		$.ajax("/client/airport/landing", {
 			method: "PUT",
 			dataType: "json",
@@ -638,10 +785,6 @@ class OverlayAirports {
 	}
 	
 	takeoff() {
-		if (!user.isLanded()) {
-			return;
-		}
-		
 		$.ajax("/client/airport/landing", {
 			method: "DELETE",
 			dataType: "json"
@@ -650,7 +793,6 @@ class OverlayAirports {
 			this.onTakeoffSuccess(response);
 		})
 		.fail((xhr, message, error) => {
-			
 			this.onTakeoffFailed(xhr, message, error);
 		});
 	}
@@ -691,6 +833,7 @@ class OverlayChat {
 	
 	putMessage(message) {
 		this.messages.append("<li class='list-group-item'>" + message + "</li>");
+		overlay.tabsContent.scrollTop(overlay.tabsContent[0].scrollHeight + 75);
 	}
 	
 	connect(token) {
@@ -709,6 +852,9 @@ class OverlayChat {
 		});
 		this.socket.on("connect_error", (error) => {
 			this.onChatConnectionError(error);
+		});
+		this.socket.on("invalidate", (error) => {
+			this.onChatConnectionInvalidate(error);
 		});
 	}
 	
@@ -754,16 +900,20 @@ class OverlayChat {
 		user.reloadClientUserProfile();
 	}
 	
+	onChatConnectionInvalidate(message) {
+		this.disconnect();
+		user.reloadClientUserProfile();
+	}
+	
 	sendMessage() {
 		if (this.socket != null) {
 			this.socket.emit("message", this.input.val());
 		}
 		this.input.val("");
-		overlay.tabsContent.scrollTop(overlay.tabsContent[0].scrollHeight);
 	}
 }
 
-class Player {
+class OverlayPlayer {
 	constructor(id) {
 		this.id = id;
 		this.player = new YT.Player(id, {
@@ -790,50 +940,32 @@ class Player {
 		
 		this.ready = false;
 		
-		this.ui = {
-			label: {
-				playing: $("#" + id + "-label-playing")
-			},
-			p: {
-				lyrics: $("#" + id + "-lyrics")
-			},
-			input: {
-				search: $("#" + id + "-input-search"),
-				volume: $("#" + id + "-volume")
-			},
-			btn: {
-				play: $("#" + id + "-btn-play"),
-				resume: $("#" + id + "-btn-resume"),
-				pause: $("#" + id + "-btn-pause")
-			}
-		};
+		this.trackName = $("#" + id + "-track-name");
+		this.trackArtist = $("#" + id + "-track-artist");
+		this.trackImage = $("#" + id + "-track-image");
+		this.playBtn = $("#" + id + "-play-btn");
+		this.pauseBtn = $("#" + id + "-pause-btn");
+		this.skipBtn = $("#" + id + "-skip-btn");
+		this.volume = $("#" + id + "-volume");
+		this.lyrics = $("#" + id + "-lyrics");
 		
-		this.playing = {
-			title: null,
-			position: null
-		};
-		
-		this.ui.btn.play.on("click", () => {
-			this.searchAndPlay(this.ui.input.search.val());
-			this.loadLyrics();
-		});
-		
-		this.ui.btn.resume.on("click", () => {
+		this.playBtn.on("click", () => {
 			this.resume();
 		});
-		
-		this.ui.btn.pause.on("click", () => {
+		this.pauseBtn.on("click", () => {
 			this.pause();
 		});
-		
-		this.ui.input.volume.on("input", () => {
-			this.player.setVolume(this.ui.input.volume.val());
+		this.skipBtn.on("click", () => {
+			this.update();
+		});
+		this.volume.on("input", () => {
+			this.setVolume(this.volume.val());
 		});
 	}
 	
 	onYoutubePlayerReady() {
 		this.ready = true;
-		this.ui.p.lyrics.text("Nothing to show!");
+		this.update();
 	}
 	
 	onYoutubePlayerError() {
@@ -841,34 +973,84 @@ class Player {
 	}
 	
 	onYoutubePlayerStateChange(e) {
-		if (this.playing.title != null) {
-			switch (e.data) {
-			case YT.PlayerState.ENDED:
-				this.ui.label.playing.text("Stopped: " + this.playing.title + "(" + this.playing.position + ")");
-				this.stop();
-				break;
-			case YT.PlayerState.PLAYING:
-				this.ui.label.playing.text("Playing: " + this.playing.title + "(" + this.playing.position + ")");
-				break;
-			case YT.PlayerState.PAUSED:
-				this.ui.label.playing.text("Paused: " + this.playing.title + "(" + this.playing.position + ")");
-				break;
-			default:
-				break;
-			}
+		switch (e.data) {
+		case YT.PlayerState.ENDED:
+			this.onYoutubePlayerStop(e);
+			break;
+		case YT.PlayerState.PLAYING:
+			this.onYoutubePlayerPlay(e);
+			break;
+		case YT.PlayerState.PAUSED:
+			this.onYoutubePlayerPause(e);
+			break;
+		default:
+			break;
 		}
+	}
+	
+	onYoutubePlayerStop(e) {
+		this.update();
+	}
+	
+	onYoutubePlayerPlay(e) {
+		this.setVolume(this.volume.val())
+	}
+	
+	onYoutubePlayerPause(e) {
+		
+	}
+	
+	onPlayerTrackLoaded(data, message, xhr) {
+		if (xhr.status == 204) {
+			this.emptyTrack();
+			return;
+		}
+		
+		const artists = data.track.artists.map((artist) => {
+			return artist.name;
+		}).join(" & ");
+		const fullName = data.track.name + " - " + artists;
+		
+		this.trackName.text(data.track.name);
+		this.trackArtist.text(artists);
+		this.trackImage.attr("src", data.track.album.images[0].url);
+		if (data.lyrics != null) {
+			if (data.lyrics.substr(0, 4) == "null") {
+				this.lyrics.html(data.lyrics.substr(4).replace(/<(a|em|i|b)( ([^>]+)?)?>/g, "").replace(/<\/(a|em|i|b)>/, ""));
+			} else {
+				this.lyrics.html(data.lyrics.replace(/\n/g,'<br/>'));
+			}
+		} else {
+			this.lyrics.html("(No lyrics)")
+		}
+		
+		this.searchAndPlay(fullName);
+	}
+	
+	onPlayerTrackFailed(xhr, message, error) {
+		this.pause();
+		this.emptyTrack();
+		if (xhr.status == 404) {
+			airportRepository.deleteAirport(xhr.responseJSON);
+		}
+		User.reloadClientUserProfile();
 	}
 	
 	isReady() {
 		return this.ready;
 	}
 	
-	searchAndPlay(title) {
+	emptyTrack() {
+		this.trackName.text("(NO TRACK)");
+		this.trackArtist.text("");
+		this.trackImage.attr("src", "/images/unknown.png");
+		this.lyrics.html("(No lyrics)");
+	}
+	
+	searchAndPlay(fullName) {
 		if (!this.isReady()) return -1;
-		this.playing.title = title;
-		this.playing.position = 1;
 		this.player.loadPlaylist({
-			"list": title,
+			"list": fullName,
 			"listType": "search"
 		})
 		return 0;
@@ -877,7 +1059,7 @@ class Player {
 	stop() {
 		if (!this.isReady()) return -1;
 		this.player.stopVideo();
-		this.playing.title = null;
+		this.track = null;
 		return 0;
 	}
 	
@@ -896,36 +1078,38 @@ class Player {
 		return 1;
 	}
 	
+	setVolume(volume) {
+		this.player.setVolume(volume);
+	}
+	
 	nextVideo() {
 		if (!this.isReady()) return -1;
 		this.player.nextVideo();
-		this.playing.position++;
 		return 0;
 	}
 	
 	previousVideo() {
 		if (!this.isReady()) return -1;
 		this.player.previousVideo();
-		this.playing.position--;
 		return 0;
 	}
 	
-	loadLyrics() {
-		$.getJSON("/client/airport/track", {
-			title: this.ui.input.search.val()
-		}).done((data) => {
-			this.onLyricsLoaded(data);
-		}).fail((xhr, message, error) => {
-			this.onLyricsFailed(xhr, message, error);
+	fetchTrack() {
+		this.pause();
+		this.emptyTrack();
+		this.trackName.text("(FETCHING TRACK...)");
+		
+		$.getJSON("/client/airport/playlist")
+		.done((response, message, xhr) => {
+			this.onPlayerTrackLoaded(response, message, xhr);
 		})
+		.fail((xhr, message, error) => {
+			this.onPlayerTrackFailed(xhr, message, error);
+		});
 	}
 	
-	onLyricsLoaded(lyrics) {
-		this.ui.p.lyrics.html(lyrics.replace(/\n/g,'<br/>'));
-	}
-	
-	onLyricsFailed() {
-		this.ui.p.lyrics.text("No se pudo cargar la letra de esta canción");
+	update() {
+		this.fetchTrack();
 	}
 }
 
@@ -947,7 +1131,7 @@ $(window).resize(onWindowResize);
 
 // Events
 window.onYouTubeIframeAPIReady = () => {
-    player = new Player("player");
+    player = new OverlayPlayer("player");
 };
 
 function onDocumentReady() {

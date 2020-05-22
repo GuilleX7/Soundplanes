@@ -98,6 +98,7 @@ public class User {
 		this.landedOn = landedOn;
 	}
 	
+	@JsonIgnore
 	public Boolean isLanded() {
 		return this.landedOn != null;
 	}

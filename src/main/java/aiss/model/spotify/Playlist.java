@@ -32,7 +32,7 @@ public class Playlist {
 	}
 	
 	public void setImages(List<Image> images) {
-		this.images = images;
+		this.images = images.subList(0, 1);
 	}
 	
 	public String getName() {

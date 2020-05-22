@@ -66,6 +66,8 @@ public class ClientAirportsController extends HttpServlet {
 				
 			airports.add(airport);
 			cr.setStatus(ClientResponseStatus.OK);
+			cr.setData(airports);
+			cr.writeTo(response);
 		} else if (query.contentEquals("all")) {
 			Long lastTimestamp;
 			try {

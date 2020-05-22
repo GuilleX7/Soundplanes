@@ -23,80 +23,66 @@
 	<button id="overlay-toggler" class="overlay-toggler" type="button"></button>
 	<div id="overlay" class="overlay overlay-hidden">
 		<div class="overlay-content container-sm">
-			<div class="overlay-header">
-				<h5 id="overlay-title"></h5>
+			<div class="nav nav-tabs" id="overlay-tabs" role="tablist">
+				<a class="nav-link active" id="music-tab" data-toggle="tab"
+					href="#music" role="tab" aria-controls="music" aria-selected="true">Music</a>
+				<a class="nav-link" id="chat-tab" data-toggle="tab" href="#chat"
+					role="tab" aria-controls="chat" aria-selected="false">Chat</a> <a
+					class="nav-link" id="profile-tab" data-toggle="tab" href="#profile"
+					role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+				<a class="nav-link" id="airport-tab" data-toggle="tab"
+					href="#airport" role="tab" aria-controls="airport"
+					aria-selected="false">Airport</a>
 			</div>
-			<ul class="nav nav-tabs" id="overlay-tabs" role="tablist">
-				<li class="nav-item"><a class="nav-link active" id="music-tab"
-					data-toggle="tab" href="#music" role="tab" aria-controls="music"
-					aria-selected="true">Music</a></li>
-				<li class="nav-item"><a class="nav-link" id="chat-tab"
-					data-toggle="tab" href="#chat" role="tab" aria-controls="chat"
-					aria-selected="false">Chat</a></li>
-				<li class="nav-item"><a class="nav-link" id="profile-tab"
-					data-toggle="tab" href="#profile" role="tab"
-					aria-controls="profile" aria-selected="false">Profile</a></li>
-				<li class="nav-item"><a class="nav-link" id="airport-tab"
-					data-toggle="tab" href="#airport" role="tab"
-					aria-controls="airport" aria-selected="false">Airport</a></li>
-			</ul>
-			<div class="tab-content pt-2" id="overlay-tabs-content">
+			<div class="tab-content pt-2 mb-2" id="overlay-tabs-content">
 				<div class="tab-pane fade show active" id="music" role="tabpanel"
 					aria-labelledby="home-tab">
 					<div id="player"></div>
-					<div class="form-group">
-						<label id="player-label-playing"></label>
-					</div>
-					<div class="form-group">
-						<div class="form-row">
-							<div class="col">
-								<input type="text" class="form-control" id="player-input-search">
-							</div>
+					<div class="card">
+						<div class="card-header" id="player-header">
+							<h2 class="mb-0">
+								<button class="btn btn-link" type="button"
+									id="player-header-title">Music player</button>
+							</h2>
 						</div>
-					</div>
-					<div class="form-group">
-						<div class="form-row">
-							<div class="col-sm-2">
-								<label>Volume: </label>
+
+						<div class="card music-player p-3" id="player-track">
+							<div class="row no-gutters">
+								<div class="col-auto">
+									<img src="/images/unknown.png" class="card-img"
+										id="player-track-image">
+								</div>
+								<div class="col-auto">
+									<div class="card-body">
+										<h5 class="card-title" id="player-track-name"></h5>
+										<p class="card-text" id="player-track-artist"></p>
+									</div>
+								</div>
 							</div>
-							<div class="col-sm-10">
-								<input type="range" class="form-control" max="100" min="0"
-									step="1" value="100" id="player-volume">
+							<div class="btn-group mb-3" role="group">
+								<button type="button" class="btn btn-dark" id="player-play-btn">
+									<img src="/images/play-btn.svg" width="25" height="25">
+								</button>
+								<button type="button" class="btn btn-dark" id="player-pause-btn">
+									<img src="/images/pause-btn.svg" width="25" height="25">
+								</button>
+								<button type="button" class="btn btn-dark" id="player-skip-btn">
+									<img src="/images/skip-btn.svg" width="25" height="25">
+								</button>
 							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="form-row">
-							<div class="col">
-								<button type="button" class="btn btn-dark btn-block"
-									id="player-btn-play">Search and play</button>
+							<div class="form-group row">
+								<div class="col-md-1">
+									<label for="formControlRange">Volume</label>
+								</div>
+								<div class="col-md-11">
+									<input class="form-control-range" id="player-volume"
+										type="range" min="0" max="100" step="1" value="100">
+								</div>
 							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="form-row">
-							<div class="col">
-								<button type="button" class="btn btn-dark btn-block"
-									id="player-btn-resume">Resume</button>
-							</div>
-							<div class="col">
-								<button type="button" class="btn btn-dark btn-block"
-									id="player-btn-pause">Pause</button>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="form-row">
-							<div class="col">
-								<label>Lyrics</label>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="form-row">
-							<div class="col">
-								<p id="player-lyrics"></p>
-							</div>
+							<button class="btn btn-dark btn-block" data-toggle="collapse"
+								data-target="#player-lyrics" aria-expanded="false"
+								aria-controls="player-lyrics">Toggle lyrics</button>
+							<div class="collapse p-3" id="player-lyrics"></div>
 						</div>
 					</div>
 				</div>
@@ -123,49 +109,76 @@
 					<div class="card">
 						<div class="card-header" id="profile-social-header">
 							<h2 class="mb-0">
-								<button class="btn btn-link" type="button">My social</button>
+								<button class="btn btn-link" type="button"
+									id="profile-social-title"></button>
 							</h2>
 						</div>
 
-						<div id="profile-social">
-							<div class="card-body">
-								<a class="btn btn-spotify btn-lg btn-block"
-									id="profile-social-spotify-btn" href="/auth/spotify"
-									role="button"> <span class="icon icon-spotify mr-2"></span>
-									Log in with Spotify
-								</a> <a class="btn btn-facebook btn-lg btn-block"
-									id="profile-social-facebook-btn" href="/auth/facebook"
-									role="button"> <span class="icon icon-facebook mr-2"></span>
-									Log in with Facebook
-								</a>
-							</div>
+						<div class="card-body" id="profile-social">
+							<a class="btn btn-spotify btn-lg btn-block"
+								id="profile-social-spotify-btn" href="/auth/spotify"
+								role="button"> <span class="icon icon-spotify mr-2"></span>
+								Log in with Spotify
+							</a> <a class="btn btn-facebook btn-lg btn-block"
+								id="profile-social-facebook-btn" href="/auth/facebook"
+								role="button"> <span class="icon icon-facebook mr-2"></span>
+								Log in with Facebook
+							</a>
 						</div>
 					</div>
 				</div>
 				<div class="tab-pane fade" id="airport" role="tabpanel"
 					aria-labelledby="airport-tab">
-					<div class="card">
-						<div class="card-header" id="profile-airport-header">
-							<h2 class="mb-0">
-								<button class="btn btn-link" type="button">My airport</button>
-							</h2>
+					<div class="card" id="profile-airport-create">
+						<div class="card-header">Create your airport</div>
+						<div class="card-body">
+							<p class="card-text" id="profile-airport-create-status"></p>
+							<button class="btn btn-primary btn-block" type="button"
+								id="profile-airport-create-btn">Create airport</button>
 						</div>
-
-						<div id="profile-airport">
+					</div>
+					<div class="accordion">
+						<div class="card" id="profile-airport-manage">
+							<div class="card-header">
+								<h2 class="mb-0">
+									<button class="btn btn-link">My airport status</button>
+								</h2>
+							</div>
 							<div class="card-body">
-								<div id="profile-airport-create">
-									<label id="profile-airport-create-status"></label>
-									<button class="btn btn-success btn-block" type="button"
-										id="profile-airport-create-btn">Create airport</button>
-								</div>
-								<div id="profile-airport-manage">
-									<p class="text-center">Update airport playlist</p>
-									<button class="btn btn-primary btn-block" type="button"
-										id="profile-airport-manage-update-btn">Reload my
-										playlists</button>
-									<div class="list-group" id="profile-airport-manage-playlists">
+								<p class="card-text" id="profile-airport-manage-status"></p>
+								<div class="card playlist">
+									<div class="row no-gutters">
+										<div class="col-4">
+											<img src="" class='card-img'
+												id="profile-airport-manage-playlist-image">
+										</div>
+										<div class="col-8">
+											<div class="card-body">
+												<p class="card-text"
+													id="profile-airport-manage-playlist-name"></p>
+											</div>
+										</div>
 									</div>
 								</div>
+								<hr>
+								<button class="btn btn-primary btn-block" type="button"
+									id="profile-airport-manage-travel-btn">Go to my
+									airport</button>
+							</div>
+						</div>
+						<div class="card" id="profile-airport-playlists">
+							<div class="card-header">
+								<h2 class="mb-0">
+									<button class="btn btn-link">Load a playlist</button>
+								</h2>
+							</div>
+							<div class="card-body">
+								<p class="card-text" id="profile-airport-playlists-status"></p>
+								<button class="btn btn-primary btn-block" type="button"
+									id="profile-airport-playlists-update-btn">Load my
+									playlists</button>
+								<hr>
+								<ul class="list-group" id="profile-airport-playlists-list"></ul>
 							</div>
 						</div>
 					</div>

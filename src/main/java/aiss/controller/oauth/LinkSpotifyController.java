@@ -37,7 +37,7 @@ public class LinkSpotifyController extends HttpServlet {
 			response.sendRedirect("/registerUser");
 			return;
 		}
-		UserProfile profile = new SpotifyResource(spotifyToken).getUserProfile();
+		UserProfile profile = SpotifyResource.fromToken(spotifyToken).getUserProfile();
 		if (profile == null) {
 			response.sendRedirect("/registerUser");
 			return;

@@ -13,21 +13,22 @@ body {
 	background-position: center;
 	background-size: 100%;
 	border: none;
-	width: 45px;
-	height: 45px;
-	top: 15px;
-	right: 15px;
-	z-index: 2001;
+	width: 30px;
+	height: 30px;
+	top: 5px;
+	right: 5px;
+	z-index: 1049;
 }
 
 .overlay {
+	display: flex;
 	position: fixed;
     top: 0px;
     left: 0px;
     right: 0px;
     bottom: 0px;
     background-color: rgba(255, 255, 255, 0.8);
-    z-index: 2000;
+    z-index: 1000;
 }
 
 .overlay.overlay-hidden {
@@ -35,29 +36,72 @@ body {
 }
 
 .overlay-content {
- 	height: 100%;  
+	display: flex;
+	flex-flow: column;
 }
 
-.overlay-header {
-	margin-top: 25px;
-	margin-bottom: 25px;
+#overlay-tabs {
+	flex: 0 0 41px;
 }
 
 #overlay-tabs-content {
-	height: 100% !important;
-	overflow-y: auto !important;
-    overflow-x: hidden;
+	flex: 1 1 auto;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.music-player .card-img {
+	width: 100px;
+	height: 100px;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+
+.music-player .btn-group .btn {
+	border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
 }
 
 #chat-messages {
-	padding-bottom: 200px;
+	padding-bottom: 75px;
 }
 
-@media (min-width: 700px) {
+#chat-messages .list-group-item {
+	word-wrap: break-word;
+}
+
+.playlist .card-img {
+	width: 75px;
+	height: 75px;
+}
+
+@media only screen and (max-width: 576px) {
+	#overlay-toggler {
+		width: 30px;
+		height: 30px;
+	}
+}
+
+@media only screen and (min-width: 576px) {
+
+}
+
+@media only screen and (min-width: 800px) {
+	#overlay-toggler {
+		width: 35px;
+		height: 35px;
+	}
+}
+
+@media only screen and (min-width: 1100px) {
 	#overlay-toggler {
 		width: 50px;
 		height: 50px;
-		top: 25px;
-		right: 25px;
+		top: 15px;
+		right: 15px;
 	}
 }
+
+@media only screen and (min-width: 1200px) {
+
+} 

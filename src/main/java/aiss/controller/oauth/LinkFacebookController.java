@@ -37,7 +37,7 @@ public class LinkFacebookController extends HttpServlet {
 			response.sendRedirect("/registerUser");
 			return;
 		}
-		UserProfile profile = new FacebookResource(facebookToken).getUserProfile();
+		UserProfile profile = FacebookResource.fromToken(facebookToken).getUserProfile();
 		if (profile == null) {
 			response.sendRedirect("/registerUser");
 			return;

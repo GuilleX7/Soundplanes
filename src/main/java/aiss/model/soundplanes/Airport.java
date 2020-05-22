@@ -3,6 +3,7 @@ package aiss.model.soundplanes;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Cache;
@@ -13,6 +14,7 @@ import com.googlecode.objectify.annotation.Index;
 import aiss.model.ircchat.Channel;
 import aiss.model.resource.IrcChatResource;
 import aiss.model.resource.UserResource;
+import aiss.model.spotify.Playlist;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -20,30 +22,35 @@ import aiss.model.resource.UserResource;
 public class Airport {
 	@Id
 	private String uuid;
+	@JsonIgnore
 	private Ref<User> owner;
+	@JsonIgnore
 	private Channel channel;
 	@Index
 	private Long creationTimestamp;
+	private Playlist playlistInfo;
 	
 	public static Airport of(String ownerUuid) {
-		return new Airport(ownerUuid, UserResource.getUser(ownerUuid), IrcChatResource.createChannel(UUID.randomUUID().toString()), Instant.now().getEpochSecond());
+		return new Airport(ownerUuid, UserResource.getUser(ownerUuid), IrcChatResource.createChannel(UUID.randomUUID().toString()), Instant.now().getEpochSecond(), null);
 	}
 	
 	public static Airport of(User owner) {
-		return new Airport(owner.getUuid(), owner, IrcChatResource.createChannel(UUID.randomUUID().toString()), Instant.now().getEpochSecond());
+		return new Airport(owner.getUuid(), owner, IrcChatResource.createChannel(UUID.randomUUID().toString()), Instant.now().getEpochSecond(), null);
 	}
 	
-	private Airport(String uuid, User owner, Channel channel, Long creationTimestamp) {
+	private Airport(String uuid, User owner, Channel channel, Long creationTimestamp, Playlist playlistInfo) {
 		this.uuid = uuid;
 		this.setOwner(owner);
 		this.channel = channel;
 		this.creationTimestamp = creationTimestamp;
+		this.playlistInfo = playlistInfo;
 	}
 	
 	private Airport() {
 		this.uuid = null;
 		this.owner = null;
 		this.creationTimestamp = null;
+		this.playlistInfo = null;
 	}
 
 	public String getUuid() {
@@ -76,6 +83,18 @@ public class Airport {
 
 	public void setChannel(Channel channel) {
 		this.channel = channel;
+	}
+
+	public Playlist getPlaylistInfo() {
+		return playlistInfo;
+	}
+
+	public void setPlaylistInfo(Playlist playlistInfo) {
+		this.playlistInfo = playlistInfo;
+	}
+	
+	public Boolean isPlaylistLoaded() {
+		return this.playlistInfo != null;
 	}
 
 	@Override

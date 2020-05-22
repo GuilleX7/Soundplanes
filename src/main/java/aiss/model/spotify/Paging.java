@@ -44,5 +44,5 @@ public class Paging<T> {
 	}
 
 	public static class PagingPlaylist extends Paging<Playlist> {}
-	public static class PagingTrack extends Paging<Track> {}
+	public static class PagingPlaylistTrack extends Paging<PlaylistTrack> {}
 }

@@ -109,7 +109,7 @@ public class ClientAirportLandingController extends HttpServlet {
 		}
 		
 		String airportUuid = request.getParameter("airportUUID");
-		if (user.isLanded() && user.getLandedOn() != airportUuid) {
+		if (user.isLanded() && !user.getLandedOn().contentEquals(airportUuid)) {
 			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
 			cr.writeTo(response);
 			return;

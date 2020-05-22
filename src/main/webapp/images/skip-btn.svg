@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="Layer"
+   enable-background="new 0 0 512 512"
+   height="512"
+   viewBox="0 0 512 512"
+   width="512"
+   version="1.1"
+   sodipodi:docname="skip-btn.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata30">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs28" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     id="namedview26"
+     showgrid="false"
+     inkscape:zoom="1.578125"
+     inkscape:cx="256"
+     inkscape:cy="256"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer" />
+  <path
+     d="m234.035 511.997c-4.387 0-8.814-.853-13.046-2.605-12.751-5.282-20.989-17.612-20.989-31.413v-443.958c0-13.801 8.238-26.131 20.989-31.412 12.749-5.28 27.294-2.389 37.053 7.37.13.13.259.262.386.395l212.221 222.208c.049.051.097.103.146.154 12.241 13.046 12.241 33.483 0 46.529-.049.052-.097.104-.146.154l-212.221 222.208c-.127.133-.256.265-.386.395-6.52 6.519-15.178 9.975-24.007 9.975zm219.257-249.154h.01z"
+     id="path21"
+     style="fill:#ececec" />
+  <path
+     d="m124 512h-48c-24.262 0-44-19.738-44-44v-424c0-24.262 19.738-44 44-44h48c24.262 0 44 19.738 44 44v424c0 24.262-19.738 44-44 44zm0-464h.01z"
+     id="path23"
+     style="fill:#ececec" />
+</svg>

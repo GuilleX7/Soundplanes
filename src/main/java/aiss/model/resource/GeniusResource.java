@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
@@ -25,7 +26,7 @@ public class GeniusResource {
 	private static final String API_KEY = "DWMo06PyLfXWFF29D7Rb2M7wsyMiu2TGKIRe63LJnhfVHeYRibGuePH5ramU_W84";
 
 	public static List<Song> searchSong(String title) throws ResourceException {
-		String searchURL = String.format("%s/search/", API_URL);
+		String searchURL = String.format("%s/search", API_URL);
 		ClientResource cr = new ClientResource(searchURL);
 		cr.addQueryParameter("q", title);
 		
@@ -71,14 +72,23 @@ public class GeniusResource {
 			log.warning(song.getUrl() + " couldn't be fetched");
 			return lyrics;
 		}
-
+		
 		Elements sections = doc.body().getElementsByClass("lyrics");
-		if (sections.size() < 1) {
-			log.warning("Couldn't fetch lyrics for " + song.getTitle());
-			return lyrics;
+		if (sections.size() > 0) {
+			lyrics = sections.get(0).wholeText().trim();
+		} else {
+			Element section = doc.body().getElementById("lyrics");
+			if (section != null) {
+				while (section.nextElementSibling() != null) {
+					section = section.nextElementSibling();
+					lyrics += section.html();
+				}
+			} else {
+				log.warning("Couldn't fetch lyrics for " + song.getTitle() + " at " + song.getUrl());
+				System.out.println(doc.html());
+			}
 		}
-
-		lyrics = sections.get(0).wholeText().trim();
+		
 		return lyrics;
 	}
 }

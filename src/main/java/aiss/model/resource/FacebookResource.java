@@ -12,11 +12,15 @@ import aiss.model.facebook.UserProfile;
 public class FacebookResource {
 	private static final Logger log = Logger.getLogger(SpotifyResource.class.getName());
 
-    private final String ACCESS_TOKEN;
+    private final String accessToken;
     private final static String API_URL = "https://graph.facebook.com";
 
-    public FacebookResource(String access_token) {
-        this.ACCESS_TOKEN = access_token;
+    public static FacebookResource fromToken(String accessToken) {
+    	return new FacebookResource(accessToken);
+    }
+    
+    private FacebookResource(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public UserProfile getUserProfile() {
@@ -24,7 +28,7 @@ public class FacebookResource {
         ClientResource cr = new ClientResource(url);
 
         ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
-        chr.setRawValue(ACCESS_TOKEN);
+        chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
 
         UserProfile profile = null;

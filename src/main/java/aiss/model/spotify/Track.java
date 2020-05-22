@@ -1,12 +1,16 @@
 package aiss.model.spotify;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Track {
+	private static Pattern nameSimplifier = Pattern.compile("([^-()]+)");
+	
 	private Album album;
 	private List<Artist> artists;
 	private String name;
@@ -38,13 +42,17 @@ public class Track {
 	
 	@JsonIgnore
 	public String getFullName() {
-		String fullName = "";
-		int i = 0;
-		for (Artist artist : this.getArtists()) {
-			if (i != 0) fullName.concat(" & ");
-			fullName.concat(artist.getName());
+		Matcher m = Track.nameSimplifier.matcher(this.getName());
+		String name = this.getName();
+		if (m.find()) {
+			name = m.group(1);
 		}
-		return fullName;
+		
+		String artists = this.getArtists().get(0).getName();
+		for (int i = 1; i < this.getArtists().size(); i++) {
+			artists.concat(" & " + this.getArtists().get(i).getName());
+		}
+		return this.getArtists().get(0).getName() + " - " + name;
 	}
 	
 	public String getUri() {

@@ -21,7 +21,7 @@ public class AirportPlaylist {
 		return new AirportPlaylist(airportUuid, new ArrayList<Track>());
 	}
 	
-	public static AirportPlaylist of(List<Track> tracks, String airportUuid) {
+	public static AirportPlaylist of(String airportUuid, List<Track> tracks) {
 		return new AirportPlaylist(airportUuid, tracks);
 	}
 	
@@ -44,7 +44,7 @@ public class AirportPlaylist {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-
+	
 	public List<Track> getTracks() {
 		return tracks;
 	}
