@@ -43,14 +43,14 @@ public class GeniusResource {
 			request = cr.get(SearchRequest.class);
 		} catch (ResourceException re) {
 			log.warning(re.getMessage());
-			return songs;
+			return null;
 		}
 
 		Meta meta = request.getMeta();
 		if (meta.getStatus() != 200) {
 			log.warning(String.format("Genius API returned error code %d: %s", meta.getStatus(),
 					(meta.getMessage() == null) ? "" : meta.getMessage()));
-			return songs;
+			return null;
 		}
 		
 		List<Hit> hits = request.getResponse().getHits();
@@ -86,7 +86,6 @@ public class GeniusResource {
 				}
 			} else {
 				log.warning("Couldn't fetch lyrics for " + song.getTitle() + " at " + song.getUrl());
-				System.out.println(doc.html());
 			}
 		}
 		

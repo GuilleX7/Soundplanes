@@ -95,7 +95,6 @@ public class SpotifyResource {
             return null;
         }
         
-        System.out.println(page);
         tracks.addAll(page.getItems());
         for (int offset = page.getOffset() + page.getLimit(); offset < page.getTotal(); offset += page.getLimit()) {
         	cr = new ClientResource(url);
@@ -110,7 +109,6 @@ public class SpotifyResource {
                 log.warning(url);
                 return null;
             }
-        	System.out.println(page);
         	tracks.addAll(page.getItems());
         }
         
