@@ -7,6 +7,11 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Song {
+	public static Song of(String fullTitle, Integer id, String songArtThumnailUrl, String title,
+			String titleWithFeatured, String url) {
+		return new Song(fullTitle, id, songArtThumnailUrl, title, titleWithFeatured, url);
+	}
+
 	@JsonProperty("full_title")
 	private String fullTitle;
 	private Integer id;
@@ -17,6 +22,19 @@ public class Song {
 	private String titleWithFeatured;
 	private String url;
 	
+	
+	
+	private Song(String fullTitle, Integer id, String songArtThumnailUrl, String title, String titleWithFeatured,
+			String url) {
+		super();
+		this.fullTitle = fullTitle;
+		this.id = id;
+		this.songArtThumnailUrl = songArtThumnailUrl;
+		this.title = title;
+		this.titleWithFeatured = titleWithFeatured;
+		this.url = url;
+	}
+
 	@JsonGetter("full_title")
 	public String getFullTitle() {
 		return fullTitle;

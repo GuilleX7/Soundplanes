@@ -13,9 +13,8 @@ import aiss.model.geocoding.Location;
 public class GeocodingResource_JUnitTest {
 	@Test
 	public void geocodeAddressTest() throws UnsupportedEncodingException {
-		String address= "Patata";
-		GeocodingResource geocoding= new GeocodingResource();
-		List<Location> geocodingResults= geocoding.geocodeAddress(address);
+		String address= "Spain";
+		List<Location> geocodingResults= GeocodingResource.geocodeAddress(address);
 		
 		assertNotNull("The search returned null", geocodingResults);
 		assertFalse("There are no location in: "+address,  geocodingResults.isEmpty());
@@ -23,10 +22,9 @@ public class GeocodingResource_JUnitTest {
 	
 	@Test
 	public void geocodeCountryStateTest() throws UnsupportedEncodingException {
-		String state= "Patata";
-		String country= "Huerto";
-		GeocodingResource geocoding= new GeocodingResource();
-		List<Location> geocodingResults= geocoding.geocodeCountryState(state, country);
+		String state= "Seville";
+		String country= "Spain";
+		List<Location> geocodingResults= GeocodingResource.geocodeCountryState(state, country);
 		
 		assertNotNull("The search returned null", geocodingResults);
 		assertFalse("There are no location in: "+state+","+country+".",  geocodingResults.isEmpty());

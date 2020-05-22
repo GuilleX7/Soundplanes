@@ -1,6 +1,6 @@
 package aiss.model.resource;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
 
@@ -11,15 +11,14 @@ import aiss.model.facebook.UserProfile;
 
 public class FacebookResource_JUnitTest {
 	
-	/*
+	
 	@Test
 	public void getUserProfileTest() throws UnsupportedEncodingException {
-		String access_token="jeje";
-		FacebookResource userFb = new FacebookResource(access_token);
+		String access_token="lgefjhge";
+		FacebookResource userFb = FacebookResource.fromToken(access_token);
 		UserProfile userFbResults= userFb.getUserProfile();
-		
-		assertNotNull("The search returned null", userFbResults);	
+		assertNull("The search doesn't returned null", userFbResults);	
 	}
-	*/
+	
 
 }
