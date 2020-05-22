@@ -46,20 +46,22 @@
 							</h2>
 						</div>
 
-						<div class="card music-player p-3" id="player-track">
+						<div class="card-body music-player p-3" id="player-track">
 							<div class="row no-gutters d-flex flex-nowrap">
-								<div class="col pl-3 py-3 d-flex flex-column flex-shrink-0 flex-grow-0 justify-content-center">
+								<div
+									class="col pl-3 py-3 d-flex flex-column flex-shrink-0 flex-grow-0 justify-content-center">
 									<img src="/images/unknown.png" class="card-img"
 										id="player-track-image">
 								</div>
-								<div class="col d-flex flex-column justify-content-center text-break">
+								<div
+									class="col d-flex flex-column justify-content-center text-break">
 									<div class="card-body">
 										<h5 class="card-title" id="player-track-name"></h5>
 										<p class="card-text" id="player-track-artist"></p>
 									</div>
 								</div>
 							</div>
-							<div class="btn-group mb-3" role="group">
+							<div class="btn-group d-flex flex-nowrap" role="group">
 								<button type="button" class="btn btn-dark" id="player-play-btn">
 									<img src="/images/play-btn.svg" width="25" height="25">
 								</button>
@@ -69,19 +71,28 @@
 								<button type="button" class="btn btn-dark" id="player-skip-btn">
 									<img src="/images/skip-btn.svg" width="25" height="25">
 								</button>
+								<button class="btn btn-dark" data-toggle="collapse"
+									data-target="#player-lyrics" aria-expanded="false"
+									aria-controls="player-lyrics">
+									<img src="/images/lyrics-btn.svg" width="25" height="25">
+								</button>
 							</div>
-							<div class="form-group row">
-								<div class="col-md-1">
-									<label for="formControlRange">Volume</label>
+							<div class="btn-group py-2 bg-dark d-flex flex-nowrap">
+								<div
+									class="col d-flex flex-column justify-content-center flex-shrink-0 flex-grow-0">
+									<img class="ml-3" src="/images/volume-icon.svg" width="25"
+										height="25">
 								</div>
-								<div class="col-md-11">
+								<div class="col d-flex flex-column justify-content-center">
 									<input class="form-control-range" id="player-volume"
 										type="range" min="0" max="100" step="1" value="100">
 								</div>
 							</div>
-							<button class="btn btn-dark btn-block" data-toggle="collapse"
-								data-target="#player-lyrics" aria-expanded="false"
-								aria-controls="player-lyrics">Toggle lyrics</button>
+							<div class="btn-group d-flex flex-nowrap" role="group">
+								<button type="button" class="btn btn-secondary"
+									id="player-export-btn">Export this playlist to my
+									Spotify account</button>
+							</div>
 							<div class="collapse p-3" id="player-lyrics"></div>
 						</div>
 					</div>
@@ -92,12 +103,12 @@
 					</ul>
 					<div class="fixed-bottom">
 						<form class="container-sm py-3 bg-light" id="chat-form">
-							<div class="row">
-								<div class="col-8 col-md-10">
+							<div class="row d-flex flex-nowrap">
+								<div class="col ">
 									<input type="text" class="form-control" id="chat-input"
 										placeholder="Enter your message">
 								</div>
-								<div class="col-4 col-md-2">
+								<div class="col">
 									<button class="btn btn-primary btn-block" id="chat-send-btn">Send</button>
 								</div>
 							</div>
@@ -147,12 +158,12 @@
 							<div class="card-body">
 								<p class="card-text" id="profile-airport-manage-status"></p>
 								<div class="card playlist">
-									<div class="row no-gutters">
-										<div class="col-4">
+									<div class="row no-gutters d-flex flew-nowrap text-break">
+										<div class="col pl-3 py-3 d-flex flex-column justify-content-center flex-shrink-0 flex-grow-0">
 											<img src="" class='card-img'
 												id="profile-airport-manage-playlist-image">
 										</div>
-										<div class="col-8">
+										<div class="col d-flex flex-column justify-content-center text-break">
 											<div class="card-body">
 												<p class="card-text"
 													id="profile-airport-manage-playlist-name"></p>

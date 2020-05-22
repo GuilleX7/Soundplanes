@@ -21,7 +21,6 @@ import aiss.model.soundplanes.AirportPlaylist;
 import aiss.model.soundplanes.User;
 import aiss.model.soundplanes.client.ClientResponse;
 import aiss.model.soundplanes.client.ClientResponseStatus;
-import aiss.model.spotify.Paging;
 import aiss.model.spotify.Playlist;
 import aiss.model.spotify.PlaylistTrack;
 import aiss.model.spotify.Track;
@@ -153,14 +152,12 @@ public class ClientAirportPlaylistController extends HttpServlet {
 		String playlistId = request.getParameter("playlistId");
 		if (playlistId == null) {
 			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
-			cr.setData("playlistId");
 			cr.writeTo(response);
 			return;
 		}
 		
 		if (user.getSpotifyId() == null) {
 			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
-			cr.setData("SpotifyId");
 			cr.writeTo(response);
 			return;
 		}
@@ -168,7 +165,6 @@ public class ClientAirportPlaylistController extends HttpServlet {
 		String spotifyToken = (String) request.getSession().getAttribute("Spotify-token");
 		if (spotifyToken == null) {
 			cr.setStatus(ClientResponseStatus.BAD_REQUEST);
-			cr.setData("Spotify-token");
 			cr.writeTo(response);
 			return;
 		}
@@ -182,7 +178,7 @@ public class ClientAirportPlaylistController extends HttpServlet {
 			return;
 		}
 		
-		Paging<PlaylistTrack> playlistTracks = sr.getPlaylistTracks(playlist);
+		List<PlaylistTrack> playlistTracks = sr.getPlaylistTracks(playlist);
 		if (playlistTracks == null) {
 			cr.setStatus(ClientResponseStatus.SEE_OTHER);
 			cr.setData("/auth/spotify");
@@ -191,7 +187,7 @@ public class ClientAirportPlaylistController extends HttpServlet {
 		}
 		
 		List<Track> tracks = new ArrayList<Track>();
-		for (PlaylistTrack playlistTrack : playlistTracks.getItems()) {
+		for (PlaylistTrack playlistTrack : playlistTracks) {
 			tracks.add(playlistTrack.getTrack());
 		}
 		

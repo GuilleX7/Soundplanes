@@ -72,16 +72,19 @@ public class IrcChatResource {
 		return token;
 	}
 	
-	public static void invalidateToken(String token) {
+	public static Boolean invalidateToken(String token) {
 		ClientResource cr = new ClientResource(String.format("%stoken", API_URL));
 		cr.addQueryParameter("token", token);
+		
+		Boolean success = true;
 		
 		try {
 			cr.delete();
 		} catch (ResourceException e) {
 			log.warning("Couldn't invalidate token " + token);
+			success = false;
 		}
 		
-		return; 
+		return success; 
 	}
 }

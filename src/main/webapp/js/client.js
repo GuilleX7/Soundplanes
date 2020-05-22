@@ -574,7 +574,7 @@ class OverlayProfileAirport {
 	
 	putPlaylist(playlist) {
 		this.playlists.append("<li class='list-group-item list-group-item-action playlist user-playlist'>" +
-				"<div class='card' data-id='" + playlist.id + "'><div class='row no-gutters' data-id='" + playlist.id + "'><div class='col-4' data-id='" + playlist.id + "'><img src='" + playlist.images[0].url + "' class='card-img' data-id='" + playlist.id + "'></div><div class='col-8' data-id='" + playlist.id + "'><div class='card-body' data-id='" + playlist.id + "'><p class='card-text' data-id='" + playlist.id + "'>" + playlist.name +  "</p></div></div></div></div>"
+				"<div class='row no-gutters d-flex flew-nowrap text-break' data-id='" + playlist.id + "'><div class='col d-flex flex-column justify-content-center flex-shrink-0 flex-grow-0' data-id='" + playlist.id + "'><img src='" + playlist.images[0].url + "' class='card-img' data-id='" + playlist.id + "'></div><div class='col d-flex flex-column justify-content-center' data-id='" + playlist.id + "'><div class='card-body' data-id='" + playlist.id + "'><p class='card-text' data-id='" + playlist.id + "'>" + playlist.name +  "</p></div></div></div>"
 				+ "</li>");
 	}
 	
@@ -947,6 +947,7 @@ class OverlayPlayer {
 		this.pauseBtn = $("#" + id + "-pause-btn");
 		this.skipBtn = $("#" + id + "-skip-btn");
 		this.volume = $("#" + id + "-volume");
+		this.exportBtn = $("#" + id + "-export-btn");
 		this.lyrics = $("#" + id + "-lyrics");
 		
 		this.playBtn.on("click", () => {
@@ -1010,6 +1011,11 @@ class OverlayPlayer {
 			return artist.name;
 		}).join(" & ");
 		const fullName = data.track.name + " - " + artists;
+	
+		this.exportBtn.removeClass("disabled");
+		this.exportBtn.on("click", () => {
+			this.exportPlaylist();
+		})
 		
 		this.trackName.text(data.track.name);
 		this.trackArtist.text(artists);
@@ -1034,6 +1040,28 @@ class OverlayPlayer {
 			airportRepository.deleteAirport(xhr.responseJSON);
 		}
 		User.reloadClientUserProfile();
+	}
+	
+	onExportPlaylistSuccess(response, message, xhr) {
+		if (xhr.status == 201) {
+			this.exportBtn.text("Playlist successfully exported!");
+		} else {
+			this.exportBtn.text("Playlist seems to be empty...");
+		}
+	}
+	
+	onExportPlaylistFailed(xhr, message, response) {
+		if (xhr.status == 303) {
+			this.exportBtn.text("Sorry, but we need to refresh your Spotify token. You will be redirected in 5 seconds.");
+			setTimeout(() => {
+				window.location.replace(xhr.responseJSON);
+			}, 5000);
+		} else if (xhr.status == 404) {
+			airportRepository.deleteAirport(xhr.responseJSON);
+			User.reloadClientUserProfile();
+		} else {
+			this.exportBtn.text("Woops! we weren't able to export this playlist");
+		}
 	}
 	
 	isReady() {
@@ -1079,7 +1107,9 @@ class OverlayPlayer {
 	}
 	
 	setVolume(volume) {
+		if (!this.isReady()) return -1;
 		this.player.setVolume(volume);
+		return 0;
 	}
 	
 	nextVideo() {
@@ -1098,6 +1128,9 @@ class OverlayPlayer {
 		this.pause();
 		this.emptyTrack();
 		this.trackName.text("(FETCHING TRACK...)");
+		this.exportBtn.text("Export this playlist to my Spotify account");
+		this.exportBtn.addClass("disabled");
+		this.exportBtn.off("click");
 		
 		$.getJSON("/client/airport/playlist")
 		.done((response, message, xhr) => {
@@ -1105,6 +1138,21 @@ class OverlayPlayer {
 		})
 		.fail((xhr, message, error) => {
 			this.onPlayerTrackFailed(xhr, message, error);
+		});
+	}
+	
+	exportPlaylist() {
+		this.exportBtn.text("Exporting...");
+		
+		$.ajax("/client/user/playlist", {
+			method: "PUT",
+			dataType: "json"
+		})
+		.done((response, message, xhr) => {
+			this.onExportPlaylistSuccess(response, message, xhr);
+		})
+		.fail((xhr, message, error) => {
+			this.onExportPlaylistFailed(xhr, message, error);
 		});
 	}
 	

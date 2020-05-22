@@ -6,8 +6,11 @@ import aiss.model.spotify.PlaylistTrack;
 import aiss.model.spotify.Track;
 import aiss.model.spotify.UserProfile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.restlet.data.ChallengeResponse;
@@ -29,7 +32,7 @@ public class SpotifyResource {
         this.accessToken = accessToken;
     }
 
-    public Paging<Playlist> getPlaylists(Integer offset, Integer limit) {
+    public List<Playlist> getPlaylists() {
         String url = API_URL + "/me/playlists";
         ClientResource cr = new ClientResource(url);
 
@@ -37,27 +40,41 @@ public class SpotifyResource {
         chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
 
-        Paging<Playlist> playlists = null;
+        List<Playlist> playlists = new ArrayList<Playlist>();
+        Paging<Playlist> page = null;
         
+        cr.addQueryParameter("offset", "0");
+        cr.addQueryParameter("limit", "50");
         try {
-            playlists = cr.get(Paging.PagingPlaylist.class);
+            page = cr.get(Paging.PagingPlaylist.class);
         } catch (ResourceException re) {
             log.warning("Error when retrieving Spotify playlists: " + cr.getResponse().getStatus());
             log.warning(url);
+            return null;
+        }
+        
+        playlists.addAll(page.getItems());
+        for (int offset = page.getOffset() + page.getLimit(); offset < page.getTotal(); offset += page.getLimit()) {
+        	cr = new ClientResource(url);
+            cr.setChallengeResponse(chr);
+        	
+        	cr.addQueryParameter("offset", String.valueOf(offset));
+        	cr.addQueryParameter("limit", String.valueOf(page.getLimit()));
+        	try {
+                page = cr.get(Paging.PagingPlaylist.class);
+            } catch (ResourceException re) {
+                log.warning("Error when retrieving Spotify playlists: " + cr.getResponse().getStatus());
+                log.warning(url);
+                return null;
+            }
+        	
+        	playlists.addAll(page.getItems());
         }
         
         return playlists;
     }
     
-    public Paging<Playlist> getPlaylists(Integer offset) {
-    	return getPlaylists(offset, 20);
-    }
-    
-    public Paging<Playlist> getPlaylists() {
-    	return getPlaylists(0, 20);
-    }
-    
-    public Paging<PlaylistTrack> getPlaylistTracks(Playlist playlist, Integer offset, Integer limit) {
+    public List<PlaylistTrack> getPlaylistTracks(Playlist playlist) {
     	String url = String.format("%s/playlists/%s/tracks", API_URL, playlist.getId());
         ClientResource cr = new ClientResource(url);
 
@@ -65,24 +82,39 @@ public class SpotifyResource {
         chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
 
-        Paging<PlaylistTrack> tracks = null;
+        List<PlaylistTrack> tracks = new ArrayList<PlaylistTrack>();
+        Paging<PlaylistTrack> page = null;
         
+        cr.addQueryParameter("offset", "0");
+        cr.addQueryParameter("limit", "100");
         try {
-            tracks = cr.get(Paging.PagingPlaylistTrack.class);
+            page = cr.get(Paging.PagingPlaylistTrack.class);
         } catch (ResourceException re) {
-            log.warning("Error when retrieving Spotify playlist tracks: " + cr.getResponse().getStatus());
+            log.warning("Error when retrieving Spotify tracks: " + cr.getResponse().getStatus());
             log.warning(url);
+            return null;
+        }
+        
+        System.out.println(page);
+        tracks.addAll(page.getItems());
+        for (int offset = page.getOffset() + page.getLimit(); offset < page.getTotal(); offset += page.getLimit()) {
+        	cr = new ClientResource(url);
+            cr.setChallengeResponse(chr);
+            
+        	cr.addQueryParameter("offset", String.valueOf(offset));
+        	cr.addQueryParameter("limit", String.valueOf(page.getLimit()));
+        	try {
+                page = cr.get(Paging.PagingPlaylistTrack.class);
+            } catch (ResourceException re) {
+                log.warning("Error when retrieving Spotify tracks: " + cr.getResponse().getStatus());
+                log.warning(url);
+                return null;
+            }
+        	System.out.println(page);
+        	tracks.addAll(page.getItems());
         }
         
         return tracks;
-    }
-    
-    public Paging<PlaylistTrack> getPlaylistTracks(Playlist playlist, Integer offset) {
-    	return getPlaylistTracks(playlist, offset, 100);
-    }
-    
-    public Paging<PlaylistTrack> getPlaylistTracks(Playlist playlist) {
-    	return getPlaylistTracks(playlist, 0, 100);
     }
     
     public Playlist getPlaylist(String playlistId) {
@@ -105,8 +137,8 @@ public class SpotifyResource {
         return playlist;
     }
     
-    public Playlist createEmptyPlaylist(UserProfile user, String name) {
-    	String url = String.format("%s/users/%s/playlists", API_URL, user.getId());
+    public Playlist createEmptyPlaylist(String userId, String name, Boolean isPublic, String description) {
+    	String url = String.format("%s/users/%s/playlists", API_URL, userId);
         ClientResource cr = new ClientResource(url);
 
         ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
@@ -115,8 +147,13 @@ public class SpotifyResource {
 
         Playlist playlist = null;
         
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("name", name);
+        query.put("public", isPublic);
+        query.put("description", description);
+        
         try {
-            playlist = cr.post(String.format("name=%s", name), Playlist.class);
+            playlist = cr.post(query, Playlist.class);
         } catch (ResourceException re) {
             log.warning("Error when creating a new Spotify playlist: " + cr.getResponse().getStatus());
             log.warning(url);
@@ -125,11 +162,7 @@ public class SpotifyResource {
         return playlist;
     }
     
-    public Playlist createEmptyPlaylist(UserProfile user) {
-    	return createEmptyPlaylist(user, user.getDisplayName() + "'s Soundplanes playlist");
-    }
-    
-    public Boolean putTracksInPlaylist(Playlist playlist, List<Track> tracks) {
+    public Boolean putTracksInPlaylist(Playlist playlist, List<Track> tracks) throws IOException {
     	String url = String.format("%s/playlists/%s/tracks", API_URL, playlist.getId());
     	ClientResource cr = new ClientResource(url);
     	
@@ -137,24 +170,27 @@ public class SpotifyResource {
         chr.setRawValue(accessToken);
         cr.setChallengeResponse(chr);
     	
-        Boolean result = true;
+        Boolean success = true;
         List<String> uris;
         
-        try {
-        	for (int offset = 0; offset < tracks.size() / 100; offset++) {
-        		uris = new ArrayList<String>();
-        		for (Track track : tracks.subList(offset, offset + 100)) {
-        			uris.add(track.getUri());
-        		}
-        		cr.post(uris);
-        	}
-        } catch (ResourceException re) {
-        	log.warning("Error when adding Spotify tracks to a playlist: " + cr.getResponse().getStatus());
-            log.warning(url);
-            result = false;
-        }
+    	for (int offset = 0, limit; offset < tracks.size(); offset += 100) {
+    		uris = new ArrayList<String>();
+    		limit = Math.min(offset + 100, tracks.size());
+    		for (int i = offset; i < limit; i++) {
+    			uris.add(tracks.get(i).getUri());
+    		}
+    		
+    		try {
+    			cr.post(uris);
+            } catch (ResourceException re) {
+            	log.warning("Error when adding Spotify tracks to a playlist: " + cr.getResponse().getStatus());
+                log.warning(url);
+                success = false;
+                break;
+            }
+    	}
         
-		return result;
+		return success;
     }
 
     public UserProfile getUserProfile() {

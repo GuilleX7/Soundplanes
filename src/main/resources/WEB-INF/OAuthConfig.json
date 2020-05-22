@@ -5,7 +5,9 @@
 		"clientSecret": "95633c0208164c5e9fdfb42ec7515405",
 		"authorizationFormUrl": "https://accounts.spotify.com/authorize",
 		"scopes": [
-			"playlist-read-private"
+			"playlist-read-private",
+			"playlist-modify-public",
+			"playlist-modify-private"
 		]
 	},
 	"Facebook": {

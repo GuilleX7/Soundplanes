@@ -57,7 +57,11 @@ body {
 	border-bottom-left-radius: 0px;
 }
 
-.music-player .btn-group .btn {
+.music-player .btn-group .btn-dark {
+	border-radius: 0px;
+}
+
+.music-player .btn-group .btn-secondary {
 	border-top-right-radius: 0px;
 	border-top-left-radius: 0px;
 }

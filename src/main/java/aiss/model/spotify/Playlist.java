@@ -32,7 +32,11 @@ public class Playlist {
 	}
 	
 	public void setImages(List<Image> images) {
-		this.images = images.subList(0, 1);
+		if (images.size() > 0) {
+			this.images = images.subList(0, 1);
+		} else {
+			this.images = images;
+		}
 	}
 	
 	public String getName() {

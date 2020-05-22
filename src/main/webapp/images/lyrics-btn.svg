@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="512pt"
+   viewBox="0 -71 512 512"
+   width="512pt"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="lyrics-btn.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="0.34570313"
+     inkscape:cx="341.33333"
+     inkscape:cy="341.33333"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="m407 0h-302c-57.898438 0-105 47.101562-105 105v160.679688c0 57.894531 47.101562 105 105 105h302c57.898438 0 105-47.105469 105-105v-160.679688c0-57.898438-47.101562-105-105-105zm-294.804688 117.316406h45.722657c8.285156 0 15 6.714844 15 15s-6.714844 15-15 15h-45.722657c-8.285156 0-15-6.714844-15-15s6.714844-15 15-15zm0 83.023438c-8.285156 0-15-6.71875-15-15 0-8.285156 6.714844-15 15-15h197.113282c8.285156 0 15 6.714844 15 15 0 8.28125-6.714844 15-15 15zm60.722657 38.019531c0 8.285156-6.714844 15-15 15h-45.722657c-8.285156 0-15-6.714844-15-15 0-8.28125 6.714844-15 15-15h45.722657c8.285156 0 15 6.71875 15 15zm29.773437-15h197.113282c8.285156 0 15 6.71875 15 15 0 8.285156-6.714844 15-15 15h-197.113282c-8.285156 0-15-6.714844-15-15 0-8.28125 6.714844-15 15-15zm136.390625-38.019531c0-8.285156 6.714844-15 15-15h45.722657c8.285156 0 15 6.714844 15 15 0 8.28125-6.714844 15-15 15h-45.722657c-8.285156 0-15-6.71875-15-15zm60.722657-38.023438h-197.113282c-8.285156 0-15-6.714844-15-15s6.714844-15 15-15h197.113282c8.285156 0 15 6.714844 15 15s-6.714844 15-15 15zm0 0"
+     id="path2"
+     style="fill:#ececec" />
+</svg>

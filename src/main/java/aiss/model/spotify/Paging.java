@@ -43,6 +43,11 @@ public class Paging<T> {
 		this.total = total;
 	}
 
+	@Override
+	public String toString() {
+		return "Paging [limit=" + limit + ", offset=" + offset + ", total=" + total + "]";
+	}
+
 	public static class PagingPlaylist extends Paging<Playlist> {}
 	public static class PagingPlaylistTrack extends Paging<PlaylistTrack> {}
 }
