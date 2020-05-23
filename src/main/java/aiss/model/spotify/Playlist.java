@@ -15,14 +15,20 @@ public class Playlist {
 	private List<Image> images;
 	private String name;
 	
-	
-
 	private Playlist(String description, String id, List<Image> images, String name) {
 		super();
 		this.description = description;
 		this.id = id;
 		this.images = images;
 		this.name = name;
+	}
+	
+	private Playlist() {
+		super();
+		this.description = null;
+		this.id = null;
+		this.images = null;
+		this.name = null;
 	}
 
 	public String getDescription() {

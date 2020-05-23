@@ -16,6 +16,26 @@ public class Track {
 	private String name;
 	private String uri;
 	
+	public static Track of(Album album, List<Artist> artists, String name, String uri) {
+		return new Track(album, artists, name, uri);
+	}
+	
+	private Track(Album album, List<Artist> artists, String name, String uri) {
+		super();
+		this.album = album;
+		this.artists = artists;
+		this.name = name;
+		this.uri = uri;
+	}
+	
+	private Track() {
+		super();
+		this.album = null;
+		this.artists = null;
+		this.name = null;
+		this.uri = null;
+	}
+
 	public Album getAlbum() {
 		return album;
 	}

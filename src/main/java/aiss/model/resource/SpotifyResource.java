@@ -75,7 +75,11 @@ public class SpotifyResource {
     }
     
     public List<PlaylistTrack> getPlaylistTracks(Playlist playlist) {
-    	String url = String.format("%s/playlists/%s/tracks", API_URL, playlist.getId());
+    	return getPlaylistTracks(playlist.getId());
+    }
+    
+    public List<PlaylistTrack> getPlaylistTracks(String playlistId) {
+    	String url = String.format("%s/playlists/%s/tracks", API_URL, playlistId);
         ClientResource cr = new ClientResource(url);
 
         ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
@@ -161,7 +165,11 @@ public class SpotifyResource {
     }
     
     public Boolean putTracksInPlaylist(Playlist playlist, List<Track> tracks) throws IOException {
-    	String url = String.format("%s/playlists/%s/tracks", API_URL, playlist.getId());
+    	return putTracksInPlaylist(playlist.getId(), tracks);
+    }
+   
+    public Boolean putTracksInPlaylist(String playlistId, List<Track> tracks) throws IOException {
+    	String url = String.format("%s/playlists/%s/tracks", API_URL, playlistId);
     	ClientResource cr = new ClientResource(url);
     	
     	ChallengeResponse chr = new ChallengeResponse(ChallengeScheme.HTTP_OAUTH_BEARER);
