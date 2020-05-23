@@ -6,10 +6,24 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Playlist {
+	public static Playlist of(String description, String id, List<Image> images, String name) {
+		return new Playlist(description, id, images, name);
+	}
+
 	private String description;
 	private String id;
 	private List<Image> images;
 	private String name;
+	
+	
+
+	private Playlist(String description, String id, List<Image> images, String name) {
+		super();
+		this.description = description;
+		this.id = id;
+		this.images = images;
+		this.name = name;
+	}
 
 	public String getDescription() {
 		return description;

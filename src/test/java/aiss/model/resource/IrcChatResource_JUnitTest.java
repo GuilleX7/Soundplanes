@@ -19,7 +19,7 @@ public class IrcChatResource_JUnitTest {
 	@Test
 	public void createChannelRandomSecretTest() throws UnsupportedEncodingException {
 		Channel channelResults = IrcChatResource.createChannel();
-
+		
 		assertNotNull("The search returned null", channelResults);
 	}
 
@@ -51,6 +51,6 @@ public class IrcChatResource_JUnitTest {
 		String token = "jgygahwegf";
 		Boolean success = IrcChatResource.invalidateToken(token);
 		
-		assertTrue(success);
+		assertTrue("Returned false",success);
 	}
 }

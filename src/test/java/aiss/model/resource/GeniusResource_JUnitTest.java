@@ -13,6 +13,7 @@ import org.restlet.resource.ResourceException;
 import aiss.model.genius.Song;
 
 public class GeniusResource_JUnitTest {
+	
 	@Test
 	public void searchSongTest() throws ResourceException, IOException {
 		final String title = "Bohemian Rhapsody";
