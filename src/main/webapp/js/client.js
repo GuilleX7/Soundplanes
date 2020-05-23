@@ -706,6 +706,13 @@ class OverlayAirports {
 		airportRepository.putAirport(response.airport);
 		user.moveTo(response.airport.geolocation);
 		
+		if (this.popup != null) {
+			map.closePopup(this.popup);
+			this.popup = null;
+		}
+		
+		planeRepository.getPlane(user.uuid).marker.closePopup().unbindPopup();
+		
 		let popup = L.popup({
 			closeOnClick: false,
 			closeButton: false,
@@ -772,9 +779,7 @@ class OverlayAirports {
 		if (!user.isLanded()) {
 			const airport = airportRepository.getAirport(uuid);
 			
-			this.popup = L.popup({
-				closeOnClick: false
-			})
+			this.popup = L.popup()
 			.setLatLng(airport.geolocation)
 			.setContent(
 				"<p><strong>" + airport.name + "</strong><p>" +
@@ -1267,8 +1272,6 @@ function onDocumentReady() {
 	map.on("mouseup", onMapMouseUp);
 	map.on("mousemove", onMapMouseMove);
 	
-	L.Util.requestAnimFrame(onMapUpdate);
-	
 	// Load status modal
 	statusModal = Modal.from("modal-status", {
 		show: true,
@@ -1304,6 +1307,7 @@ function onClientUserProfileLoaded(data) {
 	planeRepository.addPlane(Plane.from(user.uuid, user.geolocation));
 	overlay.update();
 	statusModal.hide();
+	L.Util.requestAnimFrame(onMapUpdate);
 }
 
 function onClientUserProfileReloaded(data) {
@@ -1317,13 +1321,8 @@ function onClientUserProfileFailed() {
 }
 
 function onMapUpdate() {
-	if (user != undefined) {
-		const userPlane = planeRepository.getPlane(user.uuid);
-		user.onUpdate();
-		if (userPlane != undefined && userPlane.marker != undefined) {
-			map.panTo(userPlane.marker.getLatLng());
-		}
-	}
+	user.onUpdate();
+	map.panTo(planeRepository.getPlane(user.uuid).marker.getLatLng());
 
 	L.Util.requestAnimFrame(onMapUpdate);
 }
