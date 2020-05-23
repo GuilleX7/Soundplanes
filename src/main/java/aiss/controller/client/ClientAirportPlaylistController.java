@@ -80,12 +80,13 @@ public class ClientAirportPlaylistController extends HttpServlet {
 			cr.writeTo(response);
 			return;
 		}
-		
 		Playlist playlistInfo = airport.getPlaylistInfo();
+		
 		AirportPlaylist playlist = AirportResource.getAirportPlaylist(airport.getUuid());
-		if (playlist.getTracks().size() < 0) {
+		if (playlist == null || playlist.getTracks() == null || playlist.getTracks().size() < 1) {
 			cr.setStatus(ClientResponseStatus.NO_CONTENT);
 			cr.writeTo(response);
+			return;
 		}
 		
 		Track track = playlist.getRandomTrack();
