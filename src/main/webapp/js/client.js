@@ -111,8 +111,9 @@ class Plane {
 }
 class PlaneRepository {
 	constructor() {
-		this.planes = {};	
+		this.planes = {};
 		this.socket = null;
+		this.pendingMovement = null;
 	}
 	
 	static create() {
@@ -121,7 +122,12 @@ class PlaneRepository {
 	
 	start() {
 		this.socket = io.connect('https://movement.meantoplay.games/',{query: "id=" + user.uuid + "&lat=" + user.geolocation.lat + "&lng=" + user.geolocation.lng});
-	    this.socket.on('movement', (data) => {
+	    this.socket.on("connect", () => {
+	    	if (this.pendingMovement != null) {
+	    		this.sendMove(this.pendingMovement);
+	    	}
+	    })
+		this.socket.on('movement', (data) => {
 		    this.onPlanesUpdate(JSON.parse(data));
 	    });
 	    this.socket.on('remove', (id) => {
@@ -176,10 +182,12 @@ class PlaneRepository {
 	
 	sendMove(geolocation) {
 		if (this.socket.connected) {
-			this.socket.emit('updatePos',JSON.stringify({
+			this.socket.emit('updatePos', JSON.stringify({
 				lat: geolocation.lat,
 				lng: geolocation.lng
 			}));
+		} else {
+			this.pendingMovement = geolocation;
 		}
 	}
 }
@@ -669,39 +677,39 @@ class OverlayAirports {
 	}
 	
 	onLandStatusUpdateSuccess(response) {
-		const tokenExpiration = JSON.parse(atob(response.chatToken.split(".")[1])).exp;
+		const tokenExpiration = JSON.parse(atob(response.user.chatToken.split(".")[1])).exp;
 		if (tokenExpiration <= Date.now() / 1000) {
-			return this.land(response.landedOn);
+			return this.land(response.user.landedOn);
 		}
 		
 		user.disableMovement();
-		user.landedOn = response.landedOn;
-		user.chatToken = response.chatToken;
+		user.landedOn = response.user.landedOn;
+		user.chatToken = response.user.chatToken;
 		overlay.overlayChat.update();
 		
 		if (player != null && player.isReady()) {
 			player.update();
 		}
 		
-		const airport = airportRepository.getAirport(user.landedOn);
-		user.moveTo(airport.geolocation);
+		airportRepository.putAirport(response.airport);
+		user.moveTo(response.airport.geolocation);
 		
-		this.popup = L.popup({
+		let popup = L.popup({
 			closeOnClick: false,
 			closeButton: false,
 			autoClose: false,
 			closeOnEscapeKey: false
 		})
-		.setLatLng(airport.geolocation)
 		.setContent(
-			"<p>You are currently landed on <strong>" + airport.name + "</strong><p>" +
+			"<p>You are currently landed on <strong>" + response.airport.name + "</strong><p>" +
 			"<button class='btn btn-danger btn-block " + this.id+ "-takeoff-btn'>Take off</button>"
 		);
-		map.openPopup(this.popup);
+		planeRepository.getPlane(user.uuid).marker.bindPopup(popup).openPopup();
 		
 		$("." + this.id + "-takeoff-btn").on("click", () => {
-			this.popup.setContent("<p>Taking off... this may take a moment!</p>");
-			this.popup.update();
+			const userMarker = planeRepository.getPlane(user.uuid).marker;
+			userMarker.getPopup().setContent("<p>Taking off... this may take a moment!</p>");
+			userMarker.getPopup().update();
 			this.takeoff();
 		});
 	}
@@ -720,6 +728,8 @@ class OverlayAirports {
 			map.closePopup(this.popup);
 			this.popup = null;
 		}
+		
+		planeRepository.getPlane(user.uuid).marker.closePopup().unbindPopup();
 	}
 	
 	onLandingSuccess(response) {

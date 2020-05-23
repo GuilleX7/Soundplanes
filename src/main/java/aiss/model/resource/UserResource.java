@@ -43,7 +43,7 @@ public class UserResource {
 	public static void linkUserWithSpotifyId(String uuid, String spotifyId) {
 		User user = ofy().load().type(User.class).id(uuid).now();
 		if (user != null) {
-			user.setFacebookId(spotifyId);
+			user.setSpotifyId(spotifyId);
 			ofy().save().entity(user);
 		}
 	}

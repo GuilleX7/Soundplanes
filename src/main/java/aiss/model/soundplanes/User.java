@@ -32,6 +32,10 @@ public class User {
 		return new User(UUID.randomUUID().toString(), name, geolocation, null, null, null, null);
 	}
 	
+	public static User of(String uuid, String name, Location geolocation) {
+		return new User(uuid, name, geolocation, null, null, null, null);
+	}
+	
 	private User(String uuid, String name, Location geolocation, String spotifyId, String facebookId, String landedOn, String chatToken) {
 		super();
 		this.uuid = uuid;

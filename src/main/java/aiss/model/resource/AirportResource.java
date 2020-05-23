@@ -52,5 +52,4 @@ public class AirportResource {
 			ofy().delete().entity(cursor.next()).now();
 		}
 	}
-	
 }

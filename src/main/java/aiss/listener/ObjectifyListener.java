@@ -21,11 +21,11 @@ import aiss.model.soundplanes.User;
  *
  */
 public class ObjectifyListener implements ServletContextListener {
-	private final String GOOGLEIAM_AUTH_JSON = "WEB-INF/GoogleIAM_Auth.json";
-	private final String PROJECT_ID = "soundplanes";
+	public static final String GOOGLEIAM_AUTH_JSON = "WEB-INF/GoogleIAM_Auth.json";
+	public static final String PROJECT_ID = "soundplanes";
 
-	private final Boolean PRODUCTION = false;
-	private final String DATASTORE_EMULATOR_URL = "http://localhost:8081/";
+	public static final Boolean PRODUCTION = false;
+	public static final String DATASTORE_EMULATOR_URL = "http://localhost:8081/";
 
 	/**
 	 * Default constructor.

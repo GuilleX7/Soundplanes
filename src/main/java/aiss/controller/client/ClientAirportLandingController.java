@@ -1,6 +1,9 @@
 package aiss.controller.client;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +19,7 @@ import aiss.model.resource.UserResource;
 import aiss.model.soundplanes.Airport;
 import aiss.model.soundplanes.User;
 import aiss.model.soundplanes.client.ClientAirportLandingSerializer;
+import aiss.model.soundplanes.client.ClientAirportSerializer;
 import aiss.model.soundplanes.client.ClientResponse;
 import aiss.model.soundplanes.client.ClientResponseStatus;
 
@@ -73,12 +77,16 @@ public class ClientAirportLandingController extends HttpServlet {
 			return;
 		}
 		
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("user", user);
+		data.put("airport", airport);
 		cr.setStatus(ClientResponseStatus.OK);
-		cr.setData(user);
+		cr.setData(data);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule("SimpleModule");
 		simpleModule.addSerializer(User.class, ClientAirportLandingSerializer.create());
+		simpleModule.addSerializer(Airport.class, ClientAirportSerializer.create());
 		mapper.registerModule(simpleModule);
 		cr.customWriteTo(response, mapper);
 	}
@@ -130,12 +138,16 @@ public class ClientAirportLandingController extends HttpServlet {
 		user.setChatToken(IrcChatResource.createToken(airport.getChannel(), user, Rol.getDefaultUserRoles(), 3600));
 		UserResource.registerUser(user);
 		
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("user", user);
+		data.put("airport", airport);
 		cr.setStatus(ClientResponseStatus.OK);
-		cr.setData(user);
+		cr.setData(data);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule("SimpleModule");
 		simpleModule.addSerializer(User.class, ClientAirportLandingSerializer.create());
+		simpleModule.addSerializer(Airport.class, ClientAirportSerializer.create());
 		mapper.registerModule(simpleModule);
 		
 		cr.customWriteTo(response, mapper);
