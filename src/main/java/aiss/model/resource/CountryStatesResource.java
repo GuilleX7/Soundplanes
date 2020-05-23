@@ -43,8 +43,9 @@ public class CountryStatesResource {
 				log.warning("Unable read file " + countryFileUri);
 			} else {
 				states.put(country, Arrays.asList(om.readValue(is, String[].class)));
+				log.info(states.get(country).size() + " states for country " + country + " Loaded!");
 			}
-			log.info(states.get(country).size() + " states for country " + country + " Loaded!");
+			
 		} catch (IOException e) {
 			log.log(Level.WARNING, "Unable to load states from " + countryFileUri);
 			log.log(Level.WARNING, e.getMessage());
