@@ -129,11 +129,13 @@ public class ClientUserPlaylistController extends HttpServlet {
 			cr.writeTo(response);
 			return;
 		}
+		Playlist playlistInfo = airport.getPlaylistInfo();
 		
 		AirportPlaylist airportPlaylist = AirportResource.getAirportPlaylist(airport.getUuid());
-		if (airportPlaylist == null) {
+		if (airportPlaylist == null || airportPlaylist.getTracks() == null || airportPlaylist.getTracks().size() < 1) {
 			cr.setStatus(ClientResponseStatus.NO_CONTENT);
 			cr.writeTo(response);
+			return;
 		}
 		
 		if (user.getSpotifyId() == null) {
@@ -151,7 +153,7 @@ public class ClientUserPlaylistController extends HttpServlet {
 
 		SpotifyResource sr = SpotifyResource.fromToken(spotifyToken);
 		
-		Playlist userPlaylist = sr.createEmptyPlaylist(user.getSpotifyId(), airport.getPlaylistInfo().getName(), false, "Imported playlist from Soundplanes");
+		Playlist userPlaylist = sr.createEmptyPlaylist(user.getSpotifyId(), playlistInfo.getName(), false, "Imported playlist from Soundplanes");
 		if (userPlaylist == null) {
 			cr.setStatus(ClientResponseStatus.SEE_OTHER);
 			cr.setData("/auth/spotify");

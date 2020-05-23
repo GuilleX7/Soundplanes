@@ -476,9 +476,9 @@ class OverlayProfileAirport {
 		this.containers.playlists.removeClass("d-none");
 		
 		if (!airport.playlistLoaded) {
-			this.showCurrentPlaylist("(NO PLAYLIST)", "/images/unknown.png");
+			this.showCurrentPlaylist("(NO PLAYLIST)", []);
 		} else {
-			this.showCurrentPlaylist(airport.playlistInfo.name, airport.playlistInfo.images[0].url);
+			this.showCurrentPlaylist(airport.playlistInfo.name, airport.playlistInfo.images);
 		}
 		
 		this.manageTravelBtn.removeClass("disabled");
@@ -525,7 +525,7 @@ class OverlayProfileAirport {
 	}
 	
 	onLoadAirportPlaylistSuccess(response) {
-		this.showCurrentPlaylist(response.name, response.images[0].url);
+		this.showCurrentPlaylist(response.name, response.images);
 	}
 	
 	onLoadAirportPlaylistFailed(xhr, message, error) {
@@ -552,7 +552,11 @@ class OverlayProfileAirport {
 		}
 	}
 	
-	showCurrentPlaylist(name, imageUrl) {
+	showCurrentPlaylist(name, images) {
+		let imageUrl = "/images/unknown.png";
+		if (images != null && images.length > 0) {
+			imageUrl = images[0].url;
+		}
 		this.manageStatus.text("Currently loaded on your airport:");
 		this.managePlaylistName.text(name);
 		this.managePlaylistImage.attr("src", imageUrl);
@@ -571,6 +575,10 @@ class OverlayProfileAirport {
 	}
 	
 	putPlaylists(playlists) {
+		if (playlists.length == 0) {
+			this.playlists.html("<li class='list-group-item'>No playlists found!</li>");
+		}
+		
 		for (let i = 0; i < playlists.length; i++) {
 			this.putPlaylist(playlists[i]);
 		}
@@ -581,8 +589,12 @@ class OverlayProfileAirport {
 	}
 	
 	putPlaylist(playlist) {
+		let imageUrl = "/images/unknown.png";
+		if (playlist.images != null && playlist.images.length > 0) {
+			imageUrl = playlist.images[0].url;
+		}
 		this.playlists.append("<li class='list-group-item list-group-item-action playlist user-playlist'>" +
-				"<div class='row no-gutters d-flex flew-nowrap text-break' data-id='" + playlist.id + "'><div class='col d-flex flex-column justify-content-center flex-shrink-0 flex-grow-0' data-id='" + playlist.id + "'><img src='" + playlist.images[0].url + "' class='card-img' data-id='" + playlist.id + "'></div><div class='col d-flex flex-column justify-content-center' data-id='" + playlist.id + "'><div class='card-body' data-id='" + playlist.id + "'><p class='card-text' data-id='" + playlist.id + "'>" + playlist.name +  "</p></div></div></div>"
+				"<div class='row no-gutters d-flex flew-nowrap text-break' data-id='" + playlist.id + "'><div class='col d-flex flex-column justify-content-center flex-shrink-0 flex-grow-0' data-id='" + playlist.id + "'><img src='" + imageUrl + "' class='card-img' data-id='" + playlist.id + "'></div><div class='col d-flex flex-column justify-content-center' data-id='" + playlist.id + "'><div class='card-body' data-id='" + playlist.id + "'><p class='card-text' data-id='" + playlist.id + "'>" + playlist.name +  "</p></div></div></div>"
 				+ "</li>");
 	}
 	
@@ -1012,7 +1024,7 @@ class OverlayPlayer {
 	}
 	
 	onPlayerTrackLoaded(data, message, xhr) {
-		if (xhr.status == 204) {
+		if (xhr.status == 204 || !user.isLanded()) {
 			this.emptyTrack();
 			return;
 		}
@@ -1022,14 +1034,23 @@ class OverlayPlayer {
 		}).join(" & ");
 		const fullName = data.track.name + " - " + artists;
 	
-		this.exportBtn.removeClass("disabled");
-		this.exportBtn.on("click", () => {
-			this.exportPlaylist();
-		})
+		if (user.spotifyId != null) {
+			this.exportBtn.removeClass("disabled");
+			this.exportBtn.on("click", () => {
+				this.exportPlaylist();
+			})
+		} else {
+			this.exportBtn.text("Log in with Spotify to export playlists!");
+		}
 		
 		this.trackName.text(data.track.name);
 		this.trackArtist.text(artists);
-		this.trackImage.attr("src", data.track.album.images[0].url);
+		let imageUrl = "/images/unknown.png";
+		if (data.track.album.images.length > 0) {
+			imageUrl = data.track.album.images[0].url;
+		}
+		this.trackImage.attr("src", imageUrl);
+		
 		if (data.lyrics != null) {
 			if (data.lyrics.substr(0, 4) == "null") {
 				this.lyrics.html(data.lyrics.substr(4).replace(/<(a|em|i|b)( ([^>]+)?)?>/g, "").replace(/<\/(a|em|i|b)>/, ""));
@@ -1049,7 +1070,6 @@ class OverlayPlayer {
 		if (xhr.status == 404) {
 			airportRepository.deleteAirport(xhr.responseJSON);
 		}
-		User.reloadClientUserProfile();
 	}
 	
 	onExportPlaylistSuccess(response, message, xhr) {
