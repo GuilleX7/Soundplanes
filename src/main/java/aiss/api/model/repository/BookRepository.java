@@ -123,6 +123,19 @@ public class BookRepository {
 		this.books.put("98", Book.of("98", "Underworld", "Don DeLillo", "1997-01-01"));
 		this.books.put("99", Book.of("99", "Disgrace", "JM Coetzee", "1999-01-01"));
 		this.books.put("100", Book.of("100", "True History of the Kelly Gang", "Peter Carey", "2000-01-01"));
+		
+		this.addStore(Store.of(null, "Guille's store", "Seville, Spain", null));
+		this.addStore(Store.of(null, "Carmen's store", "Seville, Spain", null));
+		this.addStore(Store.of(null, "Laur's store", "Bucarest, Romania", null));
+		this.addStore(Store.of(null, "Paco's store", "El Rompido, Spain", null));
+
+		this.getStore(0).getAvailableItems().put("1", BookItem.of(this.getBook("1"), 10.0));
+		this.getStore(0).getAvailableItems().put("2", BookItem.of(this.getBook("2"), 15.0));
+		this.getStore(0).getAvailableItems().put("3", BookItem.of(this.getBook("3"), 20.0));
+		this.getStore(1).getAvailableItems().put("1", BookItem.of(this.getBook("1"), 20.0));
+		this.getStore(1).getAvailableItems().put("4", BookItem.of(this.getBook("4"), 12.50));
+		this.getStore(2).getAvailableItems().put("2", BookItem.of(this.getBook("2"), 5.70));
+		this.getStore(3).getAvailableItems().put("2", BookItem.of(this.getBook("2"), 15.30));
 	}
 
 	public static BookRepository getInstance() throws ParseException {
