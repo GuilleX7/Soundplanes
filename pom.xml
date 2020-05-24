@@ -91,6 +91,12 @@
 			<version>${google.cloud.datastore.version}</version>
 		</dependency>
 
+		<!-- Apache http client -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.10</version>
+		</dependency>
 		<!-- Objectify -->
 		<dependency>
 			<groupId>com.googlecode.objectify</groupId>

@@ -121,4 +121,10 @@ public class Airport {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Airport [uuid=" + uuid + ", owner=" + owner + ", channel=" + channel + ", creationTimestamp="
+				+ creationTimestamp + ", playlistInfo=" + playlistInfo + "]";
+	}
 }
