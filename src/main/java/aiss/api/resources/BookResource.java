@@ -29,6 +29,8 @@ import org.jboss.resteasy.spi.NotFoundException;
 import aiss.api.model.Book;
 import aiss.api.model.Store;
 import aiss.api.model.comparator.BookAuthorComparator;
+import aiss.api.model.comparator.BookItemPriceComparator;
+import aiss.api.model.comparator.BookItemReversePriceComparator;
 import aiss.api.model.comparator.BookPublicationDateComparator;
 import aiss.api.model.comparator.BookReverseAuthorComparator;
 import aiss.api.model.comparator.BookReversePublicationDateComparator;
@@ -41,19 +43,19 @@ public class BookResource {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static BookResource instance = null;
 	private BookRepository repository = null;
-	
+
 	private BookResource() throws ParseException {
 		repository = BookRepository.getInstance();
 	}
-	
+
 	public static BookResource getInstance() throws ParseException {
 		if (instance == null) {
 			instance = new BookResource();
 		}
-		
+
 		return instance;
 	}
-	
+
 	@GET
 	@Produces("application/json")
 	public Collection<Book> getBooks(@QueryParam("q") String query, @QueryParam("order") String order,
@@ -139,18 +141,17 @@ public class BookResource {
 						"Filter must be one of these: title, -title, publicationDate, -publicationDate, author, -author");
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
 	public Response addBook(@Context UriInfo uriInfo, Book book) throws ParseException {
-		if (book.getIsbn() == null || book.getIsbn().contentEquals("") ||
-			book.getTitle() == null || book.getTitle().contentEquals("") ||
-			book.getAuthor() == null || book.getAuthor().contentEquals("") ||
-			book.getPublicationDate() == null || book.getPublicationDate().contentEquals(""))
+		if (book.getIsbn() == null || book.getIsbn().contentEquals("") || book.getTitle() == null
+				|| book.getTitle().contentEquals("") || book.getAuthor() == null || book.getAuthor().contentEquals("")
+				|| book.getPublicationDate() == null || book.getPublicationDate().contentEquals(""))
 			throw new BadRequestException("No atribute can be null or empty");
 
 		try {
@@ -158,30 +159,17 @@ public class BookResource {
 		} catch (ParseException e) {
 			throw new BadRequestException("Publication date must follow the format yyyy-MM-dd");
 		}
-		
+
 		if (!repository.addBook(book)) {
 			throw new BadRequestException("Book already exists");
 		}
 
-		UriBuilder urlBuilder = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "GET");
+		UriBuilder urlBuilder = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "getBook");
 		ResponseBuilder response = Response.created(urlBuilder.build(book.getIsbn()));
 		response.entity(book);
 		return response.build();
 	}
-	
-	@GET
-	@Path("/{isbn}")
-	@Produces("application/json")
-	public Book getBook(@PathParam("isbn") String isbn) {
-		Book book = repository.getBook(isbn);
-		
-		if (book == null) {
-			throw new NotFoundException("Book doesn't exist");			
-		}
-		
-		return book;
-	}
-	
+
 	@PUT
 	@Consumes("application/json")
 	public Response updateBook(Book newBook) {
@@ -189,26 +177,39 @@ public class BookResource {
 		if (currentBook == null) {
 			throw new NotFoundException("Book doesn't exist");
 		}
-		
+
 		if (newBook.getTitle() != null) {
 			currentBook.setTitle(newBook.getTitle());
 		}
-		
+
 		if (newBook.getAuthor() != null) {
 			currentBook.setAuthor(newBook.getAuthor());
 		}
-		
+
 		if (newBook.getPublicationDate() != null) {
 			try {
 				dateFormat.parse(newBook.getPublicationDate());
 			} catch (ParseException e) {
 				throw new BadRequestException("Publication date must follow the format yyyy-MM-dd");
 			}
-			
+
 			currentBook.setPublicationDate(newBook.getPublicationDate());
 		}
-		
+
 		return Response.noContent().build();
+	}
+
+	@GET
+	@Path("/{isbn}")
+	@Produces("application/json")
+	public Book getBook(@PathParam("isbn") String isbn) {
+		Book book = repository.getBook(isbn);
+
+		if (book == null) {
+			throw new NotFoundException("Book doesn't exist");
+		}
+
+		return book;
 	}
 	
 	@DELETE
@@ -217,20 +218,33 @@ public class BookResource {
 		if (repository.removeBook(isbn) == false) {
 			throw new NotFoundException("Book doesn't exist");
 		}
-		
+
 		return Response.noContent().build();
 	}
-	
+
 	@GET
 	@Path("/{isbn}/stores")
 	@Produces("application/json")
-	public Collection<Store> searchBookInStores(@PathParam("isbn") String isbn) {
-		Collection<Store> stores = repository.searchBookInStores(isbn);
-		
+	public Collection<Store> searchBookInStores(@PathParam("isbn") String isbn, @QueryParam("order") String order) {
+		List<Store> stores = repository.searchBookInStores(isbn);
+
 		if (stores == null) {
 			throw new NotFoundException("Book doesn't exist");
 		}
 		
+		if (order != null) {
+			switch (order) {
+			case "price":
+				stores.sort(new BookItemPriceComparator(isbn));
+				break;
+			case "-price":
+				stores.sort(new BookItemReversePriceComparator(isbn));
+				break;
+			default:
+				throw new BadRequestException("Order must be one of these: price, -price");
+			}
+		}
+
 		return stores;
 	}
 }

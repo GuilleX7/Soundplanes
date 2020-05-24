@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 
 import aiss.api.resources.BookResource;
+import aiss.api.resources.StoreResource;
 
 public class BookstoreApplication extends Application {
 	private Set<Object> singletons = new HashSet<Object>();
@@ -14,6 +15,7 @@ public class BookstoreApplication extends Application {
 
 	public BookstoreApplication() throws ParseException {
 		singletons.add(BookResource.getInstance());
+		singletons.add(StoreResource.getInstance());
 	}
 
 	@Override

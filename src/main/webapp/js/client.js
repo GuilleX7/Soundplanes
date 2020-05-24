@@ -468,9 +468,8 @@ class OverlayProfileAirport {
 	
 	onUserAirportLoaded(response) {
 		const airport = response[0];
-		const airportEntity = Airport.fromData(airport.uuid, airport.name, airport.geolocation, airport.creationTimestamp);
 		
-		airportRepository.putAirport(airportEntity, false);
+		airportRepository.putAirport(airport, false);
 		this.containers.create.addClass("d-none");
 		this.containers.manage.removeClass("d-none");
 		this.containers.playlists.removeClass("d-none");

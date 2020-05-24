@@ -27,13 +27,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 public class UserFlow_IntegrationTest {
-
 	private static final Logger log = Logger.getLogger(UserFlow_IntegrationTest.class.getName());
 	final String baseUri = "http://localhost:8090";
 
 	@Test
 	public void UserFlowTest() throws IOException {
-
 		HttpPost createUser = new HttpPost(baseUri + "/registerUser");
 		String name = "Test";
 		String location = "37.2577157,-6.5036537";
@@ -75,6 +73,5 @@ public class UserFlow_IntegrationTest {
 			assertEquals(403, response.getStatusLine().getStatusCode());
 		}
 		log.info("Test completed succesfully!");
-
 	}
 }

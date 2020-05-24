@@ -19,6 +19,14 @@ public class Store {
 		this.location = location;
 		this.availableItems = availableItems;
 	}
+	
+	private Store() {
+		super();
+		this.id = null;
+		this.name = null;
+		this.location = null;
+		this.availableItems = null;
+	}
 
 	public Integer getId() {
 		return id;

@@ -26,7 +26,7 @@ public class SpotifyResource_JUnitTest {
 	 * THEN CHANGE token HERE
 	 */
 	/* START OF MANUAL DATA */
-	final static String token = "BQCGZFjMwfrF_I144qlzAfFj0RsFqGKWtKNtQlv4c3XSu300Zo-wtJwzGblKDvGJQ2GanpBExcRlMylZ88sRN1FySM6vI9_PD4HAmqXdH72meIfDoiTYyDMviUHpcf0pKfZaWCXVUCcZT7CJONCK5bxtxWQ1qeNFtap9xcd7t_hMp1HEg-pTSHPZni1fDgImvC4oIhmr1tOjQ0z4c4yU8dI";
+	final static String token = "BQDy55xwVFngSxedyhrY-avVXHWJCwugVPi1ZvacMkwijgJk_j4p9tmjaqwiTBhApHl_AXcklFEWomU2RaE5zRTrx5l21yRp8ofusozvhcZGF5ZlJC40_EFXeY_9ZVRM_SX4V3rVTG_OUUhtlyGnXIol1GU0P7jxRkApG1JIOqN7mU3nDkz8f3KX8MIQjOovpVNyuwSihvgTsJ56ZUKBY4Q";
 	/* END OF MANUAL DATA*/
 	
 	static String userId = null;

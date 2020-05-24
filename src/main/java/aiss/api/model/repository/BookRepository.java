@@ -1,7 +1,6 @@
 package aiss.api.model.repository;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import aiss.api.model.Book;
+import aiss.api.model.BookItem;
 import aiss.api.model.Store;
 
 public class BookRepository {
 	private static BookRepository instance = null;
 	private Map<String, Book> books;
-	private Map<Integer, Store> stores;
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private Map<Integer, Store> stores;	
 	private Integer storeIndex = 0;
 
 	private BookRepository() throws ParseException {
@@ -186,6 +185,7 @@ public class BookRepository {
 
 	public void addStore(Store store) {
 		store.setId(this.storeIndex);
+		store.setAvailableItems(new HashMap<String, BookItem>());
 		this.stores.put(this.storeIndex, store);
 		this.storeIndex++;
 	}
