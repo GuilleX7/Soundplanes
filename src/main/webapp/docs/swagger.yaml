@@ -1,0 +1,468 @@
+swagger: '2.0'
+info:
+  description: Bookfinding made easy
+  version: 1.0.0
+  title: BookstoreAPI
+  # put the contact info for your development or API team
+  contact:
+    name: Soundplanes
+    url: https://soundplanes.appspot.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+schemes: 
+- https
+host: soundplanes.appspot.com
+basePath: /api
+
+# tags are used for organizing operations
+tags:
+- name: books
+  description: Books
+- name: stores
+  description: Stores
+
+paths:
+  /books:
+    get:
+      tags:
+      - books
+      summary: Get books
+      operationId: getBooks
+      description: Get all books
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: order
+        description: Order results by title, by publication date or by author
+        required: false
+        type: string
+        enum:
+        - title
+        - -title
+        - publication_date
+        - -publication_date
+        - author
+        - -author
+      - in: query
+        name: q
+        description: String to search in books name
+        type: string
+        required: false
+      - in: query
+        name: author
+        description: Filter by author
+        required: false
+        type: string
+      - in: query
+        name: publishedAfter
+        description: Show only books published after this date
+        required: false
+        type: string
+        format: date
+      - in: query
+        name: publishedBefore
+        description: show only books published before this date
+        required: false
+        type: string
+        format: date
+      responses:
+        200:
+          description: Search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Book'
+        400:
+          description: Bad request
+    post:
+      tags:
+      - books
+      summary: Create a book
+      operationId: createBook
+      description: Create a book
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: song
+        description: Book to create
+        required: true
+        schema:
+          $ref: '#/definitions/Book'
+      responses:
+        201:
+          description: Book created
+          schema:
+            $ref: '#/definitions/Book'
+        400:
+          description: Bad request
+    put:
+      tags:
+      - books
+      summary: Update a book
+      operationId: updateBook
+      description: Update a book
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: book
+        description: book to update
+        required: true
+        schema:
+          $ref: '#/definitions/Book'
+      responses:
+        204:
+          description: Book updated
+        400:
+          description: Bad request
+        404:
+          description: Book not found
+  /books/{isbn}:
+    get:
+      tags:
+      - books
+      summary: Get a book by ISBN
+      operationId: getBook
+      description: Get a book by ISBN
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: isbn
+        description: ISBN of the book
+        required: true
+        type: string
+      responses:
+        200:
+          description: Book matching ISBN
+          schema:
+            $ref: '#/definitions/Book'
+        404:
+          description: Book not found
+    delete:
+      tags:
+      - books
+      summary: Delete book
+      operationId: deleteBook
+      description: Delete book
+      parameters:
+      - in: path
+        name: isbn
+        description: ISBN of the book
+        required: true
+        type: string
+      responses:
+        204:
+          description: Book deleted
+        404:
+          description: Book not found
+  /books/{isbn}/stores:
+    get:
+      tags:
+      - books
+      summary: Find stores where the book is available
+      operationId: searchBookInStores
+      description: Find stores where the book is available
+      parameters:
+      - in: path
+        name: isbn
+        description: ISBN of the book
+        required: true
+        type: string
+      - in: query
+        name: order
+        description: Order by price
+        required: false
+        type: string
+        enum:
+          - price
+          - -price
+      responses:
+        200:
+          description: Stores where the book is available
+          schema:
+            type: array
+            items: 
+              $ref: "#/definitions/Store"
+  /stores:
+    get:
+      tags:
+      - stores
+      summary: Get stores
+      operationId: getStores
+      description: Get all stores
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: order
+        description: Order results by name or location
+        required: false
+        type: string
+        enum:
+        - name
+        - -name
+        - location
+        - -location
+      - in: query
+        name: q
+        description: Filter results by name
+        type: boolean
+        required: false
+      - in: query
+        name: location
+        description: Filter results by location
+        type: string
+        required: false
+      responses:
+        200:
+          description: Search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Store'
+        400:
+          description: Bad request
+    post:
+      tags:
+      - stores
+      summary: Create a store
+      operationId: createStore
+      description: Create a store
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: store
+        description: Store to add
+        schema:
+          $ref: '#/definitions/Store'
+      responses:
+        201:
+          description: Store created
+          schema:
+            $ref: '#/definitions/Store'
+        400:
+          description: Bad request
+    put:
+      tags:
+      - stores
+      summary: Update a store
+      operationId: updateStore
+      description: Update a store
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: store
+        description: Store to update
+        schema:
+          $ref: '#/definitions/Store'
+      responses:
+        204:
+          description: Store updated
+        400:
+          description: Bad request
+        404:
+          description: Store not found
+  /stores/{id}:
+    get:
+      tags:
+      - stores
+      summary: Get store by ID
+      operationId: getStore
+      description: Get store by ID
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: Id of the store
+        required: true
+        type: string
+      responses:
+        200:
+          description: Store matching id
+          schema:
+            $ref: '#/definitions/Store'
+        404:
+          description: Store not found
+    delete:
+      tags:
+      - stores
+      summary: Delete a store
+      operationId: deleteStore
+      description: Delete a store
+      parameters:
+      - in: path
+        name: id
+        description: Id of the store
+        required: true
+        type: string
+      responses:
+        204:
+          description: Store deleted
+        404:
+          description: Store not found
+  /stores/{storeId}/{bookIsbn}:
+    post:
+      tags:
+      - stores
+      summary: Add book item to store
+      operationId: addBookItemToStore
+      description: Add book item to store
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: storeId
+        description: Id of the store
+        required: true
+        type: string
+      - in: path
+        name: bookIsbn
+        description: ISBN of the book
+        required: true
+        type: string
+      - in: query
+        name: price
+        description: Price of the item
+        required: true
+        type: integer
+      responses:
+        201:
+          description: Book item added to the store
+          schema:
+            $ref: '#/definitions/Store'
+        400:
+          description: Bad request
+        404:
+          description: Store or book item not found
+    put:
+      tags:
+      - stores
+      summary: Update a book item
+      operationId: updateBookItemFromStore
+      description: Update a book item
+      parameters:
+      - in: path
+        name: storeId
+        description: Id of the store
+        required: true
+        type: string
+      - in: path
+        name: bookIsbn
+        description: ISBN of the item book
+        required: true
+        type: string
+      - in: query
+        name: price
+        description: Price of the item
+        required: true
+        type: integer
+      responses:
+        204:
+          description: Book item updated
+        400:
+          description: Bad request
+        404:
+          description: Book item not found
+    delete:
+      tags:
+      - stores
+      summary: Delete book item from store
+      operationId: deleteBookItemFromStore
+      description: Delete book item from store
+      parameters:
+      - in: path
+        name: storeId
+        description: Id of the store
+        required: true
+        type: string
+      - in: path
+        name: bookIsbn
+        description: ISBN of the item book
+        required: true
+        type: string
+      responses:
+        204:
+          description: Book item deleted from store
+        404:
+          description: Store or book item not found
+definitions:
+  Book:
+    type: object
+    required:
+    - isbn
+    - title
+    - author
+    - publicationDate
+    properties:
+      isbn:
+        type: string
+      title:
+        type: string
+      author:
+        type: string
+      publicationDate:
+        type: string
+        format: date
+    example: 
+      bookExample:
+        isbn: "0-1290-1165-1"
+        title: "Cinderella"
+        author: "Daisy Fisher"
+        publicationDate: "1980-01-15"
+  Store:
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      location:
+        type: string
+      availableItems:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/BookItem'
+    example:
+      id: 1
+      name: "Tom's Bookstore"
+      location: "Seville, Spain"
+      availableItems:
+        "0-1290-1165-1":
+          book:
+            isbn: "0-1290-1165-1"
+            title: "Cinderella"
+            author: "Daisy Fisher"
+            publicationDate: "1980-01-15"
+          price: 4.0
+  BookItem:
+    required:
+      - book
+      - price
+    properties:
+      book:
+        $ref: "#/definitions/Book"
+      price:
+        type: integer
+        format: double
+    example:
+      book:
+        isbn: "0-1290-1165-1"
+        title: "Cinderella"
+        author: "Daisy Fisher"
+        publicationDate: "1980-01-15"
+      price: 4.00
