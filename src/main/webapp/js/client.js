@@ -228,7 +228,7 @@ class AirportRepository {
 	}
 	
 	static getUpdateInterval() {
-		return 5000;
+		return 10000;
 	}
 	
 	start() {
@@ -239,6 +239,16 @@ class AirportRepository {
 	
 	getAirport(uuid) {
 		return this.airports.get(uuid);
+	}
+	
+	getNearAirports(airport, distance) {
+		let nearAirports = []
+		this.airports.forEach((value, key, map) => {
+			if (value.marker.getLatLng().distanceTo(airport.marker.getLatLng()) <= distance) {
+				nearAirports.push(value);
+			}
+		});
+		return nearAirports;
 	}
 	
 	deleteAirport(uuid) {
@@ -778,19 +788,42 @@ class OverlayAirports {
 		if (!user.isLanded()) {
 			const airport = airportRepository.getAirport(uuid);
 			
-			this.popup = L.popup()
-			.setLatLng(airport.geolocation)
-			.setContent(
-				"<p><strong>" + airport.name + "</strong><p>" +
-				"<button class='btn btn-success btn-block " + this.id+ "-land-btn'>Land here</button>"
-			);
-			map.openPopup(this.popup);
-			
-			$("." + this.id + "-land-btn").on("click", () => {
-				this.popup.setContent("<p>Landing... this may take a moment!</p>");
-				this.popup.update();
-				this.land(airport.uuid);
-			});
+			let nearAirports = airportRepository.getNearAirports(airport, 50);
+			if (nearAirports.length == 1) {
+				this.popup = L.popup()
+				.setLatLng(airport.geolocation)
+				.setContent(
+					"<p><strong>" + airport.name + "</strong><p>" +
+					"<button class='btn btn-success btn-block " + this.id+ "-land-btn'>Land here</button>"
+				);
+				map.openPopup(this.popup);
+				
+				$("." + this.id + "-land-btn").on("click", () => {
+					this.popup.setContent("<p>Landing... this may take a moment!</p>");
+					this.popup.update();
+					this.land(airport.uuid);
+				});
+			} else {
+				let content = "<p><strong>Select airport:</strong><p><ul class='list-group'>";
+				for (let i = 0; i < nearAirports.length; i++) {
+					const nearAirport = nearAirports[i];
+					content += "<li class='list-group-item list-group-item-action selectable-airport' data-uuid='" + nearAirport.uuid + "'>" + nearAirport.name + "</li>";
+				}
+				content += "</ul>";
+				
+				this.popup = L.popup({
+					maxHeight: 300
+				})
+				.setLatLng(airport.geolocation)
+				.setContent(content);
+				map.openPopup(this.popup);
+				
+				$(".selectable-airport").on("click", (e) => {
+					this.popup.setContent("<p>Landing... this may take a moment!</p>");
+					this.popup.update();
+					this.land($(e.target).data("uuid"));
+				});
+			}
 		}
 	}
 	
