@@ -46,7 +46,7 @@ public class UserResource_JUnitTest {
 	}
 
 	@Before
-	public void init() {
+	public void init() throws IOException {
 		session = ObjectifyService.begin();
 
 		UserResource.removeAllUsers();
@@ -58,6 +58,7 @@ public class UserResource_JUnitTest {
 	@After
 	public void end() throws IOException {
 		session.close();
+		localDatastoreHelper.reset();
 	}
 
 	@AfterClass

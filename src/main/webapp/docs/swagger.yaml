@@ -12,7 +12,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
-schemes: 
+schemes:
 - https
 host: soundplanes.appspot.com
 basePath: /api
@@ -36,6 +36,11 @@ paths:
       - application/json
       parameters:
       - in: query
+        name: q
+        description: String to search in books name
+        type: string
+        required: false
+      - in: query
         name: order
         description: Order results by title, by publication date or by author
         required: false
@@ -43,15 +48,10 @@ paths:
         enum:
         - title
         - -title
-        - publication_date
-        - -publication_date
+        - publicationDate
+        - -publicationDate
         - author
         - -author
-      - in: query
-        name: q
-        description: String to search in books name
-        type: string
-        required: false
       - in: query
         name: author
         description: Filter by author
@@ -81,9 +81,9 @@ paths:
     post:
       tags:
       - books
-      summary: Create a book
-      operationId: createBook
-      description: Create a book
+      summary: Add a book
+      operationId: addBook
+      description: Add a book
       consumes:
       - application/json
       produces:
@@ -91,13 +91,13 @@ paths:
       parameters:
       - in: body
         name: song
-        description: Book to create
+        description: Book to add
         required: true
         schema:
           $ref: '#/definitions/Book'
       responses:
         201:
-          description: Book created
+          description: Book added
           schema:
             $ref: '#/definitions/Book'
         400:
@@ -149,9 +149,9 @@ paths:
     delete:
       tags:
       - books
-      summary: Delete book
-      operationId: deleteBook
-      description: Delete book
+      summary: Remove book
+      operationId: removeBook
+      description: Remove book
       parameters:
       - in: path
         name: isbn
@@ -160,7 +160,7 @@ paths:
         type: string
       responses:
         204:
-          description: Book deleted
+          description: Book removed
         404:
           description: Book not found
   /books/{isbn}/stores:
@@ -191,6 +191,8 @@ paths:
             type: array
             items: 
               $ref: "#/definitions/Store"
+        404:
+          description: Book not found
   /stores:
     get:
       tags:
@@ -202,6 +204,11 @@ paths:
       - application/json
       parameters:
       - in: query
+        name: q
+        description: Filter results by name
+        type: boolean
+        required: false
+      - in: query
         name: order
         description: Order results by name or location
         required: false
@@ -211,11 +218,6 @@ paths:
         - -name
         - location
         - -location
-      - in: query
-        name: q
-        description: Filter results by name
-        type: boolean
-        required: false
       - in: query
         name: location
         description: Filter results by location
@@ -288,7 +290,7 @@ paths:
         name: id
         description: Id of the store
         required: true
-        type: string
+        type: integer
       responses:
         200:
           description: Store matching id
@@ -307,7 +309,7 @@ paths:
         name: id
         description: Id of the store
         required: true
-        type: string
+        type: integer
       responses:
         204:
           description: Store deleted
@@ -327,7 +329,7 @@ paths:
         name: storeId
         description: Id of the store
         required: true
-        type: string
+        type: integer
       - in: path
         name: bookIsbn
         description: ISBN of the book
@@ -358,7 +360,7 @@ paths:
         name: storeId
         description: Id of the store
         required: true
-        type: string
+        type: integer
       - in: path
         name: bookIsbn
         description: ISBN of the item book
@@ -387,7 +389,7 @@ paths:
         name: storeId
         description: Id of the store
         required: true
-        type: string
+        type: integer
       - in: path
         name: bookIsbn
         description: ISBN of the item book
@@ -417,18 +419,17 @@ definitions:
         type: string
         format: date
     example: 
-      bookExample:
-        isbn: "0-1290-1165-1"
-        title: "Cinderella"
-        author: "Daisy Fisher"
-        publicationDate: "1980-01-15"
+      isbn: "0-1290-1165-1"
+      title: "Cinderella"
+      author: "Daisy Fisher"
+      publicationDate: "1980-01-15"
   Store:
     required:
     - id
     - name
     properties:
       id:
-        type: string
+        type: integer
       name:
         type: string
       location:

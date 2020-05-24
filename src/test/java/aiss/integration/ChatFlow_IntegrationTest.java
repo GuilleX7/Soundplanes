@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +29,11 @@ import aiss.model.soundplanes.Airport;
 import aiss.model.soundplanes.User;
 
 public class ChatFlow_IntegrationTest {
-
 	private static final Logger log = Logger.getLogger(UserFlow_IntegrationTest.class.getName());
 	final String baseUri = "http://localhost:8090";
 
 	@Test
 	public void ChatFlowTest() throws IOException {
-
 		HttpPost createUser = new HttpPost(baseUri + "/registerUser");
 		String name = "Test";
 		String location = "37.2577157,-6.5036537";
@@ -110,25 +107,7 @@ public class ChatFlow_IntegrationTest {
 	}
 
 	static class LandedAirport {
-
 		public Map<String, String> user;
 		public Airport airport;
-
-		public Map<String, String> getUser() {
-			return user;
-		}
-
-		public void setUser(Map<String, String> user) {
-			this.user = user;
-		}
-
-		public Airport getAirport() {
-			return airport;
-		}
-
-		public void setAirport(Airport airport) {
-			this.airport = airport;
-		}
-
 	}
 }

@@ -61,6 +61,7 @@ public class AirportResource_JUnitTest {
 	@After
 	public void end() throws IOException {
 		session.close();
+		localDatastoreHelper.reset();
 	}
 
 	@AfterClass
