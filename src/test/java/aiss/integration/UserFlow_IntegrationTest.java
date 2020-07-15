@@ -16,6 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,8 +29,9 @@ import org.apache.http.impl.client.HttpClients;
 
 public class UserFlow_IntegrationTest {
 	private static final Logger log = Logger.getLogger(UserFlow_IntegrationTest.class.getName());
-	final String baseUri = "http://localhost:8090";
+	final String baseUri = "https://localhost";
 
+	@Ignore
 	@Test
 	public void UserFlowTest() throws IOException {
 		HttpPost createUser = new HttpPost(baseUri + "/registerUser");

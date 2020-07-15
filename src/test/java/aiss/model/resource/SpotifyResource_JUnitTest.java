@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.restlet.resource.ResourceException;
 
@@ -26,7 +27,7 @@ public class SpotifyResource_JUnitTest {
 	 * THEN CHANGE token HERE
 	 */
 	/* START OF MANUAL DATA */
-	final static String token = "BQDy55xwVFngSxedyhrY-avVXHWJCwugVPi1ZvacMkwijgJk_j4p9tmjaqwiTBhApHl_AXcklFEWomU2RaE5zRTrx5l21yRp8ofusozvhcZGF5ZlJC40_EFXeY_9ZVRM_SX4V3rVTG_OUUhtlyGnXIol1GU0P7jxRkApG1JIOqN7mU3nDkz8f3KX8MIQjOovpVNyuwSihvgTsJ56ZUKBY4Q";
+	final static String token = "BQCponaR2PFkLQKWskw-5mMznAQYRraf03ZGCZ1iZuvBddyF-Gay8pTe4so4q9K45nhV__oBCxj6Sw3UiBYuWqpKDEQo7T0N2CyPRmC-c1aPSoJfDHEabHR4yo-McNAc4WcDvEJMiXTaDgWjLFUjzZ0J78UmyHJhuozlqxsStCSUnJlJ4FPeoJ1BVLUgXYVasUDc08J2_TVMFtXN3W9twrs";
 	/* END OF MANUAL DATA*/
 	
 	static String userId = null;
@@ -38,6 +39,7 @@ public class SpotifyResource_JUnitTest {
 		testPlaylist = SpotifyResource.fromToken(token).createEmptyPlaylist(userId, "test", false, "test");
 	}
 	
+	@Ignore
 	@Test
 	public void getPlaylistsTest() throws ResourceException, IOException {
 		List<Playlist> playlistsResults = SpotifyResource.fromToken(token).getPlaylists();
@@ -46,6 +48,7 @@ public class SpotifyResource_JUnitTest {
 		assertFalse("There are no playlists ", playlistsResults.isEmpty());
 	}
 
+	@Ignore
 	@Test
 	public void getPlaylistTracksTest() throws ResourceException, IOException {
 		final String playlistId = "37i9dQZEVXbNFJfN1Vw8d9";
@@ -55,6 +58,7 @@ public class SpotifyResource_JUnitTest {
 		assertFalse("There are no playlist tracks ", playlistsTracksResults.isEmpty());
 	}
 
+	@Ignore
 	@Test
 	public void getPlaylistTest() throws ResourceException, IOException {
 		final String playlistId = "37i9dQZEVXbNFJfN1Vw8d9";
@@ -63,6 +67,7 @@ public class SpotifyResource_JUnitTest {
 		assertNotNull("The search returned null", playlistResults);
 	}
 
+	@Ignore
 	@Test
 	public void createEmptyPlaylistTest() throws ResourceException, IOException {
 		final String userId = "guillex7";
@@ -75,6 +80,7 @@ public class SpotifyResource_JUnitTest {
 		assertNotNull("Returned null", emptyPlaylistResults);
 	}
 
+	@Ignore
 	@Test
 	public void putTracksInPlaylistTest() throws ResourceException, IOException {
 		final List<Track> tracks = new ArrayList<Track>();
@@ -85,6 +91,7 @@ public class SpotifyResource_JUnitTest {
 		assertTrue("Returned false", putTracksInPlaylistResults);
 	}
 
+	@Ignore
 	@Test
 	public void getUserProfileTest() throws ResourceException, IOException {
 		UserProfile userProfileResults = SpotifyResource.fromToken(token).getUserProfile();

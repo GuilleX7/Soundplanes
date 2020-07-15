@@ -24,18 +24,21 @@
 	<div id="overlay" class="overlay overlay-hidden">
 		<div class="overlay-content container-sm">
 			<div class="nav nav-tabs" id="overlay-tabs" role="tablist">
-				<a class="nav-link active" id="music-tab" data-toggle="tab"
-					href="#music" role="tab" aria-controls="music" aria-selected="true">Music</a>
-				<a class="nav-link" id="chat-tab" data-toggle="tab" href="#chat"
-					role="tab" aria-controls="chat" aria-selected="false">Chat</a> <a
-					class="nav-link" id="profile-tab" data-toggle="tab" href="#profile"
+				<a class="nav-link" id="music-tab" data-toggle="tab"
+					href="#music" role="tab" aria-controls="music" aria-selected="false">Music</a>
+					
+				<a class="nav-link active" id="chat-tab" data-toggle="tab" href="#chat"
+					role="tab" aria-controls="chat" aria-selected="true">Chat</a>
+					
+				 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile"
 					role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+					
 				<a class="nav-link" id="airport-tab" data-toggle="tab"
 					href="#airport" role="tab" aria-controls="airport"
 					aria-selected="false">Airport</a>
 			</div>
 			<div class="tab-content pt-2 mb-2" id="overlay-tabs-content">
-				<div class="tab-pane fade show active" id="music" role="tabpanel"
+				<div class="tab-pane fade" id="music" role="tabpanel"
 					aria-labelledby="home-tab">
 					<div id="player"></div>
 					<div class="card">
@@ -97,7 +100,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="tab-pane fade" id="chat" role="tabpanel"
+				<div class="tab-pane fade show active" id="chat" role="tabpanel"
 					aria-labelledby="chat-tab" style="overflow: hidden">
 					<ul class="list-group" id="chat-messages">
 					</ul>

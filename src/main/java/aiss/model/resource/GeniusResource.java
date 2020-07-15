@@ -43,14 +43,14 @@ public class GeniusResource {
 			request = cr.get(SearchRequest.class);
 		} catch (ResourceException re) {
 			log.warning(re.getMessage());
-			return null;
+			return songs;
 		}
 
 		Meta meta = request.getMeta();
 		if (meta.getStatus() != 200) {
 			log.warning(String.format("Genius API returned error code %d: %s", meta.getStatus(),
 					(meta.getMessage() == null) ? "" : meta.getMessage()));
-			return null;
+			return songs;
 		}
 		
 		List<Hit> hits = request.getResponse().getHits();

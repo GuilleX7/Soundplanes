@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.restlet.resource.ResourceException;
 
@@ -21,9 +22,10 @@ public class FacebookResource_JUnitTest {
 	 * THEN CHANGE token HERE
 	 */
 	/* START OF MANUAL DATA */
-	final static String token = "EAAl1We7h4BEBADqJBnlGdxH7m4v8xEfxxTMRqgxliDipKOMT2ZC0saPqJSQsZCrtZB0lG2kZCORMaUTsGxhBn9J3wl18pQAy8E9vynIq5gQCNqwJyPcy9yOVwLp86pgZA6hbPUJrQcc2zGDQLjYKHQxq71uci5F1zEkXq3ooploLXZAkh6NnOvqnMbuhAtHfFm4TwTIBqTmXMw9FIpE9GxCv2eTVZBDojIGvoemZBITgvAZDZD";
+	final static String token = "EAAl1We7h4BEBAMq9rXSZAS6h3sIsE4loKZBp64aBz96SvyrgNUfXuFg6n50jh2W7q1DjpuYNLO7gsQD1kqWmZBDiQrpJfsl7IqyxOopH3VJ2ILXNY2jUz8O9FFvIjqSNn1G6R8CHChMMci7j2iEf9lIdkLsEOR2mxnm2nTpSp3Sj27gtlvzh3wio1Yw2k6sjFa4XOJnZCtSNaij8RMSh";
 	/* END OF MANUAL DATA */
 	
+	@Ignore
 	@Test
 	public void getUserProfileTest() throws ResourceException, IOException {
 		UserProfile userProfileResults = FacebookResource.fromToken(token).getUserProfile();

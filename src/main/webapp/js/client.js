@@ -707,7 +707,7 @@ class OverlayAirports {
 		user.landedOn = response.user.landedOn;
 		user.chatToken = response.user.chatToken;
 		overlay.overlayChat.update();
-		
+		overlay.show();
 		if (player != null && player.isReady()) {
 			player.update();
 		}
@@ -868,7 +868,7 @@ class OverlayChat {
 		this.form = $("#" + id + "-form");
 		this.input = $("#" + id + "-input");
 		this.sendBtn = $("#" + id + "-btn");
-		
+		this.tab = $("#"+id+"-tab");
 		this.socket = null;
 		this.lastAirport = null;
 		
@@ -879,7 +879,11 @@ class OverlayChat {
 		this.form.on("submit", (e) => {
 			e.preventDefault();
 			this.sendMessage();
-		})
+		});
+		
+		this.tab.on("shown.bs.tab", () => {
+			overlay.tabsContent.scrollTop(overlay.tabsContent[0].scrollHeight);
+		});
 	}
 	
 	static from(id) {
@@ -891,7 +895,11 @@ class OverlayChat {
 	}
 	
 	putMessage(message) {
-		this.messages.append("<li class='list-group-item'>" + message + "</li>");
+		let htmlMessage = $("<li></li>", {
+			"class": "list-group-item",
+			"text": message
+		})
+		this.messages.append(htmlMessage);
 		overlay.tabsContent.scrollTop(overlay.tabsContent[0].scrollHeight + 75);
 	}
 	
@@ -1154,20 +1162,27 @@ class OverlayPlayer {
 	stop() {
 		if (!this.isReady()) return -1;
 		this.player.stopVideo();
+		this.player.clearVideo();
+		this.emptyTrack();
 		this.track = null;
+		console.log("Stopping");
 		return 0;
 	}
 	
 	pause() {
 		if (!this.isReady()) return -1;
 		this.player.pauseVideo();
+		console.log("Pause")
 		return 0;
 	}
 	
 	resume() {
+		
 		if (!this.isReady()) return -1;
 		if (this.player.getPlayerState() == YT.PlayerState.PAUSED) {
+			console.log("Resume");
 			this.player.playVideo();
+			
 			return 0;
 		}
 		return 1;
@@ -1192,7 +1207,7 @@ class OverlayPlayer {
 	}
 	
 	fetchTrack() {
-		this.pause();
+		this.stop();
 		this.emptyTrack();
 		this.trackName.text("(FETCHING TRACK...)");
 		this.exportBtn.text("Export this playlist to my Spotify account");
