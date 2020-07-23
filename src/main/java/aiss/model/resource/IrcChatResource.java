@@ -10,7 +10,7 @@ import org.restlet.resource.ResourceException;
 import aiss.model.ircchat.Channel;
 import aiss.model.ircchat.Options;
 import aiss.model.ircchat.Payload;
-import aiss.model.ircchat.Response.StringResponse;
+import aiss.model.ircchat.Response.ChannelInfoResponse;
 import aiss.model.ircchat.Response.TokenResponse;
 import aiss.model.ircchat.Rol;
 import aiss.model.ircchat.Secret;
@@ -20,7 +20,7 @@ import aiss.model.soundplanes.User;
 public class IrcChatResource {
 	private static Logger log = Logger.getLogger(IrcChatResource.class.getName());
 	
-	private static final String API_URL = "https://chat.meantoplay.games/";
+	private static final String API_URL = "https://chat.meantoplay.games/api/v1/";
 	
 	public static Channel createChannel() {
 		return createChannel(UUID.randomUUID().toString());
@@ -30,10 +30,10 @@ public class IrcChatResource {
 		ClientResource cr = new ClientResource(String.format("%schannel", API_URL));
 		
 		Channel channel = null;
-		StringResponse response = null;
+		ChannelInfoResponse response = null;
 		
 		try {
-			response = cr.post(Secret.of(secret), StringResponse.class);
+			response = cr.post(Secret.of(secret), ChannelInfoResponse.class);
 		} catch (ResourceException e) {
 			log.warning("Couldn't register a channel with secret " + secret);
 			log.warning(e.getLocalizedMessage());
@@ -44,7 +44,7 @@ public class IrcChatResource {
 			log.warning(response.getError());
 		}
 		
-		channel = Channel.of(response.getData(), secret);
+		channel = Channel.of(response.getData().getId(), secret);
 		
 		return channel;
 	}

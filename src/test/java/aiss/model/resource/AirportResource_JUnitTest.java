@@ -48,8 +48,9 @@ public class AirportResource_JUnitTest {
 	}
 
 	@Before
-	public void init() {
+	public void init() throws IOException {
 		session = ObjectifyService.begin();
+		localDatastoreHelper.reset();
 
 		UserResource.registerUser(User.of("uuid1", "user1", Location.ofCoordinates(0.0, 0.0)));
 		AirportResource.removeAllAirports();

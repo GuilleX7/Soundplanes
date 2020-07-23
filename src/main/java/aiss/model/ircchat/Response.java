@@ -29,6 +29,6 @@ public class Response<T> {
 		this.data = data;
 	}
 	
-	public static class StringResponse extends Response<String> {}
+	public static class ChannelInfoResponse extends Response<ChannelInfo> {}
 	public static class TokenResponse extends Response<Token> {}
 }

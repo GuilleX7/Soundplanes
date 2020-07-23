@@ -865,20 +865,33 @@ class OverlayChat {
 	constructor(id) {
 		this.id = id;
 		this.messages = $("#" + id + "-messages");
+		this.users = $("#" + id + "-users");
 		this.form = $("#" + id + "-form");
 		this.input = $("#" + id + "-input");
-		this.sendBtn = $("#" + id + "-btn");
-		this.tab = $("#"+id+"-tab");
+		this.sendBtn = $("#" + id + "-send-btn");
+		this.usersBtn = $("#" + id + "-users-btn");
+		this.tab = $("#" + id + "-tab");
 		this.socket = null;
+		this.channelId = null;
 		this.lastAirport = null;
 		
 		this.sendBtn.on("click", () => {
 			this.sendMessage();
 		});
 		
-		this.form.on("submit", (e) => {
-			e.preventDefault();
-			this.sendMessage();
+		this.usersBtn.on("click", () => {
+			this.users.toggleClass("d-none");
+			this.messages.toggleClass("d-none");
+			this.usersBtn.toggleClass("btn-success");
+			this.usersBtn.toggleClass("btn-secondary");
+		})
+		
+		this.form.on("keydown", (e) => {
+			if (event.which == 13 || event.keyCode == 13) {
+				e.preventDefault();
+				this.sendMessage();
+        		return false;
+   			}
 		});
 		
 		this.tab.on("shown.bs.tab", () => {
@@ -894,10 +907,10 @@ class OverlayChat {
 		this.messages.html("");
 	}
 	
-	putMessage(message) {
+	putMessage(messageText, style) {
 		let htmlMessage = $("<li></li>", {
-			"class": "list-group-item",
-			"text": message
+			"class": style == undefined ? "list-group-item" : "list-group-item list-group-item-" + style,
+			"text": messageText
 		})
 		this.messages.append(htmlMessage);
 		overlay.tabsContent.scrollTop(overlay.tabsContent[0].scrollHeight + 75);
@@ -907,6 +920,9 @@ class OverlayChat {
 		if (this.socket != null) {
 			this.disconnect();
 		}
+		
+		this.token = token;
+		this.channelId = JSON.parse(atob(this.token.split(".")[1])).channel;
 		this.socket = io.connect('https://chat.meantoplay.games/chat', {query: "token=Bearer " + token});
 		this.socket.on("join", (message) => {
 			this.onChatJoin(message);
@@ -930,6 +946,55 @@ class OverlayChat {
 			this.socket.close();
 		}
 		this.socket = null;
+		this.token = null;
+		this.channelId = null;	
+	}
+	
+	emptyUsers() {
+		this.users.html("<li class='list-group-item list-group-item-dark text-center'>Current landed users (0)</li>" + 
+		"<li class='list-group-item list-group-item-light'>Nothing here!</li>");
+	}
+	
+	retrieveUsers() {
+		if (this.socket == null || !this.socket.connected || !user.isLanded()) {
+			this.emptyUsers();
+			return;
+		}
+		
+		$.ajax({
+			url: "https://chat.meantoplay.games/api/v1/channel/" + this.channelId,
+			method: "GET",
+			headers: {
+				"Authorization": "Bearer " + this.token	
+			},
+			dataType: "json"
+		})
+		.done((response) => {
+			this.onUsersRetrievalSuccess(response);
+		})
+	}
+	
+	updateUsers(users) {
+		this.users.html("<li class='list-group-item list-group-item-dark text-center'>Current landed users (" + users.length + ")</li>");
+		if (users.length == 0) {
+			this.users.append("<li class='list-group-item list-group-item-light'>Nothing to see here!</li>");
+		} else {
+			for (let i = 0; i < users.length; i++) {
+				let listItem = $("<li></li>", {
+					"class": "list-group-item",
+					"text": users[i].name
+				});
+				this.users.append(listItem);
+			}
+		}
+	}
+	
+	onUsersRetrievalSuccess(response) {
+		if (response.error != null) {
+			return;
+		}
+		
+		this.updateUsers(response.success.users);
 	}
 	
 	updateConnection() {
@@ -940,9 +1005,14 @@ class OverlayChat {
 			this.connect(user.chatToken);
 			this.lastAirport = user.landedOn;
 		} else {
-			this.putMessage("You have been disconnected from the chat.");
-			this.disconnect();
+			if (this.lastAirport == null) {
+				this.putMessage("Land on an airport to start chating with other people!", "primary");
+			} else {
+				this.putMessage("You have been disconnected from the chat.", "secondary");
+				this.disconnect();
+			}
 		}
+		this.retrieveUsers();
 	}
 	
 	update() {
@@ -950,31 +1020,50 @@ class OverlayChat {
 	}
 	
 	onChatJoin(message) {
-		this.putMessage(message);
+		let formattedMessage = message.userId == user.uuid ?
+		"You have entered the chat!" :
+		message.userName + " has entered the chat!";
+		
+		this.putMessage(formattedMessage, "info");
+		
+		this.retrieveUsers();
 	}
 	
 	onChatMessage(message) {
-		this.putMessage(message);
+		let formattedMessage = message.userId == user.uuid ?
+		"You say: " + message.data :
+		message.userName + " says: " + message.data;
+		
+		this.putMessage(formattedMessage);
 	}
 	
 	onChatDisconnected(message) {
-		this.putMessage(message);
+		let formattedMessage = message.userId == user.uuid ?
+		"You have left the chat!" :
+		message.userName + " has left the chat!";
+		
+		this.putMessage(formattedMessage, "secondary");
+		
+		this.retrieveUsers();
 	}
 	
 	onChatConnectionError(message) {
 		this.disconnect();
-		this.putMessage("We have some trouble connecting to this channel");
+		this.putMessage("We have some trouble connecting to the chat, probably because we are carrying out some maintenance!", "danger");
 		user.reloadClientUserProfile();
 	}
 	
 	onChatConnectionInvalidate(message) {
 		this.disconnect();
+		this.putMessage("Your session has expired, please wait a second!", "warning");
 		user.reloadClientUserProfile();
 	}
 	
 	sendMessage() {
-		if (this.socket != null) {
+		if (this.socket != null && this.socket.connected) {
 			this.socket.emit("message", this.input.val());
+		} else {
+			this.putMessage("You need to be landed on an airport first!", "danger");
 		}
 		this.input.val("");
 	}
@@ -1065,7 +1154,7 @@ class OverlayPlayer {
 	}
 	
 	onYoutubePlayerPause(e) {
-		
+		this.pause();
 	}
 	
 	onPlayerTrackLoaded(data, message, xhr) {
@@ -1165,24 +1254,19 @@ class OverlayPlayer {
 		this.player.clearVideo();
 		this.emptyTrack();
 		this.track = null;
-		console.log("Stopping");
 		return 0;
 	}
 	
 	pause() {
 		if (!this.isReady()) return -1;
 		this.player.pauseVideo();
-		console.log("Pause")
 		return 0;
 	}
 	
 	resume() {
-		
 		if (!this.isReady()) return -1;
 		if (this.player.getPlayerState() == YT.PlayerState.PAUSED) {
-			console.log("Resume");
 			this.player.playVideo();
-			
 			return 0;
 		}
 		return 1;

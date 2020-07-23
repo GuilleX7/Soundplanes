@@ -19,7 +19,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,9 +30,8 @@ import aiss.model.soundplanes.User;
 
 public class ChatFlow_IntegrationTest {
 	private static final Logger log = Logger.getLogger(UserFlow_IntegrationTest.class.getName());
-	final String baseUri = "https://localhost";
+	final String baseUri = "http://localhost:8090";
 
-	@Ignore
 	@Test
 	public void ChatFlowTest() throws IOException {
 		HttpPost createUser = new HttpPost(baseUri + "/registerUser");
