@@ -1,19 +1,25 @@
 package aiss.model.ircchat;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChannelInfo {
-	private String _id;
+	@JsonProperty("_id")
+	private String id;
 	private String name;
 	private String description;
-	
-	public String get_id() {
-		return _id;
+
+	@JsonGetter("_id")
+	public String getId() {
+		return id;
 	}
 	
-	public void set_id(String _id) {
-		this._id = _id;
+	@JsonSetter("_id")
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 	public String getName() {

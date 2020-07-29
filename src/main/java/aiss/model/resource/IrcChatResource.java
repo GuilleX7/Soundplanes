@@ -44,7 +44,7 @@ public class IrcChatResource {
 			log.warning(response.getError());
 		}
 		log.info(response.getData().getName());
-		channel = Channel.of(response.getData().get_id(), secret);
+		channel = Channel.of(response.getData().getId(), secret);
 		
 		return channel;
 	}
