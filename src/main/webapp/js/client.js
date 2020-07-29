@@ -706,6 +706,7 @@ class OverlayAirports {
 		user.disableMovement();
 		user.landedOn = response.user.landedOn;
 		user.chatToken = response.user.chatToken;
+		console.log(user.chatToken);
 		overlay.overlayChat.update();
 		overlay.show();
 		if (player != null && player.isReady()) {

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import aiss.model.ircchat.Rol;
+import aiss.model.ircchat.Permission;
 import aiss.model.resource.AirportResource;
 import aiss.model.resource.IrcChatResource;
 import aiss.model.resource.UserResource;
@@ -135,7 +135,7 @@ public class ClientAirportLandingController extends HttpServlet {
 		if (user.getChatToken() != null) {
 			IrcChatResource.invalidateToken(user.getChatToken());
 		}
-		user.setChatToken(IrcChatResource.createToken(airport.getChannel(), user, Rol.getDefaultUserRoles(), 3600));
+		user.setChatToken(IrcChatResource.createToken(airport.getChannel(), user, Permission.getDefaultUserRoles(), 3600));
 		UserResource.registerUser(user);
 		
 		Map<String, Object> data = new HashMap<String, Object>();

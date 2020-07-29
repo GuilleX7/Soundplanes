@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import aiss.model.geocoding.Location;
 import aiss.model.ircchat.Channel;
-import aiss.model.ircchat.Rol;
+import aiss.model.ircchat.Permission;
 import aiss.model.soundplanes.User;
 
 public class IrcChatResource_JUnitTest {
@@ -37,8 +37,8 @@ public class IrcChatResource_JUnitTest {
 		final String secret = "1";
 		final Channel channel = IrcChatResource.createChannel(secret);
 		final User user = User.of("Pepe", Location.ofCoordinates(40.4165001, -3.7025599));
-		final List<Rol> roles = new ArrayList<>();
-		roles.add(Rol.EDIT);
+		final List<Permission> roles = new ArrayList<>();
+		roles.add(Permission.EDIT);
 		final Integer expirationSeconds = 1000;
 		String tokenResults = IrcChatResource.createToken(channel, user, roles, expirationSeconds);
 

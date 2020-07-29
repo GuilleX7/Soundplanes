@@ -9,18 +9,18 @@ public class Payload {
 	private String sub;
 	private String channel;
 	private String name;
-	private List<Rol> roles;
+	private List<Permission> permissions;
 	
-	public static Payload of(String sub, String channel, String name, List<Rol> roles) {
-		return new Payload(sub, channel, name, roles);
+	public static Payload of(String sub, String channel, String name, List<Permission> permissions) {
+		return new Payload(sub, channel, name, permissions);
 	}
 	
-	private Payload(String sub, String channel, String name, List<Rol> roles) {
+	private Payload(String sub, String channel, String name, List<Permission> permissions) {
 		super();
 		this.sub = sub;
 		this.channel = channel;
 		this.name = name;
-		this.roles = roles;
+		this.permissions = permissions;
 	}
 
 	public String getSub() {
@@ -47,11 +47,11 @@ public class Payload {
 		this.name = name;
 	}
 	
-	public List<Rol> getRoles() {
-		return roles;
+	public List<Permission> getPermissions() {
+		return permissions;
 	}
 	
-	public void setRoles(List<Rol> roles) {
-		this.roles = roles;
+	public void setPermissions(List<Permission> permissions) {
+		this.permissions = permissions;
 	}
 }

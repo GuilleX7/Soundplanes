@@ -12,7 +12,7 @@ import aiss.model.ircchat.Options;
 import aiss.model.ircchat.Payload;
 import aiss.model.ircchat.Response.ChannelInfoResponse;
 import aiss.model.ircchat.Response.TokenResponse;
-import aiss.model.ircchat.Rol;
+import aiss.model.ircchat.Permission;
 import aiss.model.ircchat.Secret;
 import aiss.model.ircchat.TokenRequest;
 import aiss.model.soundplanes.User;
@@ -49,14 +49,14 @@ public class IrcChatResource {
 		return channel;
 	}
 	
-	public static String createToken(Channel channel, User user, List<Rol> roles, Integer expirationSeconds) {
+	public static String createToken(Channel channel, User user, List<Permission> permissions, Integer expirationSeconds) {
 		ClientResource cr = new ClientResource(String.format("%stoken", API_URL));
 		
 		String token = null;
 		TokenResponse response = null;
 		
 		try {
-			response = cr.post(TokenRequest.of(channel.getSecret(), Payload.of(user.getUuid(), channel.getId(), user.getName(), Rol.getDefaultUserRoles()), Options.of(3600)), TokenResponse.class);
+			response = cr.post(TokenRequest.of(channel.getSecret(), Payload.of(user.getUuid(), channel.getId(), user.getName(), Permission.getDefaultUserRoles()), Options.of(3600)), TokenResponse.class);
 		} catch (ResourceException e) {
 			log.warning("Couldn't create a token for channel ID " + channel.getId());
 			log.warning(e.getLocalizedMessage());
