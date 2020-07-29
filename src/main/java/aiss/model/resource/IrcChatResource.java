@@ -43,8 +43,8 @@ public class IrcChatResource {
 			log.warning("Couldn't register a channel with secret " + secret);
 			log.warning(response.getError());
 		}
-		
-		channel = Channel.of(response.getData().getId(), secret);
+		log.info(response.getData().getName());
+		channel = Channel.of(response.getData().get_id(), secret);
 		
 		return channel;
 	}
